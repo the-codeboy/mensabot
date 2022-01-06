@@ -1,21 +1,26 @@
 package ml.codeboy.thebot;
 
+import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 
+import java.text.NumberFormat;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
 import java.util.Date;
+import java.util.Locale;
 
 public class MensaUtil {
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date){
         EmbedBuilder builder=new EmbedBuilder();
         builder.setTitle("Meals in "+mensa.getName());
-        builder.setDescription(dateToWord(date));
-
+        builder.setDescription(DayOfWeek.of(date.getDay()==0?7:date.getDay()).getDisplayName(TextStyle.FULL,Locale.GERMANY)+" "+Util.dateToString(date));
+        NumberFormat currencyFormatter =
+                NumberFormat.getCurrencyInstance(Locale.GERMANY);
         for (Meal meal: mensa.getMeals(date)){
             builder.addField(meal.getName(),meal.getCategory()+
-                    (meal.getPrices().getStudents()!=null?"\npreis: "+meal.getPrices().getStudents()+"€ ("+meal.getPrices().getOthers()+"€)":""),true);
+                    (meal.getPrices().getStudents()!=null?"\npreis: "+currencyFormatter.format(Float.parseFloat(meal.getPrices().getStudents()))+" ("+currencyFormatter.format(Float.parseFloat(meal.getPrices().getOthers()))+")":""),true);
         }
 
         return builder;
