@@ -34,7 +34,12 @@ public class GuildManager {
 
 
     public GuildData loadData(Guild guild) throws FileNotFoundException {
-        GuildData data= new Gson().fromJson(new FileReader(guildFolder+ File.separator+guild.getId()), GuildData.class);
+        return loadData(guild.getId());
+    }
+
+
+    private GuildData loadData(String id) throws FileNotFoundException {
+        GuildData data= new Gson().fromJson(new FileReader(guildFolder+ File.separator+id), GuildData.class);
         return data;
     }
 
@@ -48,5 +53,4 @@ public class GuildManager {
             ex.printStackTrace();
         }
     }
-
 }

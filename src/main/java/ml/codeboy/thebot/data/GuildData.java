@@ -13,6 +13,7 @@ public class GuildData {
     private final transient Guild guild;
     private String guildId;
     private int defaultMensaId=187;
+    private String updateChannelId="";
 
     public GuildData(Guild guild) {
         this.guild = guild;
@@ -31,6 +32,16 @@ public class GuildData {
 
     public int getDefaultMensaId() {
         return defaultMensaId;
+    }
+
+
+    public String getUpdateChannelId() {
+        return updateChannelId;
+    }
+
+    public void setUpdateChannelId(String updateChannelId) {
+        this.updateChannelId = updateChannelId;
+        save();
     }
 
     public void setDefaultMensaId(int defaultMensaId) {

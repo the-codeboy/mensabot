@@ -1,9 +1,13 @@
 package ml.codeboy.thebot;
 
+import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.commands.*;
+import ml.codeboy.thebot.data.GuildData;
+import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -11,15 +15,17 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CommandHandler extends ListenerAdapter {
     private final Bot bot;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private Guild server;
+    private final ScheduledExecutorService executorService= Executors.newScheduledThreadPool(1);
 
     public CommandHandler(Bot bot) {
         this.bot = bot;
@@ -34,6 +40,40 @@ public class CommandHandler extends ListenerAdapter {
             server = bot.getJda().getGuildById(serverID);
 
         this.registerKnowCommands();
+
+        registerAnnouncements();
+    }
+
+    private void registerAnnouncements(){
+        Date date=new Date();
+        announceIn(60*60*24-(date.getSeconds()+date.getMinutes()*60+date.getHours()*3600)+60);//60 seconds extra
+    }
+
+    private void announceIn(int seconds){
+        System.out.println("sending in "+seconds);
+        executorService.schedule(()->{
+            registerAnnouncements();
+            sendToAllGuilds();
+        },seconds, TimeUnit.SECONDS);
+    }
+
+    private void sendToAllGuilds(){
+        System.out.println("Sending meals to guilds");
+        for (Guild guild:getBot().getJda().getGuilds()){
+            sendToGuild(guild);
+        }
+    }
+
+    private void sendToGuild(Guild guild){
+        GuildData data=GuildManager.getInstance().getData(guild);
+        try {
+            Mensa mensa=data.getDefaultMensa();
+            MessageChannel channel= (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
+            if(channel!=null&&mensa.isOpen()&&!mensa.getMeals().isEmpty()) {
+                channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).queue();
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     public void registerKnowCommands() {
@@ -48,6 +88,7 @@ public class CommandHandler extends ListenerAdapter {
 
         registerCommand(new MensaCommand());
         registerCommand(new DefaultMensaCommand());
+        registerCommand(new MensaAnnounceChannelCommand());
 
         registerAllSlashCommands();
     }
