@@ -2,6 +2,8 @@ package ml.codeboy.thebot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
@@ -14,6 +16,9 @@ public class MensaBot implements Bot{
     public JDA getJda() {
         return jda;
     }
+
+    public static final Logger logger
+            = LoggerFactory.getLogger(MensaBot.class);
 
     @Override
     public CommandHandler getCmdHandler() {

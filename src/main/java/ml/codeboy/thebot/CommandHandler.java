@@ -7,6 +7,7 @@ import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -50,7 +51,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void announceIn(int seconds){
-        System.out.println("sending in "+seconds);
+        MensaBot.logger.info("sending in "+seconds);
         executorService.schedule(()->{
             registerAnnouncements();
             sendToAllGuilds();
@@ -58,7 +59,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void sendToAllGuilds(){
-        System.out.println("Sending meals to guilds");
+        MensaBot.logger.info("Sending meals to guilds");
         for (Guild guild:getBot().getJda().getGuilds()){
             sendToGuild(guild);
         }
@@ -69,8 +70,15 @@ public class CommandHandler extends ListenerAdapter {
         try {
             Mensa mensa=data.getDefaultMensa();
             MessageChannel channel= (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
-            if(channel!=null&&mensa.isOpen()&&!mensa.getMeals().isEmpty()) {
-                channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).queue();
+            if(channel!=null) {
+                try {
+                    channel.retrieveMessageById(data.getLatestAnnouncementId()).queue((message) -> {
+                        message.delete().reason("idk");
+                    });
+                } catch (Exception ignored) {
+                }
+                Message message=channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).complete();
+                data.setLatestAnnouncementId(message.getId());
             }
         } catch (Exception ignored) {
         }
@@ -113,6 +121,8 @@ public class CommandHandler extends ListenerAdapter {
         String cmd = content.split(" ", 2)[0];
         Command command = getCommand(cmd);
         if (command != null) {
+            MensaBot.logger.info(event.getGuild().getName()+": "+event.getChannel().getName()+": "+event.getAuthor().getAsTag()
+                    +": "+event.getMessage().getContentRaw());
             command.execute(new MessageCommandEvent(event));
         }
     }
@@ -120,8 +130,11 @@ public class CommandHandler extends ListenerAdapter {
     @Override
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
         Command command = getCommand(event.getName());
-        if (command != null)
+        if (command != null) {
+            MensaBot.logger.info(event.getGuild().getName()+": "+event.getChannel().getName()+": "+event.getMember().getUser().getAsTag()
+                    +": "+event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event));
+        }
     }
 
     private void registerAllSlashCommands(){

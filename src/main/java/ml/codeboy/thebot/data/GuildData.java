@@ -2,16 +2,12 @@ package ml.codeboy.thebot.data;
 
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
-import com.google.gson.Gson;
-import ml.codeboy.thebot.Config;
 import net.dv8tion.jda.api.entities.Guild;
-
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class GuildData {
     private final transient Guild guild;
     private String guildId;
+    private String latestAnnouncementId="";
     private int defaultMensaId=187;
     private String updateChannelId="";
 
@@ -56,4 +52,14 @@ public class GuildData {
     public String getId() {
         return guildId;
     }
+
+    //region getter setter
+    public String getLatestAnnouncementId() {
+        return latestAnnouncementId;
+    }
+
+    public void setLatestAnnouncementId(String latestAnnouncementId) {
+        this.latestAnnouncementId = latestAnnouncementId;
+    }
+    //endregion
 }

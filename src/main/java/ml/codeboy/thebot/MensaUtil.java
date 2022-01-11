@@ -14,6 +14,10 @@ import java.util.Locale;
 public class MensaUtil {
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date){
         EmbedBuilder builder=new EmbedBuilder();
+        if(!mensa.isOpen(date)||mensa.getMeals(date).isEmpty()){
+            builder.setTitle(mensa.getName()+" is closed "+dateToWord(date));
+            return builder;
+        }
         builder.setTitle("Meals in "+mensa.getName());
         builder.setDescription(DayOfWeek.of(date.getDay()==0?7:date.getDay()).getDisplayName(TextStyle.FULL,Locale.GERMANY)+" "+Util.dateToString(date));
         NumberFormat currencyFormatter =
