@@ -98,6 +98,9 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new DefaultMensaCommand());
         registerCommand(new MensaAnnounceChannelCommand());
 
+        registerCommand(new ExecuteCommand());
+        registerCommand(new LanguagesCommand());
+
         registerAllSlashCommands();
     }
 
