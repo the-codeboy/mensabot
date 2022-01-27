@@ -47,7 +47,7 @@ public class ExecuteCommand extends Command{
             ExecutionResult result=r.execute(code);
             EmbedBuilder builder=new EmbedBuilder();
             builder.setTitle("Execution output").setDescription("Language: "+result.getLanguage());
-            builder.addField("code",code,false);
+            builder.addField("code","```"+language+"\n"+code+"\n```",false);
             ExecutionOutput output=result.getOutput();
 
             builder.addField("output",output.getOutput(),false);

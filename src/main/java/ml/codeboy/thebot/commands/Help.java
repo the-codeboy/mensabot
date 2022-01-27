@@ -20,7 +20,8 @@ public class Help extends Command {
         EmbedBuilder embedBuilder = newBuilder();
         embedBuilder.setTitle("Help for commands", "https://youtu.be/watch?v=dQw4w9WgXcQ");
         for (Command command : commands) {
-            embedBuilder.addField(command.getName(), command.getDescription(), true);
+            if (!command.isHidden())
+                embedBuilder.addField(command.getName(), command.getDescription(), true);
         }
         event.reply(embedBuilder);
     }

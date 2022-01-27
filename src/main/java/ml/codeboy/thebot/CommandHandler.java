@@ -2,6 +2,7 @@ package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.commands.*;
+import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
@@ -16,7 +17,10 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +30,7 @@ public class CommandHandler extends ListenerAdapter {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private Guild server;
-    private final ScheduledExecutorService executorService= Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
     public CommandHandler(Bot bot) {
         this.bot = bot;
@@ -45,39 +49,39 @@ public class CommandHandler extends ListenerAdapter {
         registerAnnouncements();
     }
 
-    private void registerAnnouncements(){
-        Date date=new Date();
-        announceIn(60*60*24-(date.getSeconds()+date.getMinutes()*60+date.getHours()*3600)+60);//60 seconds extra
+    private void registerAnnouncements() {
+        Date date = new Date();
+        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600) + 60);//60 seconds extra
     }
 
-    private void announceIn(int seconds){
-        MensaBot.logger.info("sending in "+seconds);
-        executorService.schedule(()->{
+    private void announceIn(int seconds) {
+        MensaBot.logger.info("sending in " + seconds);
+        executorService.schedule(() -> {
             registerAnnouncements();
             sendToAllGuilds();
-        },seconds, TimeUnit.SECONDS);
+        }, seconds, TimeUnit.SECONDS);
     }
 
-    private void sendToAllGuilds(){
+    private void sendToAllGuilds() {
         MensaBot.logger.info("Sending meals to guilds");
-        for (Guild guild:getBot().getJda().getGuilds()){
+        for (Guild guild : getBot().getJda().getGuilds()) {
             sendToGuild(guild);
         }
     }
 
-    private void sendToGuild(Guild guild){
-        GuildData data=GuildManager.getInstance().getData(guild);
+    private void sendToGuild(Guild guild) {
+        GuildData data = GuildManager.getInstance().getData(guild);
         try {
-            Mensa mensa=data.getDefaultMensa();
-            MessageChannel channel= (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
-            if(channel!=null) {
+            Mensa mensa = data.getDefaultMensa();
+            MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
+            if (channel != null) {
                 try {
                     channel.retrieveMessageById(data.getLatestAnnouncementId()).queue((message) -> {
                         message.delete().reason("idk");
                     });
                 } catch (Exception ignored) {
                 }
-                Message message=channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).complete();
+                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).complete();
                 data.setLatestAnnouncementId(message.getId());
             }
         } catch (Exception ignored) {
@@ -101,7 +105,24 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new ExecuteCommand());
         registerCommand(new LanguagesCommand());
 
+        registerAudioCommands();
+
         registerAllSlashCommands();
+    }
+
+    private void registerAudioCommands() {
+        registerCommand(new Play());
+        registerCommand(new Pause());
+        registerCommand(new Echo());
+        registerCommand(new Loop());
+        registerCommand(new PlayNext());
+        registerCommand(new Queue());
+        registerCommand(new RemoveTrack());
+        registerCommand(new Shuffle());
+        registerCommand(new Skip());
+        registerCommand(new Stop());
+        registerCommand(new Volume());
+        registerCommand(new CurrentTrack());
     }
 
     private void registerCommand(Command command) {
@@ -111,8 +132,9 @@ public class CommandHandler extends ListenerAdapter {
             commands.put(alias.toLowerCase(), command);
         }
         CommandData data = command.getCommandData();
-        if (data != null)
+        if (data != null && !command.isHidden())
             registerSlashCommand(data);
+        MensaBot.logger.info("registered command "+command.getName());
     }
 
     @Override
@@ -124,8 +146,8 @@ public class CommandHandler extends ListenerAdapter {
         String cmd = content.split(" ", 2)[0];
         Command command = getCommand(cmd);
         if (command != null) {
-            MensaBot.logger.info(event.getGuild().getName()+": "+event.getChannel().getName()+": "+event.getAuthor().getAsTag()
-                    +": "+event.getMessage().getContentRaw());
+            MensaBot.logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
+                    + ": " + event.getMessage().getContentRaw());
             command.execute(new MessageCommandEvent(event));
         }
     }
@@ -134,16 +156,17 @@ public class CommandHandler extends ListenerAdapter {
     public void onSlashCommand(@NotNull SlashCommandEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
-            MensaBot.logger.info(event.getGuild().getName()+": "+event.getChannel().getName()+": "+event.getMember().getUser().getAsTag()
-                    +": "+event.getCommandString());
+            MensaBot.logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getMember().getUser().getAsTag()
+                    + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event));
         }
     }
 
-    private void registerAllSlashCommands(){
-        CommandListUpdateAction action=getBot().getJda().updateCommands();
-        for (Command command:allCommands){
-            action=action.addCommands(command.getCommandData());
+    private void registerAllSlashCommands() {
+        CommandListUpdateAction action = getBot().getJda().updateCommands();
+        for (Command command : allCommands) {
+            if (!command.isHidden())
+                action = action.addCommands(command.getCommandData());
         }
         action.queue();
     }

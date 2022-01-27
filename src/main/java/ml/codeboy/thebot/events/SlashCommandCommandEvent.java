@@ -1,14 +1,12 @@
 package ml.codeboy.thebot.events;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public class SlashCommandCommandEvent extends CommandEvent {
     public SlashCommandCommandEvent(SlashCommandEvent jdaEvent) {
         super(jdaEvent);
+        jdaEvent.deferReply(isEphermal()).queue();
     }
 
     @Override
@@ -19,7 +17,10 @@ public class SlashCommandCommandEvent extends CommandEvent {
 
     @Override
     public void reply(MessageEmbed embed) {
-        getSlashCommandEvent().replyEmbeds(embed).queue();
+        if(getSlashCommandEvent().isAcknowledged()) {
+            getSlashCommandEvent().getHook().editOriginalEmbeds(embed).queue();
+        }else
+            getSlashCommandEvent().replyEmbeds(embed).queue();
     }
 
     @Override
@@ -35,5 +36,10 @@ public class SlashCommandCommandEvent extends CommandEvent {
     @Override
     public Member getMember() {
         return getSlashCommandEvent().getMember();
+    }
+
+    @Override
+    public MessageChannel getChannel() {
+        return getSlashCommandEvent().getChannel();
     }
 }

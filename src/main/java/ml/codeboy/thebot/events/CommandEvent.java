@@ -1,13 +1,12 @@
 package ml.codeboy.thebot.events;
 
 import ml.codeboy.thebot.Config;
+import ml.codeboy.thebot.commands.sound.GuildMusicManager;
+import ml.codeboy.thebot.commands.sound.PlayerManager;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 
 public abstract class CommandEvent {
     private final Event jdaEvent;
+    private boolean ephermal=false;
 
     public CommandEvent(Event jdaEvent) {
         this.jdaEvent = jdaEvent;
@@ -85,6 +85,40 @@ public abstract class CommandEvent {
 
     public GuildData getGuildData(){
         return GuildManager.getInstance().getData(getGuild());
+    }
+
+    public abstract MessageChannel getChannel();
+
+    public Message send(String message){
+        return getChannel().sendMessage(message).complete();
+    }
+
+    public Message send(MessageEmbed message){
+        return getChannel().sendMessageEmbeds(message).complete();
+    }
+
+    public Message send(EmbedBuilder builder) {
+        return send(builder.build());
+    }
+
+    public void replyErrorUnknown() {
+        replyError("unknown error");
+    }
+
+    public EmbedBuilder getBuilder() {
+        return new EmbedBuilder();
+    }
+
+    public GuildMusicManager getManager() {
+        return PlayerManager.getInstance().getMusicManager(getGuild());
+    }
+
+    public boolean isEphermal() {
+        return ephermal;
+    }
+
+    public void setEphermal(boolean ephermal) {
+        this.ephermal = ephermal;
     }
 
     //endregion

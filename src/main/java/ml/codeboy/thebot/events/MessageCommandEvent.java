@@ -1,9 +1,6 @@
 package ml.codeboy.thebot.events;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class MessageCommandEvent extends CommandEvent {
@@ -37,7 +34,10 @@ public class MessageCommandEvent extends CommandEvent {
         return getMessageReceivedEvent().getGuild();
     }
 
-
+    @Override
+    public MessageChannel getChannel() {
+        return getMessageReceivedEvent().getChannel();
+    }
 
 
 }
