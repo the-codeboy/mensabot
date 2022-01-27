@@ -2,6 +2,8 @@ package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.commands.*;
+import ml.codeboy.thebot.commands.quotes.AddQuote;
+import ml.codeboy.thebot.commands.quotes.QuoteCommand;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
@@ -106,6 +108,9 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new LanguagesCommand());
 
         registerAudioCommands();
+
+        registerCommand(new AddQuote());
+        registerCommand(new QuoteCommand());
 
         registerAllSlashCommands();
     }
