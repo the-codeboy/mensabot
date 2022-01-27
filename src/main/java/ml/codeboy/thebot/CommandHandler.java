@@ -5,10 +5,14 @@ import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
 import ml.codeboy.thebot.commands.sound.*;
+import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
+import ml.codeboy.thebot.quotes.Quote;
+import ml.codeboy.thebot.quotes.QuoteManager;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -19,10 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -113,6 +114,17 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new QuoteCommand());
 
         registerAllSlashCommands();
+
+//        changeStatus();
+    }
+
+    private void changeStatus(){
+        new Timer().schedule(new TimerTask(){
+            public void run(){
+                Quote quote= QuoteManager.getInstance().getRandomQuote();
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.LISTENING, "\""+quote.getContent()+
+                        "\"\n - "+quote.getPerson()));
+            }},0,60_000);
     }
 
     private void registerAudioCommands() {

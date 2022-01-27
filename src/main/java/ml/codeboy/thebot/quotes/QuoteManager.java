@@ -1,6 +1,7 @@
 package ml.codeboy.thebot.quotes;
 
 import com.google.gson.Gson;
+import ml.codeboy.thebot.MensaBot;
 import ml.codeboy.thebot.data.GuildData;
 
 import java.io.*;
@@ -31,6 +32,7 @@ public class QuoteManager {
         for (File file:saveFolder.listFiles()){
             loadPerson(file);
         }
+        MensaBot.logger.info("loaded "+persons.size()+" persons with a total of "+quotes.size()+" quotes");
     }
 
     public void registerPerson(Person person){
@@ -39,6 +41,7 @@ public class QuoteManager {
             quote.setPerson(person.getName());
         }
         quotes.addAll(person.getQuotes());
+        MensaBot.logger.info("registered "+person.getName()+" with "+person.getQuotes().size()+" quotes");
     }
 
     private void loadPerson(File file) {
@@ -78,6 +81,17 @@ public class QuoteManager {
     }
 
     public Quote getRandomQuote() {
+        return getRandomQuote(quotes);
+    }
+
+    public Quote getRandomQuote(String person) {
+        Person p=getOrCreate(person);
+        if(p.getQuotes().isEmpty())
+            return null;
+        return getRandomQuote(p.getQuotes());
+    }
+
+    public Quote getRandomQuote(ArrayList<Quote>quotes) {
         return quotes.get(random.nextInt(quotes.size()));
     }
 
