@@ -39,54 +39,53 @@ public class PlayerManager {
     }
 
     public void load(CommandEvent event, String trackUrl, boolean play, boolean playNext) {
-        load(event, trackUrl, play,true,playNext);
+        load(event, trackUrl, play, true, playNext);
     }
 
-    public void load(CommandEvent event, String trackUrl,boolean play,boolean notify,boolean playNext) {
-        load(event, trackUrl, play,true,playNext,false);
+    public void load(CommandEvent event, String trackUrl, boolean play, boolean notify, boolean playNext) {
+        load(event, trackUrl, play, notify, playNext, false);
     }
 
 
-
-    public void load(CommandEvent event, String trackUrl,boolean play,boolean notify,boolean playNext,boolean shuffle) {
+    public void load(CommandEvent event, String trackUrl, boolean play, boolean notify, boolean playNext, boolean shuffle) {
         final GuildMusicManager musicManager = this.getMusicManager(event.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                if(!play) {
-                    musicManager.scheduler.queue(track,playNext);
+                if (!play) {
+                    musicManager.scheduler.queue(track, playNext);
 
-                    if(notify)
-                        songAddedToQueue(event,track);
-                    }else {
-                    musicManager.audioPlayer.startTrack(track,false);
+                    if (notify)
+                        songAddedToQueue(event, track);
+                } else {
+                    musicManager.audioPlayer.startTrack(track, false);
 
-                    if(notify)
-                        songPlaying(event,track);
+                    if (notify)
+                        songPlaying(event, track);
                 }
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                if(playlist.isSearchResult()&&playlist.getTracks().size()>0) {
+                if (playlist.isSearchResult() && playlist.getTracks().size() > 0) {
                     trackLoaded(playlist.getTracks().get(0));
                     return;
                 }
 
-                if(shuffle)
+                if (shuffle)
                     Collections.shuffle(playlist.getTracks());
                 for (AudioTrack track : playlist.getTracks()) {
                     musicManager.scheduler.queue(track);
                 }
 
-                if(notify)
-                    playlistAddedToQueue(event,playlist);
+                if (notify)
+                    playlistAddedToQueue(event, playlist);
             }
 
             @Override
             public void noMatches() {
-                if(notify)
+                if (notify)
                     event.reply("No matches");
             }
 
@@ -99,38 +98,34 @@ public class PlayerManager {
         });
     }
 
-    public void songAddedToQueue(CommandEvent event,AudioTrack track){
+    public void songAddedToQueue(CommandEvent event, AudioTrack track) {
         event.reply(event.getBuilder().setTitle("Song added to queue")
                 .addField(track.getInfo().title, "by `" + track.getInfo().author + '`', true));
     }
 
-    public void songPlaying(CommandEvent event,AudioTrack track){
+    public void songPlaying(CommandEvent event, AudioTrack track) {
         event.reply(event.getBuilder().setTitle("Now playing")
                 .addField(track.getInfo().title, " by `" + track.getInfo().author + '`', true));
     }
 
-    public void playlistAddedToQueue(CommandEvent event,AudioPlaylist playlist){
+    public void playlistAddedToQueue(CommandEvent event, AudioPlaylist playlist) {
         event.reply(event.getBuilder().setTitle("Playlist added to queue")
-                .addField(playlist.getName(),"with "+playlist.getTracks().size()+" tracks",true));
+                .addField(playlist.getName(), "with " + playlist.getTracks().size() + " tracks", true));
     }
 
     public static PlayerManager getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new PlayerManager();
         }
 
         return INSTANCE;
     }
 
-    public void destroy(Guild guild){
-        GuildMusicManager musicManager=musicManagers.remove(guild.getIdLong());
-        if(musicManager!=null)
+    public void destroy(Guild guild) {
+        GuildMusicManager musicManager = musicManagers.remove(guild.getIdLong());
+        if (musicManager != null)
             musicManager.destroy();
     }
-
-
-
-
 
 
 }
