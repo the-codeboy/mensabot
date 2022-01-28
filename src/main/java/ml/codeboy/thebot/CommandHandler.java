@@ -115,7 +115,9 @@ public class CommandHandler extends ListenerAdapter {
 
         registerAllSlashCommands();
 
-//        changeStatus();
+        if(Config.getInstance().quoteStatus) {
+            changeStatus();
+        }
     }
 
     private void changeStatus(){

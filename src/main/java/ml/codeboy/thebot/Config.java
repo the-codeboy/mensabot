@@ -17,6 +17,7 @@ public class Config {
     public String token="token";
     public String serverId="0";
     public String prefix="!";
+    public boolean quoteStatus=true;
 
     static {
         try {
