@@ -56,8 +56,8 @@ public class TrackScheduler extends AudioEventAdapter {
         }
 
         if(track==null){
-            if(latestEvent!=null)
-                latestEvent.replyError("There are no more tracks in the queue");
+//            if(latestEvent!=null)
+//                latestEvent.replyError("There are no more tracks in the queue");
             return;
         }
         play(track);

@@ -29,7 +29,7 @@ public abstract class AudioCommand extends Command {
     public void execute(CommandEvent event) {
         event.setEphermal(true);
         super.execute(event);
-        event.getManager().scheduler.setLatestEvent(event);
+//        event.getManager().scheduler.setLatestEvent(event);//song info will now only be send if current is run
     }
 
     protected boolean ensureConnected(CommandEvent event){

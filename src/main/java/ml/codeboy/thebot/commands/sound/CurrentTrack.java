@@ -19,8 +19,10 @@ public class CurrentTrack extends AudioCommand{
 
         AudioTrack current=event.getManager().audioPlayer.getPlayingTrack();
 
-        if(current!=null)
-            sendTrackInfo(event,current);
+        if(current!=null) {
+            sendTrackInfo(event, current);
+            event.getManager().scheduler.setLatestEvent(event);
+        }
         else {
             event.replyError("There is no song currently playing!");
         }
