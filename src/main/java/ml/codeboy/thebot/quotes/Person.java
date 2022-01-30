@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Person {
     private String name;
-    private ArrayList<Quote>quotes=new ArrayList<>();
+    private ArrayList<Quote> quotes = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -22,7 +22,7 @@ public class Person {
         this.quotes = quotes;
     }
 
-    public void save(){
+    public void save() {
         QuoteManager.getInstance().save(this);
     }
 }

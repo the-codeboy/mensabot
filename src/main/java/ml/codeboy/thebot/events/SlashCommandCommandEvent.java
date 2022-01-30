@@ -3,6 +3,8 @@ package ml.codeboy.thebot.events;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
+import java.util.Arrays;
+
 public class SlashCommandCommandEvent extends CommandEvent {
     public SlashCommandCommandEvent(SlashCommandEvent jdaEvent) {
         super(jdaEvent);
@@ -16,11 +18,11 @@ public class SlashCommandCommandEvent extends CommandEvent {
     }
 
     @Override
-    public void reply(MessageEmbed embed) {
-        if(getSlashCommandEvent().isAcknowledged()) {
+    public void reply(MessageEmbed... embed) {
+        if (getSlashCommandEvent().isAcknowledged()) {
             getSlashCommandEvent().getHook().editOriginalEmbeds(embed).queue();
-        }else
-            getSlashCommandEvent().replyEmbeds(embed).queue();
+        } else
+            getSlashCommandEvent().replyEmbeds(Arrays.asList(embed)).queue();
     }
 
     @Override

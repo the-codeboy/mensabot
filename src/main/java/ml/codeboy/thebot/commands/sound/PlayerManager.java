@@ -28,6 +28,14 @@ public class PlayerManager {
         AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
     }
 
+    public static PlayerManager getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new PlayerManager();
+        }
+
+        return INSTANCE;
+    }
+
     public GuildMusicManager getMusicManager(Guild guild) {
         return this.musicManagers.computeIfAbsent(guild.getIdLong(), (guildId) -> {
             final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager);
@@ -45,7 +53,6 @@ public class PlayerManager {
     public void load(CommandEvent event, String trackUrl, boolean play, boolean notify, boolean playNext) {
         load(event, trackUrl, play, notify, playNext, false);
     }
-
 
     public void load(CommandEvent event, String trackUrl, boolean play, boolean notify, boolean playNext, boolean shuffle) {
         final GuildMusicManager musicManager = this.getMusicManager(event.getGuild());
@@ -111,14 +118,6 @@ public class PlayerManager {
     public void playlistAddedToQueue(CommandEvent event, AudioPlaylist playlist) {
         event.reply(event.getBuilder().setTitle("Playlist added to queue")
                 .addField(playlist.getName(), "with " + playlist.getTracks().size() + " tracks", true));
-    }
-
-    public static PlayerManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new PlayerManager();
-        }
-
-        return INSTANCE;
     }
 
     public void destroy(Guild guild) {

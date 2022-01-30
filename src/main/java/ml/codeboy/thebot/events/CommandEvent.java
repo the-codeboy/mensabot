@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public abstract class CommandEvent {
     private final Event jdaEvent;
-    private boolean ephermal=false;
+    private boolean ephermal = false;
 
     public CommandEvent(Event jdaEvent) {
         this.jdaEvent = jdaEvent;
@@ -25,7 +25,7 @@ public abstract class CommandEvent {
 
     public abstract void reply(String message);
 
-    public abstract void reply(MessageEmbed embed);
+    public abstract void reply(MessageEmbed... embed);
 
     public abstract User getUser();
 
@@ -83,17 +83,17 @@ public abstract class CommandEvent {
 
     public abstract Guild getGuild();
 
-    public GuildData getGuildData(){
+    public GuildData getGuildData() {
         return GuildManager.getInstance().getData(getGuild());
     }
 
     public abstract MessageChannel getChannel();
 
-    public Message send(String message){
+    public Message send(String message) {
         return getChannel().sendMessage(message).complete();
     }
 
-    public Message send(MessageEmbed message){
+    public Message send(MessageEmbed message) {
         return getChannel().sendMessageEmbeds(message).complete();
     }
 

@@ -21,7 +21,7 @@ public class GuildMusicManager {
         return sendHandler;
     }
 
-    public void destroy(){
+    public void destroy() {
         audioPlayer.destroy();
         scheduler.destroy();
     }

@@ -4,8 +4,8 @@ import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
-import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.commands.sound.Queue;
+import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
@@ -32,8 +32,8 @@ public class CommandHandler extends ListenerAdapter {
     private final Bot bot;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
-    private Guild server;
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    private Guild server;
 
     public CommandHandler(Bot bot) {
         this.bot = bot;
@@ -115,18 +115,24 @@ public class CommandHandler extends ListenerAdapter {
 
         registerAllSlashCommands();
 
-        if(Config.getInstance().quoteStatus) {
+        if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
     }
 
-    private void changeStatus(){
-        new Timer().schedule(new TimerTask(){
-            public void run(){
-                Quote quote= QuoteManager.getInstance().getRandomQuote();
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.LISTENING, "\""+quote.getContent()+
-                        "\"\n - "+quote.getPerson()));
-            }},0,60_000);
+    private void changeStatus() {
+        new Timer().schedule(new TimerTask() {
+            public void run() {
+                Quote quote;
+                String status;
+                do {
+                    quote = QuoteManager.getInstance().getRandomQuote();
+                    status = "\"" + quote.getContent() +
+                            "\"\n - " + quote.getPerson();
+                } while (status.length() > 128);
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.LISTENING, status));
+            }
+        }, 0, 60_000);
     }
 
     private void registerAudioCommands() {
@@ -153,7 +159,7 @@ public class CommandHandler extends ListenerAdapter {
         CommandData data = command.getCommandData();
         if (data != null && !command.isHidden())
             registerSlashCommand(data);
-        MensaBot.logger.info("registered command "+command.getName());
+        MensaBot.logger.info("registered command " + command.getName());
     }
 
     @Override

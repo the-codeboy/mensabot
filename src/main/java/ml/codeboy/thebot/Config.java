@@ -10,26 +10,26 @@ import java.io.IOException;
 public class Config {
     private static Config instance;
 
-    public static Config getInstance() {
-        return instance;
-    }
-
-    public String token="token";
-    public String serverId="0";
-    public String prefix="!";
-    public boolean quoteStatus=true;
-
     static {
         try {
-            instance= new Gson().fromJson(new FileReader("config.json"),Config.class);
+            instance = new Gson().fromJson(new FileReader("config.json"), Config.class);
         } catch (FileNotFoundException e) {
             try {
-                FileWriter writer=new FileWriter("config.json");
-                new Gson().toJson((instance=new Config()),writer);
+                FileWriter writer = new FileWriter("config.json");
+                new Gson().toJson((instance = new Config()), writer);
                 writer.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public String token = "token";
+    public String serverId = "0";
+    public String prefix = "!";
+    public boolean quoteStatus = true;
+
+    public static Config getInstance() {
+        return instance;
     }
 }

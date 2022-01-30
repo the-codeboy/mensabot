@@ -3,6 +3,8 @@ package ml.codeboy.thebot.events;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.util.Arrays;
+
 public class MessageCommandEvent extends CommandEvent {
     public MessageCommandEvent(MessageReceivedEvent jdaEvent) {
         super(jdaEvent);
@@ -15,8 +17,8 @@ public class MessageCommandEvent extends CommandEvent {
     }
 
     @Override
-    public void reply(MessageEmbed embed) {
-        getMessageReceivedEvent().getChannel().sendMessageEmbeds(embed).queue();
+    public void reply(MessageEmbed... embed) {
+        getMessageReceivedEvent().getChannel().sendMessageEmbeds(Arrays.asList(embed)).queue();
     }
 
     @Override

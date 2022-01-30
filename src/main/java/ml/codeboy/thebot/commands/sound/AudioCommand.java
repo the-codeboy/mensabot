@@ -12,11 +12,11 @@ import java.net.URL;
 
 public abstract class AudioCommand extends Command {
     public AudioCommand(String name) {
-        this(name,"");
+        this(name, "");
     }
 
-    public AudioCommand(String name,String usage,String... aliases) {
-        super(name,usage,aliases);
+    public AudioCommand(String name, String usage, String... aliases) {
+        super(name, usage, aliases);
         setHidden(true);
     }
 
@@ -32,10 +32,9 @@ public abstract class AudioCommand extends Command {
 //        event.getManager().scheduler.setLatestEvent(event);//song info will now only be send if current is run
     }
 
-    protected boolean ensureConnected(CommandEvent event){
+    protected boolean ensureConnected(CommandEvent event) {
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
-
 
 
         final Member member = event.getMember();
@@ -48,7 +47,7 @@ public abstract class AudioCommand extends Command {
 
         AudioManager audioManager = event.getGuild().getAudioManager();
 
-        if(selfVoiceState.getChannel() == null) {
+        if (selfVoiceState.getChannel() == null) {
             audioManager.openAudioConnection(memberVoiceState.getChannel());
             return true;
         }
@@ -61,31 +60,32 @@ public abstract class AudioCommand extends Command {
         return true;
     }
 
-    protected void queue(CommandEvent event,String link){
-        queue(event,link,false);
+    protected void queue(CommandEvent event, String link) {
+        queue(event, link, false);
     }
 
-    protected void queue(CommandEvent event,String link,boolean playNext){
-        link=toYtUrl(link);
+    protected void queue(CommandEvent event, String link, boolean playNext) {
+        link = toYtUrl(link);
 
-        PlayerManager.getInstance().load(event, link,false,playNext);
+        PlayerManager.getInstance().load(event, link, false, playNext);
     }
 
-    protected void play(CommandEvent event,String link){
-        play(event, link,false);
-    }
-    protected void play(CommandEvent event,String link,boolean shuffle){
-        link=toYtUrl(link);
-
-        PlayerManager.getInstance().load(event, link,true,true,false,shuffle);
+    protected void play(CommandEvent event, String link) {
+        play(event, link, false);
     }
 
-    private String toYtUrl(String link){
+    protected void play(CommandEvent event, String link, boolean shuffle) {
+        link = toYtUrl(link);
+
+        PlayerManager.getInstance().load(event, link, true, true, false, shuffle);
+    }
+
+    private String toYtUrl(String link) {
         if (!isUrl(link)) {
-            File file=new File("music"+File.separator+link+".mp3");
-            if(file.exists())//music available offline
+            File file = new File("music" + File.separator + link + ".mp3");
+            if (file.exists())//music available offline
             {
-                return "file://"+file.getPath();
+                return "file://" + file.getPath();
             }
             link = "ytsearch:" + link;
         }
@@ -101,7 +101,7 @@ public abstract class AudioCommand extends Command {
         }
     }
 
-    protected void shuffle(CommandEvent event){
+    protected void shuffle(CommandEvent event) {
         event.getManager().scheduler.shuffle();
     }
 

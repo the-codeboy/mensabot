@@ -29,8 +29,7 @@ public class RhymeCommand extends Command {
         if (args.length == 0) {
             event.reply(newBuilder().setColor(Color.RED).setTitle("Error")
                     .setDescription("Please provide a word"));
-        }
-        else {
+        } else {
             String word = args[0];
             ArrayList<String> words = RhymeApi.getInstance().getRhymingWords(word);
             EmbedBuilder builder = newBuilder();

@@ -13,43 +13,40 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Echo extends Command {
-    public Echo(){
-        super("echo","makes the bot repeat everything you say");
+    public Echo() {
+        super("echo", "makes the bot repeat everything you say");
     }
 
 
     @Override
     public void run(CommandEvent event) {
-        AudioChannel channel=event.getMember().getVoiceState()==null?
-                event.getGuild().getAfkChannel():event.getMember().getVoiceState().getChannel();
-        if(channel==null){
+        AudioChannel channel = event.getMember().getVoiceState() == null ?
+                event.getGuild().getAfkChannel() : event.getMember().getVoiceState().getChannel();
+        if (channel == null) {
             event.reply("please join a voice channel and run the command again");
             return;
         }
 
         AudioManager audioManager = event.getGuild().getAudioManager();
 
-        EchoHandler handler=new EchoHandler();
+        EchoHandler handler = new EchoHandler();
 
         audioManager.setSendingHandler(handler);
         audioManager.setReceivingHandler(handler);
         audioManager.openAudioConnection(channel);
     }
 
-    public static class EchoHandler implements AudioSendHandler, AudioReceiveHandler
-    {
+    public static class EchoHandler implements AudioSendHandler, AudioReceiveHandler {
         private final Queue<byte[]> queue = new ConcurrentLinkedQueue<>();
 
 
         @Override
-        public boolean canReceiveCombined()
-        {
+        public boolean canReceiveCombined() {
             return queue.size() < 10;
         }
 
         @Override
-        public void handleCombinedAudio(CombinedAudio combinedAudio)
-        {
+        public void handleCombinedAudio(CombinedAudio combinedAudio) {
             if (combinedAudio.getUsers().isEmpty())
                 return;
 
@@ -58,21 +55,18 @@ public class Echo extends Command {
         }
 
         @Override
-        public boolean canProvide()
-        {
+        public boolean canProvide() {
             return !queue.isEmpty();
         }
 
         @Override
-        public ByteBuffer provide20MsAudio()
-        {
+        public ByteBuffer provide20MsAudio() {
             byte[] data = queue.poll();
             return data == null ? null : ByteBuffer.wrap(data);
         }
 
         @Override
-        public boolean isOpus()
-        {
+        public boolean isOpus() {
             return false;
         }
     }

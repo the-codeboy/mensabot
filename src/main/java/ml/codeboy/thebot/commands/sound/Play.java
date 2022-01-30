@@ -10,16 +10,15 @@ public class Play extends AudioCommand {
     @Override
     public void run(CommandEvent event) {
 
-        if(!ensureConnected(event))
+        if (!ensureConnected(event))
             return;
 
-        if (event.getArgs().length==0){
-            if(event.getManager().audioPlayer.getPlayingTrack()==null) {
-                if(event.getManager().scheduler.songsInQueue()==0) {
-                    play(event, "https://www.youtube.com/watch?v=w2Ov5jzm3j8&list=PLurPBtLcqJqcg3r-HOhR3LZ0aDxpI15Fa",true);
+        if (event.getArgs().length == 0) {
+            if (event.getManager().audioPlayer.getPlayingTrack() == null) {
+                if (event.getManager().scheduler.songsInQueue() == 0) {
+                    play(event, "https://www.youtube.com/watch?v=w2Ov5jzm3j8&list=PLurPBtLcqJqcg3r-HOhR3LZ0aDxpI15Fa", true);
                     shuffle(event);
-                }
-                else if(event.getManager().audioPlayer.getPlayingTrack()!=null){
+                } else if (event.getManager().audioPlayer.getPlayingTrack() != null) {
                     event.getManager().audioPlayer.playTrack(event.getManager().audioPlayer.getPlayingTrack().makeClone());
                 }
             }
@@ -28,7 +27,7 @@ public class Play extends AudioCommand {
         }
 
         String link = String.join(" ", event.getArgs());
-        play(event,link);
+        play(event, link);
     }
 
 }

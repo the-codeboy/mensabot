@@ -11,13 +11,13 @@ import java.awt.*;
 public abstract class Command {
     private final String name, description;
     private final String[] aliases;
-    private Permission[]requiredPermisions=new Permission[0];
-    private boolean hidden=false;
+    private Permission[] requiredPermisions = new Permission[0];
+    private boolean hidden = false;
 
     public Command(String name, String description, String... aliases) {
         this.name = name;
-        if(description==null||description.isEmpty())
-            description="unknown";
+        if (description == null || description.isEmpty())
+            description = "unknown";
         this.description = description;
         this.aliases = aliases;
     }
@@ -30,16 +30,16 @@ public abstract class Command {
         this.requiredPermisions = requiredPermisions;
     }
 
-    public void execute(CommandEvent event){
-        if(!hasPermission(event)){
+    public void execute(CommandEvent event) {
+        if (!hasPermission(event)) {
             event.reply("Insufficient permissions");
             return;
         }
         run(event);
     }
 
-    private boolean hasPermission(CommandEvent event){
-        Member member=event.getMember();
+    private boolean hasPermission(CommandEvent event) {
+        Member member = event.getMember();
         return member.hasPermission(getRequiredPermisions());
     }
 

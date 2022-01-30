@@ -3,12 +3,12 @@ package ml.codeboy.thebot.apis;
 public class InsultApi extends CachedAPI<String> {
     private static final InsultApi instance = new InsultApi();
 
-    public static InsultApi getInstance() {
-        return instance;
-    }
-
     public InsultApi() {
         super(1);
+    }
+
+    public static InsultApi getInstance() {
+        return instance;
     }
 
     @Override

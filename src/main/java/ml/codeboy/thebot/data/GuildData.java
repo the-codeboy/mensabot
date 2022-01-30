@@ -7,13 +7,13 @@ import net.dv8tion.jda.api.entities.Guild;
 public class GuildData {
     private final transient Guild guild;
     private String guildId;
-    private String latestAnnouncementId="";
-    private int defaultMensaId=187;
-    private String updateChannelId="";
+    private String latestAnnouncementId = "";
+    private int defaultMensaId = 187;
+    private String updateChannelId = "";
 
     public GuildData(Guild guild) {
         this.guild = guild;
-        guildId=guild.getId();
+        guildId = guild.getId();
     }
 
 
@@ -22,7 +22,7 @@ public class GuildData {
     }
 
 
-    public Mensa getDefaultMensa(){
+    public Mensa getDefaultMensa() {
         return OpenMensa.getInstance().getMensa(getDefaultMensaId());
     }
 
@@ -30,6 +30,10 @@ public class GuildData {
         return defaultMensaId;
     }
 
+    public void setDefaultMensaId(int defaultMensaId) {
+        this.defaultMensaId = defaultMensaId;
+        save();
+    }
 
     public String getUpdateChannelId() {
         return updateChannelId;
@@ -40,12 +44,7 @@ public class GuildData {
         save();
     }
 
-    public void setDefaultMensaId(int defaultMensaId) {
-        this.defaultMensaId = defaultMensaId;
-        save();
-    }
-
-    public void save(){
+    public void save() {
         GuildManager.getInstance().save(this);
     }
 

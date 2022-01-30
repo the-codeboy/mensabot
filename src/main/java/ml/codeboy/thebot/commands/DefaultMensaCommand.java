@@ -18,22 +18,22 @@ public class DefaultMensaCommand extends Command {
 
     @Override
     public CommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.INTEGER,"id","Id of the new default Mensa",true);
+        return super.getCommandData().addOption(OptionType.INTEGER, "id", "Id of the new default Mensa", true);
     }
 
     @Override
     public void run(CommandEvent event) {
-        String[]args=event.getArgs();
-        if(args.length==0){
+        String[] args = event.getArgs();
+        if (args.length == 0) {
             event.replyError("Missing argument");
-        }else {
+        } else {
             try {
-                int i=Integer.parseInt(args[0]);
-                Mensa mensa= OpenMensa.getInstance().getMensa(i);
-                if (mensa==null){
-                    event.replyError("Unable to find mensa with id "+i);
-                }else {
-                    event.reply(new EmbedBuilder().setTitle("Success").setDescription("New default mensa for server is "+mensa.getName())
+                int i = Integer.parseInt(args[0]);
+                Mensa mensa = OpenMensa.getInstance().getMensa(i);
+                if (mensa == null) {
+                    event.replyError("Unable to find mensa with id " + i);
+                } else {
+                    event.reply(new EmbedBuilder().setTitle("Success").setDescription("New default mensa for server is " + mensa.getName())
                             .setColor(Color.GREEN));
                     event.getGuildData().setDefaultMensaId(i);
                 }

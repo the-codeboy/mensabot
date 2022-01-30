@@ -2,7 +2,6 @@ package ml.codeboy.thebot.util;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -11,9 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Util {
-
-    private static final int secondsPerDay = 3600 * 24,
-            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static String toReadable(long millis) {
         int seconds = (int) (millis / 1000);
@@ -44,7 +40,8 @@ public class Util {
         if (date.length() == 0)
             date = millis + " milliseconds";
         return date;
-    }
+    }    private static final int secondsPerDay = 3600 * 24,
+            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static String repeat(String s, int times) {
         StringBuilder builder = new StringBuilder();
@@ -109,7 +106,9 @@ public class Util {
     }
 
     public static EmbedBuilder sign(EmbedBuilder builder, CommandEvent e) {
-        builder.setFooter("requested by "+e.getMember().getEffectiveName(), e.getMember().getUser().getAvatarUrl());
+        builder.setFooter("requested by " + e.getMember().getEffectiveName(), e.getMember().getUser().getAvatarUrl());
         return builder;
     }
+
+
 }

@@ -98,8 +98,8 @@ public class MensaCommand extends Command {
         for (Mensa mensa : mensas) {
             builder.addField(mensa.getName(), "id: " + mensa.getId() + (mensa.getId() == defaultMensaId ? "\nThis servers default mensa" : "")
                     , true);
-            if(!builder.isValidLength()){
-                builder.getFields().remove(builder.getFields().size()-1);
+            if (!builder.isValidLength()) {
+                builder.getFields().remove(builder.getFields().size() - 1);
 
                 event.reply(builder);
                 return;
@@ -119,8 +119,8 @@ public class MensaCommand extends Command {
     }
 
     private void sendMensaMenu(CommandEvent event, Mensa mensa, Date date) {
-        if(!mensa.isOpen(date)){
-            event.replyError("The mensa "+mensa.getName()+" is not open "+MensaUtil.dateToWord(date));
+        if (!mensa.isOpen(date)) {
+            event.replyError("The mensa " + mensa.getName() + " is not open " + MensaUtil.dateToWord(date));
             return;
         }
         event.reply(MensaUtil.MealsToEmbed(mensa, date));

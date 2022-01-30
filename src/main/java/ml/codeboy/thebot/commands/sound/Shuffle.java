@@ -2,7 +2,7 @@ package ml.codeboy.thebot.commands.sound;
 
 import ml.codeboy.thebot.events.CommandEvent;
 
-public class Shuffle extends AudioCommand{
+public class Shuffle extends AudioCommand {
     public Shuffle() {
         super("shuffle");
     }

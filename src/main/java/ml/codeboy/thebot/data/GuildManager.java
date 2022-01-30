@@ -7,28 +7,29 @@ import java.io.*;
 import java.util.HashMap;
 
 public class GuildManager {
-    private static final String guildFolder="guilds";
+    private static final String guildFolder = "guilds";
 
-    private static final GuildManager instance=new GuildManager();
+    private static final GuildManager instance = new GuildManager();
+    private final HashMap<String, GuildData> guildData = new HashMap<>();
+
+    private GuildManager() {
+    }
 
     public static GuildManager getInstance() {
         return instance;
     }
 
-    private GuildManager(){}
-
-    private final HashMap<String,GuildData>guildData=new HashMap<>();
-
-    public GuildData getData(Guild guild){
-        GuildData data=guildData.get(guild.getId());
-        if(data!=null){
+    public GuildData getData(Guild guild) {
+        GuildData data = guildData.get(guild.getId());
+        if (data != null) {
             return data;
         }
         try {
             return loadData(guild);
-        } catch (FileNotFoundException ignored) {}
-        data=new GuildData(guild);
-        guildData.put(guild.getId(),data);
+        } catch (FileNotFoundException ignored) {
+        }
+        data = new GuildData(guild);
+        guildData.put(guild.getId(), data);
         return data;
     }
 
@@ -39,15 +40,15 @@ public class GuildManager {
 
 
     private GuildData loadData(String id) throws FileNotFoundException {
-        GuildData data= new Gson().fromJson(new FileReader(guildFolder+ File.separator+id), GuildData.class);
+        GuildData data = new Gson().fromJson(new FileReader(guildFolder + File.separator + id), GuildData.class);
         return data;
     }
 
-    public void save(GuildData data){
+    public void save(GuildData data) {
         try {
             new File(guildFolder).mkdirs();
-            FileWriter writer=new FileWriter(guildFolder+ File.separator+data.getId());
-            new Gson().toJson(data,writer);
+            FileWriter writer = new FileWriter(guildFolder + File.separator + data.getId());
+            new Gson().toJson(data, writer);
             writer.close();
         } catch (IOException ex) {
             ex.printStackTrace();
