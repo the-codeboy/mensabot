@@ -128,7 +128,7 @@ public class CommandHandler extends ListenerAdapter {
                 do {
                     status=getRandomStatus();
                 } while (status.length() > 128);
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.LISTENING, status));
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,"https://cntr.click/g3PZ5hm"));
             }
         }, 0, 60_000);
     }
