@@ -1,6 +1,7 @@
 package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -123,16 +124,30 @@ public class CommandHandler extends ListenerAdapter {
     private void changeStatus() {
         new Timer().schedule(new TimerTask() {
             public void run() {
-                Quote quote;
                 String status;
                 do {
-                    quote = QuoteManager.getInstance().getRandomQuote();
-                    status = "\"" + quote.getContent() +
-                            "\"\n - " + quote.getPerson();
+                    status=getRandomStatus();
                 } while (status.length() > 128);
                 getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.LISTENING, status));
             }
         }, 0, 60_000);
+    }
+
+    private String getRandomStatus(){
+        return getRandomAdviceStatus();
+    }
+
+    private String getRandomAdviceStatus(){
+        return AdviceApi.getInstance().getObject();
+    }
+
+    private String getRandomQuoteStatus(){
+        Quote quote;
+        String status;
+        quote = QuoteManager.getInstance().getRandomQuote();
+        status = "\"" + quote.getContent() +
+                "\"\n - " + quote.getPerson();
+        return status;
     }
 
     private void registerAudioCommands() {
