@@ -35,7 +35,12 @@ public abstract class Command {
             event.reply("Insufficient permissions");
             return;
         }
-        run(event);
+        try {
+            run(event);
+        } catch (Exception e) {
+            e.printStackTrace();
+            event.replyError(e.getMessage());
+        }
     }
 
     private boolean hasPermission(CommandEvent event) {
