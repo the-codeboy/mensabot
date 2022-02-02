@@ -4,7 +4,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -108,6 +110,12 @@ public class Util {
     public static EmbedBuilder sign(EmbedBuilder builder, CommandEvent e) {
         builder.setFooter("requested by " + e.getMember().getEffectiveName(), e.getMember().getUser().getAvatarUrl());
         return builder;
+    }
+
+    public static Member getAsMember(User user){
+        if(user.getMutualGuilds().isEmpty())
+            return null;
+        return user.getMutualGuilds().get(0).getMember(user);
     }
 
 

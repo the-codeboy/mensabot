@@ -13,6 +13,7 @@ import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
+import ml.codeboy.thebot.tracker.BedTimeTracker;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -51,6 +52,11 @@ public class CommandHandler extends ListenerAdapter {
         this.registerKnowCommands();
 
         registerAnnouncements();
+        registerBedTimeTracker();
+    }
+
+    private void registerBedTimeTracker() {
+        BedTimeTracker tracker=new BedTimeTracker(getBot());
     }
 
     private void registerAnnouncements() {
@@ -59,7 +65,6 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void announceIn(int seconds) {
-        MensaBot.logger.info("sending in " + seconds);
         executorService.schedule(() -> {
             registerAnnouncements();
             sendToAllGuilds();
@@ -128,7 +133,7 @@ public class CommandHandler extends ListenerAdapter {
                 do {
                     status=getRandomStatus();
                 } while (status.length() > 128);
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,"https://cntr.click/g3PZ5hm"));
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,"https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
             }
         }, 0, 60_000);
     }

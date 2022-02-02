@@ -2,6 +2,8 @@ package ml.codeboy.thebot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +17,11 @@ public class MensaBot implements Bot {
     private JDA jda;
 
     public MensaBot() throws LoginException, InterruptedException {
-        jda = JDABuilder.createDefault(Config.getInstance().token).build();
+        jda = JDABuilder.createDefault(Config.getInstance().token)
+                .enableIntents(GatewayIntent.DIRECT_MESSAGES,
+                        GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.GUILD_PRESENCES)
+                .enableCache(CacheFlag.ONLINE_STATUS).build();
         jda.awaitReady();
         commandHandler = new CommandHandler(this);
     }
