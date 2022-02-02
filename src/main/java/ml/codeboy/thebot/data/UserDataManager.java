@@ -26,9 +26,6 @@ public class UserDataManager {
                 }
             }
         }
-        UserData data=new UserData("412330776886247424");
-        data.setBedTime(new Date().getHours()*3600+60*new Date().getMinutes()+59);
-        userData.put(data.getId(),data);
     }
 
     public static UserDataManager getInstance() {
@@ -56,7 +53,7 @@ public class UserDataManager {
 
 
     private UserData loadData(String id) throws FileNotFoundException {
-        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
+        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id + ".json"), UserData.class);
         return data;
     }
 
