@@ -14,10 +14,9 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.DisconnectEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -220,6 +219,17 @@ public class CommandHandler extends ListenerAdapter {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();
 //        getBot().getJda().upsertCommand(data);
+    }
+
+    @Override
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        if(event.getChannelLeft().getMembers().size()==1) {
+            AudioChannel connectedChannel = event.getGuild().getSelfMember().getVoiceState().getChannel();
+            if(connectedChannel!=event.getChannelLeft())
+                return;
+
+            PlayerManager.getInstance().destroy(event.getGuild());
+        }
     }
 
     private Bot getBot() {
