@@ -53,7 +53,7 @@ public class UserDataManager {
 
 
     private UserData loadData(String id) throws FileNotFoundException {
-        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id + ".json"), UserData.class);
+        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
         return data;
     }
 
