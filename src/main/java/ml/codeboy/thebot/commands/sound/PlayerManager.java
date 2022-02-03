@@ -56,7 +56,11 @@ public class PlayerManager {
     }
 
     public void load(CommandEvent event, String trackUrl, boolean play, boolean notify, boolean playNext, boolean shuffle) {
-        final GuildMusicManager musicManager = this.getMusicManager(event.getGuild());
+        load(event, event.getGuild(), trackUrl, play, notify, playNext, shuffle);
+    }
+
+    public void load(CommandEvent event, Guild guild, String trackUrl, boolean play, boolean notify, boolean playNext, boolean shuffle) {
+        final GuildMusicManager musicManager = this.getMusicManager(guild);
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override

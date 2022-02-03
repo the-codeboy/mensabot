@@ -5,6 +5,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
+import ml.codeboy.thebot.commands.secret.RickRoll;
 import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
@@ -118,11 +119,17 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new AddQuote());
         registerCommand(new QuoteCommand());
 
+        registerSecretCommands();
+
         registerAllSlashCommands();
 
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
+    }
+
+    private void registerSecretCommands() {
+        registerCommand(new RickRoll());
     }
 
     private void changeStatus() {
