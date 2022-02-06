@@ -57,6 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
         }
 
         if (track == null) {
+            PlayerManager.getInstance().destroy(manager.guild);
 //            if(latestEvent!=null)
 //                latestEvent.replyError("There are no more tracks in the queue");
             return;
