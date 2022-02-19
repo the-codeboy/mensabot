@@ -1,5 +1,6 @@
 package ml.codeboy.thebot;
 
+import com.github.codeboy.OpenMensa;
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
@@ -23,11 +24,70 @@ public class MensaUtil {
         NumberFormat currencyFormatter =
                 NumberFormat.getCurrencyInstance(Locale.GERMANY);
         for (Meal meal : mensa.getMeals(date)) {
-            builder.addField(meal.getName(), meal.getCategory() +
+            String symbol=getEmojiForMeal(meal);
+            builder.addField(symbol+meal.getName(), meal.getCategory() +
                     (meal.getPrices().getStudents() != null ? "\npreis: " + currencyFormatter.format(Float.parseFloat(meal.getPrices().getStudents())) + " (" + currencyFormatter.format(Float.parseFloat(meal.getPrices().getOthers())) + ")" : ""), true);
         }
 
         return builder;
+    }
+
+    private static String getEmojiForMeal(Meal meal){
+        String name=meal.getName().toLowerCase();
+
+        if(name.contains("schnitzel"))
+            return "<:schnitzel:943559144135336047>";
+        if(name.contains("burger"))
+            return ":hamburger:";
+        if(name.contains("pfannkuchen"))
+            return ":pancakes:";
+        if(name.contains("kuchen"))
+            return ":cake:";
+        if(name.contains("spaghetti"))
+            return ":spaghetti:";
+        if(name.contains("suppe"))
+            return ":stew:";
+        if(name.contains("keule"))
+            return ":poultry_leg:";
+        if(name.contains("hähnchen")||name.contains("huhn"))
+            return ":chicken:";
+        if(name.contains("fisch")||name.contains("lachs"))
+            return ":fish:";
+        if(name.contains("reis"))
+            return ":rice:";
+        if(name.contains("pommes"))
+            return ":fries:";
+        if(name.contains("apfel"))
+            return ":apple:";
+        if(name.contains("brokkoli"))
+            return ":broccoli:";
+        if(name.contains("paprika"))
+            return ":bell_pepper:";
+        if(name.contains("chili"))
+            return ":hot_pepper:";
+        if(name.contains("mais"))
+            return ":corn:";
+        if(name.contains("karotte"))
+            return ":carrot:";
+        if(name.contains("kartoffel"))
+            return ":potato:";
+        if(name.contains("salat"))
+            return ":salad:";
+
+        switch (meal.getCategory()){
+            case "Vegetarisch":
+                return ":leafy_green:";
+            case "Klassiker":
+                return ":cut_of_meat:";
+            case "Burger der Woche":
+            case "Burger Classics":
+                return ":hamburger:";
+            case "Hauptbeilagen":
+                return ":potato:";
+            case "Nebenbeilage":
+                return ":salad:";
+        }
+        return ":fork_knife_plate:";
     }
 
     public static String dateToWord(Date date) {
