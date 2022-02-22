@@ -5,6 +5,9 @@ import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import net.dv8tion.jda.api.EmbedBuilder;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Date;
@@ -35,10 +38,9 @@ public class MensaUtil {
 
     private static String toPrice(String f) {
         float value = Float.parseFloat(f);
-        return (int) value +
-                "," +
-                (int) (value * 100 - 100 * ((int) value)) +
-                "€";
+        NumberFormat currencyFormatter =
+                NumberFormat.getCurrencyInstance(Locale.GERMANY);
+        return currencyFormatter.format(value).replace(" ","");
     }
 
     private static String getEmojiForMeal(Meal meal) {
