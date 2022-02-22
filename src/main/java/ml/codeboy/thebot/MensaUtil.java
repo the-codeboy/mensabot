@@ -1,12 +1,10 @@
 package ml.codeboy.thebot;
 
-import com.github.codeboy.OpenMensa;
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Date;
@@ -20,61 +18,74 @@ public class MensaUtil {
             return builder;
         }
         builder.setTitle("Meals in " + mensa.getName());
-        builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + " " + Util.dateToString(date));
-        NumberFormat currencyFormatter =
-                NumberFormat.getCurrencyInstance(Locale.GERMANY);
+        builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
         for (Meal meal : mensa.getMeals(date)) {
-            String symbol=getEmojiForMeal(meal);
-            builder.addField(symbol+meal.getName(), meal.getCategory() +
-                    (meal.getPrices().getStudents() != null ? "\npreis: " + currencyFormatter.format(Float.parseFloat(meal.getPrices().getStudents())) + " (" + currencyFormatter.format(Float.parseFloat(meal.getPrices().getOthers())) + ")" : ""), true);
+            String symbol = getEmojiForMeal(meal);
+            String description = meal.getCategory() +
+                    (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
+                            + " (" + toPrice(meal.getPrices().getOthers()) + ")" : "");
+            String name = symbol + " " + meal.getName();
+            boolean inline = !(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
+            builder.addField(name, description,
+                    inline);
         }
 
         return builder;
     }
 
-    private static String getEmojiForMeal(Meal meal){
-        String name=meal.getName().toLowerCase();
+    private static String toPrice(String f) {
+        float value = Float.parseFloat(f);
+        return (int) value +
+                "," +
+                (int) (value * 100 - 100 * ((int) value)) +
+                "€";
+    }
 
-        if(name.contains("schnitzel"))
+    private static String getEmojiForMeal(Meal meal) {
+        String name = meal.getName().toLowerCase();
+
+        if (name.contains("schnitzel"))
             return "<:schnitzel:943559144135336047>";
-        if(name.contains("burger"))
+        if (name.contains("burger"))
             return ":hamburger:";
-        if(name.contains("pfannkuchen"))
+        if (name.contains("pfannkuchen"))
             return ":pancakes:";
-        if(name.contains("kuchen"))
+        if (name.contains("kuchen"))
             return ":cake:";
-        if(name.contains("spaghetti"))
+        if (name.contains("spaghetti"))
             return ":spaghetti:";
-        if(name.contains("suppe"))
+        if (name.contains("suppe"))
             return ":stew:";
-        if(name.contains("keule"))
+        if (name.contains("keule"))
             return ":poultry_leg:";
-        if(name.contains("hähnchen")||name.contains("huhn"))
+        if (name.contains("hähnchen") || name.contains("huhn"))
             return ":chicken:";
-        if(name.contains("fisch")||name.contains("lachs"))
+        if (name.contains("fisch") || name.contains("lachs"))
             return ":fish:";
-        if(name.contains("reis"))
+        if (name.contains("reis"))
             return ":rice:";
-        if(name.contains("pommes"))
+        if (name.contains("pommes"))
             return ":fries:";
-        if(name.contains("apfel"))
+        if (name.contains("apfel"))
             return ":apple:";
-        if(name.contains("brokkoli"))
+        if (name.contains("brokkoli"))
             return ":broccoli:";
-        if(name.contains("paprika"))
+        if (name.contains("paprika"))
             return ":bell_pepper:";
-        if(name.contains("chili"))
+        if (name.contains("chili"))
             return ":hot_pepper:";
-        if(name.contains("mais"))
+        if (name.contains("mais"))
             return ":corn:";
-        if(name.contains("karotte"))
+        if (name.contains("karotte"))
             return ":carrot:";
-        if(name.contains("kartoffel"))
+        if (name.contains("kartoffel"))
             return ":potato:";
-        if(name.contains("salat"))
+        if (name.contains("salat"))
             return ":salad:";
+        if (name.contains("eintopf"))
+            return ":stew:";
 
-        switch (meal.getCategory()){
+        switch (meal.getCategory()) {
             case "Vegetarisch":
                 return ":leafy_green:";
             case "Klassiker":
