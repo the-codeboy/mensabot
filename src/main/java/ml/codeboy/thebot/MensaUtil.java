@@ -86,6 +86,8 @@ public class MensaUtil {
             return ":salad:";
         if (name.contains("eintopf"))
             return ":stew:";
+        if (name.contains("käse"))
+            return ":cheese:";
 
         switch (meal.getCategory()) {
             case "Vegetarisch":
