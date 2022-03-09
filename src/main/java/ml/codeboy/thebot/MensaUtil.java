@@ -60,6 +60,8 @@ public class MensaUtil {
             return ":stew:";
         if (name.contains("keule"))
             return ":poultry_leg:";
+        if (name.contains("steak"))
+            return ":cut_of_meat:";
         if (name.contains("hähnchen") || name.contains("huhn"))
             return ":chicken:";
         if (name.contains("fisch") || name.contains("lachs"))
@@ -88,6 +90,8 @@ public class MensaUtil {
             return ":stew:";
         if (name.contains("käse"))
             return ":cheese:";
+        if (name.contains("zwiebel"))
+            return ":onion:";
 
         switch (meal.getCategory()) {
             case "Vegetarisch":
