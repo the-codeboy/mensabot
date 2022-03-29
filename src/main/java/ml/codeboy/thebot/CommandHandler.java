@@ -61,7 +61,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAnnouncements() {
         Date date = new Date();
-        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600) + 60);//60 seconds extra
+        announceIn(60 * 60 * 16 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600)+10);//10 seconds extra
     }
 
     private void announceIn(int seconds) {
