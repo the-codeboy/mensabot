@@ -5,6 +5,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
+import ml.codeboy.thebot.commands.secret.React;
 import ml.codeboy.thebot.commands.secret.RickRoll;
 import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
@@ -61,7 +62,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAnnouncements() {
         Date date = new Date();
-        announceIn(60 * 60 * 16 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600)+10);//10 seconds extra
+        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600)+10);//10 seconds extra
     }
 
     private void announceIn(int seconds) {
@@ -130,6 +131,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerSecretCommands() {
         registerCommand(new RickRoll());
+        registerCommand(new React());
     }
 
     private void changeStatus() {

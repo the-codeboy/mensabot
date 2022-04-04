@@ -45,7 +45,7 @@ public class MensaAnnounceChannelCommand extends Command {
     }
 
     private void deactivate(CommandEvent event) {
-        event.reply("Deactivating meal announcement");
+        event.reply("Deactivating meal announcement");//todo fix
         event.getGuildData().setUpdateChannelId("");
     }
 
