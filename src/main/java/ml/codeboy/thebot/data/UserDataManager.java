@@ -1,12 +1,10 @@
 package ml.codeboy.thebot.data;
 
 import com.google.gson.Gson;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 
 public class UserDataManager {
@@ -16,9 +14,9 @@ public class UserDataManager {
     private final HashMap<String, UserData> userData = new HashMap<>();
 
     private UserDataManager() {
-        File folder=new File(userDataFolder);
-        if(folder.exists()){
-            for (File file:folder.listFiles()){
+        File folder = new File(userDataFolder);
+        if (folder.exists()) {
+            for (File file : folder.listFiles()) {
                 try {
                     loadData(file.getName());
                 } catch (FileNotFoundException e) {
@@ -57,7 +55,7 @@ public class UserDataManager {
         return data;
     }
 
-    public Collection<UserData>getAllUserData(){
+    public Collection<UserData> getAllUserData() {
         return userData.values();
     }
 

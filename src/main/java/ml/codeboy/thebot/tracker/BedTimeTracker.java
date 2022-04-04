@@ -33,18 +33,18 @@ public class BedTimeTracker {
             User user = bot.getJda().retrieveUserById(data.getId()).complete();
             if (user == null || data.getBedTime() < 0)
                 continue;
-            int seconds=data.getBedTime();
-            int hours=seconds/3600;
-            seconds-=hours*3600;
-            int minutes=seconds/60;
-            seconds-=minutes*60;
+            int seconds = data.getBedTime();
+            int hours = seconds / 3600;
+            seconds -= hours * 3600;
+            int minutes = seconds / 60;
+            seconds -= minutes * 60;
             ZonedDateTime nextRun = now.withHour(hours).withMinute(minutes).withSecond(seconds);
             if (now.compareTo(nextRun) > 0)
                 nextRun = nextRun.plusDays(1);
 
             Duration duration = Duration.between(now, nextRun);
-            long delay = duration.getSeconds()*1000;
-            delay+=500;//make sure messages don't get sent too early
+            long delay = duration.getSeconds() * 1000;
+            delay += 500;//make sure messages don't get sent too early
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {

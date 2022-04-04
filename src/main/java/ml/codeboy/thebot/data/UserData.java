@@ -2,7 +2,7 @@ package ml.codeboy.thebot.data;
 
 public class UserData {
     private String userId;
-    private int bedTime=-1;
+    private int bedTime = -1;
 
     public UserData(String userId) {
         this.userId = userId;

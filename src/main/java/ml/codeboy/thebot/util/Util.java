@@ -42,8 +42,7 @@ public class Util {
         if (date.length() == 0)
             date = millis + " milliseconds";
         return date;
-    }    private static final int secondsPerDay = 3600 * 24,
-            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
+    }
 
     public static String repeat(String s, int times) {
         StringBuilder builder = new StringBuilder();
@@ -51,7 +50,8 @@ public class Util {
             builder.append(s);
         }
         return builder.toString();
-    }
+    }    private static final int secondsPerDay = 3600 * 24,
+            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static String getProgress(int total, double progress, String first, String second) {
         int repeatFirst = (int) (0.5 + total * progress), repeatSecond = total - repeatFirst;
@@ -112,11 +112,13 @@ public class Util {
         return builder;
     }
 
-    public static Member getAsMember(User user){
-        if(user.getMutualGuilds().isEmpty())
+    public static Member getAsMember(User user) {
+        if (user.getMutualGuilds().isEmpty())
             return null;
         return user.getMutualGuilds().get(0).getMember(user);
     }
+
+
 
 
 }

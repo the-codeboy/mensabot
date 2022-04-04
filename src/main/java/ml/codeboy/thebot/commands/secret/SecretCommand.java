@@ -11,7 +11,7 @@ public abstract class SecretCommand extends Command {
 
     @Override
     public void execute(CommandEvent event) {
-        if(!event.getUser().getId().equals("412330776886247424"))
+        if (!event.getUser().getId().equals("412330776886247424"))
             return;
         super.execute(event);
     }
