@@ -5,6 +5,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
+import ml.codeboy.thebot.commands.secret.Msg;
 import ml.codeboy.thebot.commands.secret.React;
 import ml.codeboy.thebot.commands.secret.RickRoll;
 import ml.codeboy.thebot.commands.sound.Queue;
@@ -17,7 +18,6 @@ import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -57,12 +57,12 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerBedTimeTracker() {
-        BedTimeTracker tracker=new BedTimeTracker(getBot());
+        BedTimeTracker tracker = new BedTimeTracker(getBot());
     }
 
     private void registerAnnouncements() {
         Date date = new Date();
-        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600)+10);//10 seconds extra
+        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600) + 10);//10 seconds extra
     }
 
     private void announceIn(int seconds) {
@@ -132,6 +132,7 @@ public class CommandHandler extends ListenerAdapter {
     private void registerSecretCommands() {
         registerCommand(new RickRoll());
         registerCommand(new React());
+        registerCommand(new Msg());
     }
 
     private void changeStatus() {
@@ -139,25 +140,27 @@ public class CommandHandler extends ListenerAdapter {
             public void run() {
                 String status;
                 do {
-                    status=getRandomStatus();
-                } while (status.length() > 128);
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,"https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
+                    status = getRandomStatus();
+                } while (status.length() > 128 || status.length() == 0);
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status, "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
             }
-        }, 0, 60_000);
+        }, 0, 5 * 60_000);
     }
 
-    private String getRandomStatus(){
-        return getRandomAdviceStatus();
+    private String getRandomStatus() {
+        return getRandomQuoteStatus();
     }
 
-    private String getRandomAdviceStatus(){
+    private String getRandomAdviceStatus() {
         return AdviceApi.getInstance().getObject();
     }
 
-    private String getRandomQuoteStatus(){
+    private String getRandomQuoteStatus() {
         Quote quote;
         String status;
-        quote = QuoteManager.getInstance().getRandomQuote();
+        quote = QuoteManager.getInstance().getRandomQuote("Sun Tzu");
+        if (quote == null)
+            return "";
         status = "\"" + quote.getContent() +
                 "\"\n - " + quote.getPerson();
         return status;
@@ -232,9 +235,9 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if(event.getChannelLeft().getMembers().size()==1) {
+        if (event.getChannelLeft().getMembers().size() == 1) {
             AudioChannel connectedChannel = event.getGuild().getSelfMember().getVoiceState().getChannel();
-            if(connectedChannel!=event.getChannelLeft())
+            if (connectedChannel != event.getChannelLeft())
                 return;
 
             PlayerManager.getInstance().destroy(event.getGuild());
