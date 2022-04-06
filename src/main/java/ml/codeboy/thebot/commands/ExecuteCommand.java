@@ -11,6 +11,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
+import java.util.List;
+
 public class ExecuteCommand extends Command {
     public ExecuteCommand() {
         super("run", "runs code in the specified language");
@@ -19,7 +21,21 @@ public class ExecuteCommand extends Command {
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true)
-                .addOption(OptionType.STRING, "code", "the code to run", true);
+                .addOption(OptionType.STRING, "code", "the code to run", true,true);
+    }
+
+
+
+    @Override
+    public void autoComplete(String option, List<String> options) {
+        switch (option) {
+            case "language": {
+                for (Runtime runtime : Piston.getDefaultApi().getRuntimes()) {
+                    options.add(runtime.getLanguage());
+                }
+                break;
+            }
+        }
     }
 
     @Override

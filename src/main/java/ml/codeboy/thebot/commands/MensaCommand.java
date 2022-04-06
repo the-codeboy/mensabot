@@ -6,7 +6,6 @@ import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -24,17 +23,27 @@ public class MensaCommand extends Command {
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData()
-                .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187",false)
+                .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187", false)
                 .addOption(OptionType.STRING, "date", "Today, tomorrow or yesterday", false, true)
-                .addOption(OptionType.STRING, "name", "Name of the mensa", false);
+                .addOption(OptionType.STRING, "name", "Name of the mensa", false, true);
     }
 
     @Override
-    public void autoComplete(CommandAutoCompleteInteractionEvent event) {
-        if(event.getFocusedOption().getName().equals("date")){
-            event.replyChoices(new net.dv8tion.jda.api.interactions.commands.Command.Choice("today","today"),
-                    new net.dv8tion.jda.api.interactions.commands.Command.Choice("tomorrow","tomorrow"),
-                    new net.dv8tion.jda.api.interactions.commands.Command.Choice("yesterday","yesterday")).queue();
+    public void autoComplete(String option, List<String> options) {
+        switch (option) {
+            case "date": {
+                options.add("today");
+                options.add("tomorrow");
+                options.add("yesterday");
+                break;
+            }
+            case "name": {
+                for (Mensa mensa : OpenMensa.getInstance().getAllCanteens()) {
+                    if (mensa != null)
+                        options.add(mensa.getName());
+                }
+                break;
+            }
         }
     }
 

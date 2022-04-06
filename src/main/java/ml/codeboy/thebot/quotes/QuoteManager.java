@@ -5,6 +5,7 @@ import ml.codeboy.thebot.MensaBot;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -56,6 +57,10 @@ public class QuoteManager {
         for (Person person : persons.values()) {
             save(person);
         }
+    }
+
+    public Collection<Person>getPersons(){
+        return persons.values();
     }
 
     public void save(Person person) {

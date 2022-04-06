@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Command {
     private final String name, description;
@@ -83,6 +86,21 @@ public abstract class Command {
     }
 
     public void autoComplete(CommandAutoCompleteInteractionEvent event) {
+        List<String> options = new ArrayList<>();
+        autoComplete(event.getFocusedOption().getName(), options);
+
+        List<net.dv8tion.jda.api.interactions.commands.Command.Choice> choices = new ArrayList<>();
+        String value = event.getFocusedOption().getValue().toLowerCase();
+        for (String option : options) {
+            if (choices.size() >= 25)//choices limited to 25
+                break;
+            if (option.toLowerCase().contains(value))
+                choices.add(new net.dv8tion.jda.api.interactions.commands.Command.Choice(option, option));
+        }
+        event.replyChoices(choices).queue();
+    }
+
+    public void autoComplete(String option, List<String> options) {
         //do nothing by default
     }
 }

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AddQuote extends Command {
     public AddQuote() {
@@ -21,8 +22,20 @@ public class AddQuote extends Command {
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData()
-                .addOption(OptionType.STRING, "name", "the name of the person the quote is from", true)
+                .addOption(OptionType.STRING, "name", "the name of the person the quote is from", true, true)
                 .addOption(OptionType.STRING, "content", "the content of the quote", true);
+    }
+
+    @Override
+    public void autoComplete(String option, List<String> options) {
+        switch (option) {
+            case "name": {
+                for (Person person : QuoteManager.getInstance().getPersons()) {
+                    options.add(person.getName());
+                }
+                break;
+            }
+        }
     }
 
     @Override
