@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class MensaAnnounceChannelCommand extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData().addOption(OptionType.CHANNEL, "channel", "the channel to post the meals in");
     }
 

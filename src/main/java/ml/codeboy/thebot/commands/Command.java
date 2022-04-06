@@ -4,7 +4,9 @@ import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 
@@ -50,8 +52,8 @@ public abstract class Command {
 
     public abstract void run(CommandEvent event);
 
-    public CommandData getCommandData() {
-        return new CommandData(getName().toLowerCase(), getDescription());
+    public SlashCommandData getCommandData() {
+        return Commands.slash(getName().toLowerCase(), getDescription());
     }
 
     protected EmbedBuilder newBuilder() {//allows to configure default values for embeds like color
@@ -78,5 +80,9 @@ public abstract class Command {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public void autoComplete(CommandAutoCompleteInteractionEvent event) {
+        //do nothing by default
     }
 }

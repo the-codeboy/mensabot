@@ -7,9 +7,9 @@ import com.github.codeboy.piston4j.api.Runtime;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class ExecuteCommand extends Command {
     public ExecuteCommand() {
@@ -17,7 +17,7 @@ public class ExecuteCommand extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true)
                 .addOption(OptionType.STRING, "code", "the code to run", true);
     }
@@ -32,7 +32,7 @@ public class ExecuteCommand extends Command {
             String code = content.substring(language.length() + 1);
             run(event, language, code);
         } else {
-            SlashCommandEvent e = event.getSlashCommandEvent();
+            SlashCommandInteractionEvent e = event.getSlashCommandEvent();
             run(event, e.getOption("language").getAsString(), e.getOption("code").getAsString());
         }
     }

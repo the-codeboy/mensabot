@@ -5,7 +5,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class RhymeCommand extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData()
                 .addOption(OptionType.STRING, "word"
                         , "The word to find rhymes for", true);

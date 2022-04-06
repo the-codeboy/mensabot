@@ -6,10 +6,11 @@ import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.Date;
 import java.util.List;
@@ -21,11 +22,20 @@ public class MensaCommand extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData()
-                .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187")
-                .addOption(OptionType.STRING, "date", "Today, tomorrow or yesterday")
-                .addOption(OptionType.STRING, "name", "Name of the mensa");
+                .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187",false)
+                .addOption(OptionType.STRING, "date", "Today, tomorrow or yesterday", false, true)
+                .addOption(OptionType.STRING, "name", "Name of the mensa", false);
+    }
+
+    @Override
+    public void autoComplete(CommandAutoCompleteInteractionEvent event) {
+        if(event.getFocusedOption().getName().equals("date")){
+            event.replyChoices(new net.dv8tion.jda.api.interactions.commands.Command.Choice("today","today"),
+                    new net.dv8tion.jda.api.interactions.commands.Command.Choice("tomorrow","tomorrow"),
+                    new net.dv8tion.jda.api.interactions.commands.Command.Choice("yesterday","yesterday")).queue();
+        }
     }
 
     @Override
@@ -54,7 +64,7 @@ public class MensaCommand extends Command {
             }
 
         } else {
-            SlashCommandEvent sce = event.getSlashCommandEvent();
+            SlashCommandInteractionEvent sce = event.getSlashCommandEvent();
             Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
             Date date = new Date();
             for (OptionMapping om : sce.getOptions()) {

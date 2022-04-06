@@ -50,8 +50,7 @@ public class Util {
             builder.append(s);
         }
         return builder.toString();
-    }    private static final int secondsPerDay = 3600 * 24,
-            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
+    }
 
     public static String getProgress(int total, double progress, String first, String second) {
         int repeatFirst = (int) (0.5 + total * progress), repeatSecond = total - repeatFirst;
@@ -59,7 +58,8 @@ public class Util {
         if (repeatSecond == 0)
             output += ":white_check_mark:";
         return output;
-    }
+    }    private static final int secondsPerDay = 3600 * 24,
+            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static EmbedBuilder getSongInfo(AudioTrack track, EmbedBuilder builder) {
         builder.setTitle(track.getInfo().title);

@@ -48,6 +48,8 @@ public class MensaUtil {
             return "<:schnitzel:943559144135336047>";
         if (name.contains("burger"))
             return ":hamburger:";
+        if (name.contains("pizza"))
+            return ":pizza:";
         if (name.contains("pfannkuchen"))
             return ":pancakes:";
         if (name.contains("kuchen"))

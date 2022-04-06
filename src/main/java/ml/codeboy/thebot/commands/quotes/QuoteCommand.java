@@ -4,10 +4,10 @@ import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class QuoteCommand extends Command {
     public QuoteCommand() {
@@ -17,7 +17,7 @@ public class QuoteCommand extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData().addOption(OptionType.STRING, "author", "the name of the person the quote is from");
     }
 
@@ -25,7 +25,7 @@ public class QuoteCommand extends Command {
     public void run(CommandEvent event) {
         Quote quote;
         if (event.isSlashCommandEvent()) {
-            SlashCommandEvent e = event.getSlashCommandEvent();
+            SlashCommandInteractionEvent e = event.getSlashCommandEvent();
             OptionMapping option = e.getOption("author");
             if (option != null) {
                 String name = option.getAsString();

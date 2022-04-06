@@ -7,7 +7,7 @@ import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class AddQuote extends Command {
     }
 
     @Override
-    public CommandData getCommandData() {
+    public SlashCommandData getCommandData() {
         return super.getCommandData()
                 .addOption(OptionType.STRING, "name", "the name of the person the quote is from", true)
                 .addOption(OptionType.STRING, "content", "the content of the quote", true);

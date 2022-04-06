@@ -1,19 +1,19 @@
 package ml.codeboy.thebot.events;
 
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Arrays;
 
 public class SlashCommandCommandEvent extends CommandEvent {
-    public SlashCommandCommandEvent(SlashCommandEvent jdaEvent) {
+    public SlashCommandCommandEvent(SlashCommandInteractionEvent jdaEvent) {
         super(jdaEvent);
         jdaEvent.deferReply(isEphermal()).queue();
     }
 
     @Override
     public void reply(String message) {
-        SlashCommandEvent event = getSlashCommandEvent();
+        SlashCommandInteractionEvent event = getSlashCommandEvent();
         event.reply(message).queue();
     }
 

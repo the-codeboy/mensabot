@@ -19,7 +19,9 @@ import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.GenericAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -208,13 +210,22 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
+
     @Override
-    public void onSlashCommand(@NotNull SlashCommandEvent event) {
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
             MensaBot.logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getMember().getUser().getAsTag()
                     + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event));
+        }
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
+        Command command = getCommand(event.getName());
+        if (command != null) {
+            command.autoComplete(event);
         }
     }
 

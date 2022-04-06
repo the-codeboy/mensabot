@@ -8,7 +8,7 @@ import ml.codeboy.thebot.data.GuildManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.Event;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -44,8 +44,8 @@ public abstract class CommandEvent {
         return (MessageReceivedEvent) jdaEvent;
     }
 
-    public SlashCommandEvent getSlashCommandEvent() {
-        return (SlashCommandEvent) jdaEvent;
+    public SlashCommandInteractionEvent getSlashCommandEvent() {
+        return (SlashCommandInteractionEvent) jdaEvent;
     }
 
     public String[] getArgs() {// TODO: Add better way to use arguments. Maybe something similar to JDAs slash commands
