@@ -17,7 +17,11 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
+import ml.codeboy.thebot.util.Util;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.GenericAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -226,6 +230,20 @@ public class CommandHandler extends ListenerAdapter {
         Command command = getCommand(event.getName());
         if (command != null) {
             command.autoComplete(event);
+        }
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        if(event.getGuild().getId().equals("896116435875668019")){
+            TextChannel channel= (TextChannel) event.getGuild().getGuildChannelById("896116435875668024");
+            EmbedBuilder builder=new EmbedBuilder();
+
+            builder.setTitle("Wilkommen "+event.getMember().getAsMention())
+                            .setDescription("Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
+                    .setColor(Util.getRandomColor());
+
+            channel.sendMessageEmbeds(builder.build()).queue();
         }
     }
 

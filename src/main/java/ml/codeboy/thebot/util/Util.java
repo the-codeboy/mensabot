@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
+import java.awt.*;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,7 +60,9 @@ public class Util {
         if (repeatSecond == 0)
             output += ":white_check_mark:";
         return output;
-    }    private static final int secondsPerDay = 3600 * 24,
+    }
+
+    private static final int secondsPerDay = 3600 * 24,
             secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static EmbedBuilder getSongInfo(AudioTrack track, EmbedBuilder builder) {
@@ -118,7 +122,16 @@ public class Util {
         return user.getMutualGuilds().get(0).getMember(user);
     }
 
+    private static final Random rand = new Random();
+    private static final Color[] colors = new Color[]{Color.blue, Color.cyan, Color.magenta, Color.orange, Color.pink, Color.yellow, Color.white};
 
+    public static Color getRandomColor() {
+//        float r = rand.nextFloat();
+//        float g = rand.nextFloat();
+//        float b = rand.nextFloat();
+//        return new Color(r,g,b);
+        return colors[rand.nextInt(colors.length)];
+    }
 
 
 }
