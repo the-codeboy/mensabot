@@ -128,6 +128,7 @@ public class CommandHandler extends ListenerAdapter {
 
         registerCommand(new AddQuote());
         registerCommand(new QuoteCommand());
+        registerCommand(new Karma());
 
         registerSecretCommands();
 

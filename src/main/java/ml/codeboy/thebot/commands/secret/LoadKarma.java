@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.entities.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class LoadKarma extends SecretCommand {
     public LoadKarma() {
@@ -19,6 +17,11 @@ public class LoadKarma extends SecretCommand {
 
     @Override
     public void run(CommandEvent event) {
+        int messagesAmount = 1000;
+        try {
+            messagesAmount = Integer.parseInt(event.getArgs()[1]);
+        } catch (Exception ignored) {
+        }
         HashMap<User, Integer> karmaMap = new HashMap<>();
         Guild guild = event.getJdaEvent().getJDA().getGuildById(event.getArgs()[0]);
         event.reply("loading karma for " + guild.getName());
@@ -28,7 +31,7 @@ public class LoadKarma extends SecretCommand {
                 try {
                     event.reply("loading karma for " + channel.getAsMention());
                     TextChannel tc = (TextChannel) channel;
-                    List<Message> messages = tc.getIterableHistory().takeAsync(1000)
+                    List<Message> messages = tc.getIterableHistory().takeAsync(messagesAmount)
                             .thenApply(ArrayList::new).get();
                     for (Message message : messages) {
                         User user = message.getAuthor();
