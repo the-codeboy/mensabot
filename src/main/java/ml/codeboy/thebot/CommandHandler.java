@@ -5,6 +5,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
+import ml.codeboy.thebot.commands.secret.LoadKarma;
 import ml.codeboy.thebot.commands.secret.Msg;
 import ml.codeboy.thebot.commands.secret.React;
 import ml.codeboy.thebot.commands.secret.RickRoll;
@@ -141,6 +142,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new RickRoll());
         registerCommand(new React());
         registerCommand(new Msg());
+        registerCommand(new LoadKarma());
     }
 
     private void changeStatus() {
