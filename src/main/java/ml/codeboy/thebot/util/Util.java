@@ -2,6 +2,8 @@ package ml.codeboy.thebot.util;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ml.codeboy.thebot.data.UserData;
+import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -131,6 +133,12 @@ public class Util {
 //        float b = rand.nextFloat();
 //        return new Color(r,g,b);
         return colors[rand.nextInt(colors.length)];
+    }
+
+    public static void addKarma(User user, int amount) {
+        UserData data = UserDataManager.getInstance().getData(user);
+        data.setKarma(data.getKarma() + amount);
+        UserDataManager.getInstance().save(data);
     }
 
 

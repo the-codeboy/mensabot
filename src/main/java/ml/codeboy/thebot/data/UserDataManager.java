@@ -30,6 +30,10 @@ public class UserDataManager {
         return instance;
     }
 
+    public UserData getData(User user) {
+        return getData(user.getId());
+    }
+
     public UserData getData(String userId) {
         UserData data = userData.get(userId);
         if (data != null) {

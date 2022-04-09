@@ -27,6 +27,8 @@ import net.dv8tion.jda.api.events.interaction.GenericAutoCompleteInteractionEven
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -239,11 +241,39 @@ public class CommandHandler extends ListenerAdapter {
             TextChannel channel= (TextChannel) event.getGuild().getGuildChannelById("896116435875668024");
             EmbedBuilder builder=new EmbedBuilder();
 
-            builder.setTitle("Wilkommen "+event.getMember().getAsMention())
-                            .setDescription("Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
+            builder.setTitle("Wilkommen "+event.getMember().getEffectiveName())
+                            .setDescription(event.getMember().getAsMention()+"Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
                     .setColor(Util.getRandomColor());
 
             channel.sendMessageEmbeds(builder.build()).queue();
+        }
+    }
+
+    @Override
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        MessageReaction.ReactionEmote reaction=event.getReaction().getReactionEmote();
+        if(reaction.isEmote()){
+            String id=reaction.getEmote().getId();
+            boolean upvote=id.equals(Config.getInstance().upvoteEmote),
+                    downVote=id.equals(Config.getInstance().downVoteEmote);
+            if(upvote||downVote){
+                Message message=event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+                Util.addKarma(message.getAuthor(),upvote?1:-1);
+            }
+        }
+    }
+
+    @Override
+    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+        MessageReaction.ReactionEmote reaction=event.getReaction().getReactionEmote();
+        if(reaction.isEmote()){
+            String id=reaction.getEmote().getId();
+            boolean upvote=id.equals(Config.getInstance().upvoteEmote),
+                    downVote=id.equals(Config.getInstance().downVoteEmote);
+            if(upvote||downVote){
+                Message message=event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+                Util.addKarma(message.getAuthor(),upvote?-1:1);//removing upvotes => remove karma
+            }
         }
     }
 

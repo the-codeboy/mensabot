@@ -13,14 +13,14 @@ public class Config {
     static {
         try {
             instance = new Gson().fromJson(new FileReader("config.json"), Config.class);
-        } catch (FileNotFoundException e) {
-            try {
-                FileWriter writer = new FileWriter("config.json");
-                new Gson().toJson((instance = new Config()), writer);
-                writer.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        } catch (FileNotFoundException ignored) {
+        }
+        try {
+            FileWriter writer = new FileWriter("config.json");
+            new Gson().toJson(instance==null?(instance = new Config()):instance, writer);
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -28,6 +28,7 @@ public class Config {
     public String serverId = "0";
     public String prefix = "!";
     public boolean quoteStatus = true;
+    public String upvoteEmote="903336533992550420", downVoteEmote ="903336514644222033";
 
     public static Config getInstance() {
         return instance;
