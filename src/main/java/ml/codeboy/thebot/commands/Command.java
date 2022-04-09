@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands;
 
+import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -98,6 +99,10 @@ public abstract class Command {
                 choices.add(new net.dv8tion.jda.api.interactions.commands.Command.Choice(option, option));
         }
         event.replyChoices(choices).queue();
+    }
+
+    public void register(CommandHandler handler){
+        //do nothing
     }
 
     public void autoComplete(String option, List<String> options) {

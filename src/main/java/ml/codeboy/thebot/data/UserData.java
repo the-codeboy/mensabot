@@ -1,9 +1,12 @@
 package ml.codeboy.thebot.data;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.User;
+
 public class UserData {
     private String userId;
     private int bedTime = -1;
-    private int karma=0;
+    private int karma = 0;
 
     public UserData(String userId) {
         this.userId = userId;
@@ -19,6 +22,10 @@ public class UserData {
 
     public String getId() {
         return userId;
+    }
+
+    public User getUser(JDA jda) {
+        return jda.retrieveUserById(getId()).complete();
     }
 
     public int getKarma() {

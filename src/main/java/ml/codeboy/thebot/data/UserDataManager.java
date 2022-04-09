@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 
 public class UserDataManager {
     private static final String userDataFolder = "users";
@@ -18,12 +17,13 @@ public class UserDataManager {
         if (folder.exists()) {
             for (File file : folder.listFiles()) {
                 try {
-                    loadData(file.getName());
+                    userData.put(file.getName(), loadData(file.getName()));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
             }
         }
+        updateKarmaTop();
     }
 
     public static UserDataManager getInstance() {
@@ -72,5 +72,24 @@ public class UserDataManager {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private List<UserData> karmaSorted;
+    private long lastUpdatedKarmaTop = 0, karmaTopUpdate = 600000;
+
+
+    public List<UserData> getKarmaSorted() {
+        if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
+            updateKarmaTop();
+        }
+        karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+        return karmaSorted;
+    }
+
+    private void updateKarmaTop() {
+            karmaSorted = new ArrayList<>(getAllUserData());
+            karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+            karmaSorted = karmaSorted.subList(0, 20);
+            lastUpdatedKarmaTop = System.currentTimeMillis();
     }
 }
