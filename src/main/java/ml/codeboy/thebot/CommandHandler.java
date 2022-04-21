@@ -210,7 +210,7 @@ public class CommandHandler extends ListenerAdapter {
         if (!event.isFromGuild()){
             TextChannel channel= (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag()+" "+event.getAuthor().getAsMention())
-                    .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build());
+                    .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build()).queue();
             return;
         }
         if (!content.startsWith(Config.getInstance().prefix))
