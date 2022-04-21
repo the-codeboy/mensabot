@@ -207,6 +207,12 @@ public class CommandHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String content = event.getMessage().getContentRaw();
+        if (!event.isFromGuild()){
+            TextChannel channel= (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
+            channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag()+" "+event.getAuthor().getAsMention())
+                    .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build());
+            return;
+        }
         if (!content.startsWith(Config.getInstance().prefix))
             return;
         content = content.replaceFirst(Config.getInstance().prefix, "");

@@ -1,7 +1,9 @@
 package ml.codeboy.thebot.commands.secret;
 
 import ml.codeboy.thebot.events.CommandEvent;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 public class Msg extends SecretCommand {
     public Msg() {
@@ -10,7 +12,16 @@ public class Msg extends SecretCommand {
 
     @Override
     public void run(CommandEvent event) {
-        TextChannel channel = (TextChannel) event.getJdaEvent().getJDA().getGuildChannelById(event.getArgs()[0]);
+        String id = event.getArgs()[0];
+        MessageChannel channel = (TextChannel) event.getJdaEvent().getJDA().getGuildChannelById(id);
+        if (channel == null) {
+            User user = event.getJdaEvent().getJDA().getUserById(id);
+            if(user==null) {
+                event.reply(":(");
+                return;
+            }
+            channel=user.openPrivateChannel().complete();
+        }
         String message = String.join(" ", event.getArgs());
         message = message.substring(event.getArgs()[0].length() + 1);
         channel.sendMessage(message).complete();
