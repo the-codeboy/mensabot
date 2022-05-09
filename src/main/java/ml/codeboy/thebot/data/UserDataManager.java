@@ -88,8 +88,9 @@ public class UserDataManager {
 
     private void updateKarmaTop() {
             karmaSorted = new ArrayList<>(getAllUserData());
+            karmaSorted.removeIf(d->d.getKarma()==0);
             karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
-            karmaSorted = karmaSorted.subList(0, 20);
+//            karmaSorted = karmaSorted.subList(0, 20);
             lastUpdatedKarmaTop = System.currentTimeMillis();
     }
 }

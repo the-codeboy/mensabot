@@ -28,6 +28,14 @@ public class UserData {
         return jda.retrieveUserById(getId()).complete();
     }
 
+    public String getTag(JDA jda){
+        try {
+            return getUser(jda).getAsTag();
+        }catch (Exception ignored){
+        }
+        return "unknown user";
+    }
+
     public int getKarma() {
         return karma;
     }

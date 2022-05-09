@@ -11,9 +11,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import java.awt.*;
 import java.util.List;
 
-public class KarmaTop extends Command {
-    public KarmaTop() {
-        super("KarmaTop", "Karma Bestenliste", "kt");
+public class KarmaBottom extends Command {
+    public KarmaBottom() {
+        super("KarmaBottom", "Karma Schlechtestenliste", "kb");
     }
 
     @Override
@@ -26,7 +26,7 @@ public class KarmaTop extends Command {
         event.reply(getKarmaTop(event.getJdaEvent().getJDA()));
     }
 
-    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaTop")
+    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaBottom")
             .setDescription("please use the command again").setColor(Color.RED).build();
     private long lastUpdated = 0;
     private final long updateInterval = 60000;
@@ -41,11 +41,11 @@ public class KarmaTop extends Command {
     private void updateKarmaTop(JDA jda) {
         new Thread(() -> {
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("KarmaTop")
+            builder.setTitle("KarmaBottom")
                     .setDescription("Updated every 10 Minutes");
             List<UserData> karmaTop = UserDataManager.getInstance().getKarmaSorted();
             for (int i = 0; i < 10; i++) {
-                UserData data = karmaTop.get(i);
+                UserData data = karmaTop.get(karmaTop.size()-(i+1));
                 builder.addField(i + 1 + ".", data.getTag(jda) + " " + data.getKarma(), false);
             }
             this.karmaTop = builder.build();

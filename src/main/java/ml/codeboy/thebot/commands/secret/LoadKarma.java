@@ -39,9 +39,9 @@ public class LoadKarma extends SecretCommand {
                         for (MessageReaction r : message.getReactions()) {
                             if (r.getReactionEmote().isEmote()) {
                                 int multiplier = 0;
-                                if (r.getReactionEmote().getEmote().getId().equals(Config.getInstance().upvoteEmote))
+                                if (Config.getInstance().isDownvote(r.getReactionEmote().getEmote().getId()))
                                     multiplier = 1;
-                                else if (r.getReactionEmote().getEmote().getId().equals(Config.getInstance().upvoteEmote))
+                                if (Config.getInstance().isUpvote(r.getReactionEmote().getEmote().getId()))
                                     multiplier = -1;
                                 karma += r.getCount() * multiplier;
                             }

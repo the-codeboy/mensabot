@@ -30,8 +30,10 @@ public class BedTimeTracker {
         Timer timer = new Timer();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/Berlin"));
         for (UserData data : UserDataManager.getInstance().getAllUserData()) {
+            if(data.getBedTime() < 0)
+                continue;
             User user = bot.getJda().retrieveUserById(data.getId()).complete();
-            if (user == null || data.getBedTime() < 0)
+            if (user == null)
                 continue;
             int seconds = data.getBedTime();
             int hours = seconds / 3600;

@@ -128,6 +128,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new QuoteCommand());
         registerCommand(new Karma());
         registerCommand(new KarmaTop());
+        registerCommand(new KarmaBottom());
 
         registerSecretCommands();
 
@@ -263,8 +264,8 @@ public class CommandHandler extends ListenerAdapter {
         MessageReaction.ReactionEmote reaction = event.getReaction().getReactionEmote();
         if (reaction.isEmote()) {
             String id = reaction.getEmote().getId();
-            boolean upvote = id.equals(Config.getInstance().upvoteEmote),
-                    downVote = id.equals(Config.getInstance().downVoteEmote);
+            boolean upvote = Config.getInstance().isUpvote(id),
+                    downVote = Config.getInstance().isDownvote(id);
             if (upvote || downVote) {
                 Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
                 Util.addKarma(message.getAuthor(), upvote ? 1 : -1);
@@ -277,8 +278,8 @@ public class CommandHandler extends ListenerAdapter {
         MessageReaction.ReactionEmote reaction = event.getReaction().getReactionEmote();
         if (reaction.isEmote()) {
             String id = reaction.getEmote().getId();
-            boolean upvote = id.equals(Config.getInstance().upvoteEmote),
-                    downVote = id.equals(Config.getInstance().downVoteEmote);
+            boolean upvote = Config.getInstance().isUpvote(id),
+                    downVote = Config.getInstance().isDownvote(id);
             if (upvote || downVote) {
                 Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
                 Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma

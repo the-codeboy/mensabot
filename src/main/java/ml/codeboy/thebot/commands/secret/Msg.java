@@ -15,7 +15,7 @@ public class Msg extends SecretCommand {
         String id = event.getArgs()[0];
         MessageChannel channel = (TextChannel) event.getJdaEvent().getJDA().getGuildChannelById(id);
         if (channel == null) {
-            User user = event.getJdaEvent().getJDA().getUserById(id);
+            User user = event.getJdaEvent().getJDA().retrieveUserById(id).complete();
             if(user==null) {
                 event.reply(":(");
                 return;
