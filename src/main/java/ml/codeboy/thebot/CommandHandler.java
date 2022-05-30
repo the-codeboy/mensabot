@@ -56,6 +56,8 @@ public class CommandHandler extends ListenerAdapter {
         }
         if (serverID != null)
             server = bot.getJda().getGuildById(serverID);
+        amogus=getBot().getJda().getEmoteById("909891436625944646");
+        sus=getBot().getJda().getEmoteById("930765635913408532");
 
         this.registerKnowCommands();
 
@@ -205,8 +207,24 @@ public class CommandHandler extends ListenerAdapter {
         MensaBot.logger.info("registered command " + command.getName());
     }
 
+    private final Emote amogus,sus;
+
+    private void amogus(MessageReceivedEvent event){
+        String msg=event.getMessage().getContentRaw().toLowerCase();
+        if(msg.contains("mogus")||msg.contains("imposter")||msg.contains("among us")){
+            MensaBot.logger.info("amogus");
+            event.getMessage().addReaction(amogus).queue();
+        }
+        if(msg.contains("sus")) {
+            MensaBot.logger.info("sus");
+            event.getMessage().addReaction(amogus).queue();
+            event.getMessage().addReaction(sus).queue();
+        }
+    }
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        amogus(event);
         String content = event.getMessage().getContentRaw();
         if (!event.isFromGuild()){
             TextChannel channel= (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");

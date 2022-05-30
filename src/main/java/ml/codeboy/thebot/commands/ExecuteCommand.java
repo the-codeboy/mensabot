@@ -20,8 +20,8 @@ public class ExecuteCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true)
-                .addOption(OptionType.STRING, "code", "the code to run", true,true);
+        return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true, true)
+                .addOption(OptionType.STRING, "code", "the code to run", true);
     }
 
 
