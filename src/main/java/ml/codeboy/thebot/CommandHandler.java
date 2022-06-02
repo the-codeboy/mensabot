@@ -5,10 +5,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
-import ml.codeboy.thebot.commands.secret.LoadKarma;
-import ml.codeboy.thebot.commands.secret.Msg;
-import ml.codeboy.thebot.commands.secret.React;
-import ml.codeboy.thebot.commands.secret.RickRoll;
+import ml.codeboy.thebot.commands.secret.*;
 import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
@@ -58,6 +55,7 @@ public class CommandHandler extends ListenerAdapter {
             server = bot.getJda().getGuildById(serverID);
         amogus=getBot().getJda().getEmoteById("909891436625944646");
         sus=getBot().getJda().getEmoteById("930765635913408532");
+        downvote=getBot().getJda().getEmoteById("903336514644222033");
 
         this.registerKnowCommands();
 
@@ -146,6 +144,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new React());
         registerCommand(new Msg());
         registerCommand(new LoadKarma());
+        registerCommand(new Bee());
     }
 
     private void changeStatus() {
@@ -207,7 +206,7 @@ public class CommandHandler extends ListenerAdapter {
         MensaBot.logger.info("registered command " + command.getName());
     }
 
-    private final Emote amogus,sus;
+    private final Emote amogus,sus,downvote;
 
     private void amogus(MessageReceivedEvent event){
         String msg=event.getMessage().getContentRaw().toLowerCase();
@@ -219,6 +218,10 @@ public class CommandHandler extends ListenerAdapter {
             MensaBot.logger.info("sus");
             event.getMessage().addReaction(amogus).queue();
             event.getMessage().addReaction(sus).queue();
+        }
+
+        if(event.getAuthor().getId().equals("290368310711681024")){
+            event.getMessage().addReaction(downvote).queue();
         }
     }
 

@@ -59,13 +59,18 @@ public class ExecuteCommand extends Command {
             event.replyError("Language not found");
         } else {
             ExecutionResult result = r.execute(code);
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("Execution output").setDescription("Language: " + result.getLanguage());
-            builder.addField("code", "```" + language + "\n" + code + "\n```", false);
+            EmbedBuilder input = new EmbedBuilder();
+            input.setTitle("Execution output").setDescription("Language: " + result.getLanguage());
+            String codeValue="```" + language + "\n" + code + "\n```";
+            if(codeValue.length()>1024)
+                codeValue="Code too long to fit in this message :(";
+            input.addField("code", codeValue, false);
             ExecutionOutput output = result.getOutput();
 
-            builder.addField("output", output.getOutput(), false);
-            event.reply(builder);
+            EmbedBuilder out = new EmbedBuilder();
+            System.out.println(output.getOutput().length());
+            out.addField("output", output.getOutput(), false);
+            event.reply(input.build(),out.build());
         }
     }
 }
