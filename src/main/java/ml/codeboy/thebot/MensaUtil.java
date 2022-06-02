@@ -3,6 +3,7 @@ package ml.codeboy.thebot;
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.data.FoodRatingManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.text.NumberFormat;
@@ -25,9 +26,16 @@ public class MensaUtil {
             String description = meal.getCategory() +
                     (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
                             + " (" + toPrice(meal.getPrices().getOthers()) + ")" : "");
-            String name = symbol + " " + meal.getName();
+            String title = symbol + " " + meal.getName();
+            int rating = (int) FoodRatingManager.getInstance().getRating(meal.getName());
+            if (rating != -1) {
+                title += " ";
+                for (int i = 0; i < rating; i++) {
+                    title += ":star:";
+                }
+            }
             boolean inline = !(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
-            builder.addField(name, description,
+            builder.addField(title, description,
                     inline);
         }
 
@@ -52,12 +60,14 @@ public class MensaUtil {
             return ":pizza:";
         if (name.contains("pfannkuchen"))
             return ":pancakes:";
-        if (name.contains("kuchen"))
+        if (name.contains("kuchen") || name.contains("küchlein"))
             return ":cake:";
         if (name.contains("spaghetti"))
             return ":spaghetti:";
         if (name.contains("suppe"))
             return ":stew:";
+        if (name.contains("chili") || name.contains("scharf"))
+            return ":hot_pepper:";
         if (name.contains("keule"))
             return ":poultry_leg:";
         if (name.contains("steak"))
@@ -76,8 +86,6 @@ public class MensaUtil {
             return ":broccoli:";
         if (name.contains("paprika"))
             return ":bell_pepper:";
-        if (name.contains("chili"))
-            return ":hot_pepper:";
         if (name.contains("mais"))
             return ":corn:";
         if (name.contains("karotte"))

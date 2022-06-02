@@ -3,10 +3,14 @@ package ml.codeboy.thebot.data;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UserData {
     private String userId;
     private int bedTime = -1;
     private int karma = 0;
+    private Map<String,Integer> ratings=new HashMap<>();
 
     public UserData(String userId) {
         this.userId = userId;
@@ -42,5 +46,23 @@ public class UserData {
 
     public void setKarma(int karma) {
         this.karma = karma;
+    }
+
+    public void addRating(String meal,int rating){
+        if(ratings==null)
+            ratings=new HashMap<>();
+        if(ratings.containsKey(meal)){
+            FoodRatingManager.getInstance().removeRating(meal,ratings.get(meal));
+        }
+        FoodRatingManager.getInstance().addRating(meal,rating);
+        ratings.put(meal,rating);
+        UserDataManager.getInstance().save(this);
+    }
+
+    public void clearRatings() {
+        if(ratings!=null&&!ratings.isEmpty()) {
+            ratings = new HashMap<>();
+            UserDataManager.getInstance().save(this);
+        }
     }
 }
