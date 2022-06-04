@@ -35,6 +35,13 @@ public class FoodRatingManager {
         return rating.getAverage();
     }
 
+    public int getRatings(String meal) {
+        Rating rating = ratings.getOrDefault(meal, null);
+        if (rating == null)
+            return -1;
+        return rating.getRatings();
+    }
+
     public void addRating(String meal, int rating) {
         Rating r = ratings.computeIfAbsent(meal, m -> new Rating());
         r.addRating(rating);

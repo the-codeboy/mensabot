@@ -27,12 +27,32 @@ public class MensaUtil {
                     (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
                             + " (" + toPrice(meal.getPrices().getOthers()) + ")" : "");
             String title = symbol + " " + meal.getName();
-            int rating = (int) FoodRatingManager.getInstance().getRating(meal.getName());
+            double rating = FoodRatingManager.getInstance().getRating(meal.getName());
             if (rating != -1) {
                 title += "\n";
-                for (int i = 0; i < rating; i++) {
+                while (rating >= 1) {
                     title += ":star:";
+                    rating--;
                 }
+                if (rating > 0.9)
+                    title += "<:09:982648330666528769>";
+                else if (rating > 0.8)
+                    title += "<:08:982648332801441852>";
+                else if (rating > 0.7)
+                    title += "<:07:982648330666528769>";
+                else if (rating > 0.6)
+                    title += "<:06:982648332801441852>";
+                else if (rating > 0.5)
+                    title += "<:05:982648334621736960>";
+                else if (rating > 0.4)
+                    title += "<:04:982648321132855315>";
+                else if (rating > 0.3)
+                    title += "<:03:982648322944819280>";
+                else if (rating > 0.2)
+                    title += "<:02:982648324228268084>";
+                else if (rating > 0.1)
+                    title += "<:01:982648326103134319>";
+                title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
             }
             boolean inline = !(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
             builder.addField(title, description,
