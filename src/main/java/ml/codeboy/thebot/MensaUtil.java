@@ -29,7 +29,7 @@ public class MensaUtil {
             String title = symbol + " " + meal.getName();
             int rating = (int) FoodRatingManager.getInstance().getRating(meal.getName());
             if (rating != -1) {
-                title += " ";
+                title += "\n";
                 for (int i = 0; i < rating; i++) {
                     title += ":star:";
                 }

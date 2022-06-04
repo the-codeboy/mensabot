@@ -10,8 +10,6 @@ import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
-import ml.codeboy.thebot.data.UserData;
-import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
@@ -116,6 +114,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new NewsCommand());
         registerCommand(new InsultCommand());
         registerCommand(new RhymeCommand());
+        registerCommand(new MemeCommand());
 
         registerCommand(new MensaCommand());
         registerCommand(new RateCommand());

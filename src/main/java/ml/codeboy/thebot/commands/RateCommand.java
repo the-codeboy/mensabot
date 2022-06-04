@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,12 +69,15 @@ public class RateCommand extends Command {
             SlashCommandInteractionEvent scie = event.getSlashCommandEvent();
             String meal = scie.getOption("meal").getAsString();
             int rating = scie.getOption("rating").getAsInt();
-            if (GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa().getMeals().stream().anyMatch(m -> m.getName().equals(meal))) {//check if meal exists
-                UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
-                event.getChannel().sendMessage("rating added").queue();
-            } else
-            {
-                event.getChannel().sendMessage("meal not found").queue();
+            if (rating <= 5 && rating >= 1) {
+                if (GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa().getMeals().stream().anyMatch(m -> m.getName().equals(meal))) {//check if meal exists
+                    UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
+                    event.getChannel().sendMessage("rating added").queue();
+                } else {
+                    event.getChannel().sendMessage("meal not found").queue();
+                }
+            } else {
+                event.getChannel().sendMessage("invalid number. Has to be between 1 and 5").queue();
             }
         }
     }

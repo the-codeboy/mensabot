@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserData {
-    private String userId;
+    private final String userId;
     private int bedTime = -1;
     private int karma = 0;
     private Map<String,Integer> ratings=new HashMap<>();
@@ -49,11 +49,11 @@ public class UserData {
     }
 
     public void addRating(String meal,int rating){
-        if(ratings==null)
-            ratings=new HashMap<>();
-        if(ratings.containsKey(meal)){
-            FoodRatingManager.getInstance().removeRating(meal,ratings.get(meal));
-        }
+        if (ratings == null)
+            ratings = new HashMap<>();
+        if (ratings.containsKey(meal)) {
+            FoodRatingManager.getInstance().removeRating(meal, ratings.get(meal));
+        } else karma++;//add one karma for rating
         FoodRatingManager.getInstance().addRating(meal,rating);
         ratings.put(meal,rating);
         UserDataManager.getInstance().save(this);
