@@ -25,6 +25,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.user.UserActivityStartEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -42,26 +44,7 @@ public class CommandHandler extends ListenerAdapter {
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private Guild server;
 
-    public CommandHandler(Bot bot) {
-        this.bot = bot;
-        bot.getJda().addEventListener(this);
-        String serverID = Config.getInstance().serverId;
-        try {
-            bot.getJda().awaitReady();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (serverID != null)
-            server = bot.getJda().getGuildById(serverID);
-        amogus=getBot().getJda().getEmoteById("909891436625944646");
-        sus=getBot().getJda().getEmoteById("930765635913408532");
-        downvote=getBot().getJda().getEmoteById("903336514644222033");
-
-        this.registerKnowCommands();
-
-        registerAnnouncements();
-        registerBedTimeTracker();
-    }
+    private final Emote amogus, sus, downvote;
 
     private void registerBedTimeTracker() {
         BedTimeTracker tracker = new BedTimeTracker(getBot());
@@ -104,6 +87,38 @@ public class CommandHandler extends ListenerAdapter {
         } catch (Exception ignored) {
         }
     }
+
+    public CommandHandler(Bot bot) {
+        this.bot = bot;
+        bot.getJda().addEventListener(this);
+        String serverID = Config.getInstance().serverId;
+        try {
+            bot.getJda().awaitReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (serverID != null)
+            server = bot.getJda().getGuildById(serverID);
+        amogus = getBot().getJda().getEmoteById("909891436625944646");
+        sus = getBot().getJda().getEmoteById("930765635913408532");
+        downvote = getBot().getJda().getEmoteById("903336514644222033");
+
+        this.registerKnowCommands();
+
+        registerAnnouncements();
+        registerBedTimeTracker();
+    }
+
+    @Override
+    public void onUserActivityStart(@NotNull UserActivityStartEvent event) {
+        checkActivity(event.getMember());
+    }
+
+    @Override
+    public void onUserUpdateActivityOrder(@NotNull UserUpdateActivityOrderEvent event) {
+        checkActivity(event.getMember());
+    }
+
 
     public void registerKnowCommands() {
         this.registerCommand(new Help(bot));
@@ -208,21 +223,44 @@ public class CommandHandler extends ListenerAdapter {
         MensaBot.logger.info("registered command " + command.getName());
     }
 
-    private final Emote amogus,sus,downvote;
+    private void checkActivity(Member member) {
+        for (Activity activity : member.getActivities()) {
+            if (activity.isRich()) {
+                RichPresence presence = activity.asRichPresence();
+                if (presence != null && "401518684763586560".equals(presence.getApplicationId())
+                        && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
+                    String message = null;
+                    switch (presence.getLargeImage().getText()) {
+                        case "Yuumi":
+                            message = "Warum spielst du überhaupt League of Legends, wenn alles was du tust e-drücken ist?";
+                            break;
+                        case "Teemo":
+                            message = "Hör mal auf Teemo zu spielen. Scheiß range top laner";
+                            break;
+                    }
+                    if (message != null && Math.random() > 0.8) {
+                        System.out.println(member.getUser().getAsTag() + " " + message);
+                        member.getUser().openPrivateChannel().complete().sendMessage(message).queue();
+                    }
+                }
 
-    private void amogus(MessageReceivedEvent event){
-        String msg=event.getMessage().getContentRaw().toLowerCase();
-        if(msg.contains("mogus")||msg.contains("imposter")||msg.contains("among us")){
+            }
+        }
+    }
+
+    private void amogus(MessageReceivedEvent event) {
+        String msg = event.getMessage().getContentRaw().toLowerCase();
+        if (msg.contains("mogus") || msg.contains("imposter") || msg.contains("among us")) {
             MensaBot.logger.info("amogus");
             event.getMessage().addReaction(amogus).queue();
         }
-        if(msg.contains("sus")) {
+        if (msg.contains("sus")) {
             MensaBot.logger.info("sus");
             event.getMessage().addReaction(amogus).queue();
             event.getMessage().addReaction(sus).queue();
         }
 
-        if(event.getAuthor().getId().equals("290368310711681024")){
+        if (event.getAuthor().getId().equals("290368310711681024")) {
             event.getMessage().addReaction(downvote).queue();
         }
     }
@@ -231,9 +269,9 @@ public class CommandHandler extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         amogus(event);
         String content = event.getMessage().getContentRaw();
-        if (!event.isFromGuild()){
-            TextChannel channel= (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
-            channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag()+" "+event.getAuthor().getAsMention())
+        if (!event.isFromGuild()) {
+            TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
+            channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
                     .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build()).queue();
             return;
         }

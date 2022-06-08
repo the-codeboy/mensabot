@@ -13,15 +13,15 @@ public class MensaBot implements Bot {
 
     public static final Logger logger
             = LoggerFactory.getLogger(MensaBot.class);
-    private CommandHandler commandHandler;
-    private JDA jda;
+    private final CommandHandler commandHandler;
+    private final JDA jda;
 
     public MensaBot() throws LoginException, InterruptedException {
         jda = JDABuilder.createDefault(Config.getInstance().token)
                 .enableIntents(GatewayIntent.DIRECT_MESSAGES,
                         GatewayIntent.GUILD_MEMBERS,
                         GatewayIntent.GUILD_PRESENCES)
-                .enableCache(CacheFlag.ONLINE_STATUS).build();
+                .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY).build();
         jda.awaitReady();
         commandHandler = new CommandHandler(this);
     }
