@@ -1,7 +1,6 @@
 package ml.codeboy.thebot.commands;
 
 import com.github.codeboy.api.Meal;
-import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
@@ -16,8 +15,7 @@ import java.util.List;
 public class RateCommand extends Command {
 
     public RateCommand() {
-        super("rate", "rate mensa meals");
-        FoodRatingManager.getInstance();//todo remove debug statement
+        super("rate", "Rate mensa meals");
     }
 
     @Override
@@ -72,12 +70,12 @@ public class RateCommand extends Command {
             if (rating <= 5 && rating >= 1) {
                 if (GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa().getMeals().stream().anyMatch(m -> m.getName().equals(meal))) {//check if meal exists
                     UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
-                    event.getChannel().sendMessage("rating added").queue();
+                    scie.reply("Rating added").setEphemeral(true).queue();
                 } else {
-                    event.getChannel().sendMessage("meal not found").queue();
+                    scie.reply("Meal not found").setEphemeral(true).queue();
                 }
             } else {
-                event.getChannel().sendMessage("invalid number. Has to be between 1 and 5").queue();
+                scie.reply("Invalid number. Has to be between 1 and 5").setEphemeral(true).queue();
             }
         }
     }
