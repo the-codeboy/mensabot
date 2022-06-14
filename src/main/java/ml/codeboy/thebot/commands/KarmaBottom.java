@@ -9,7 +9,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class KarmaBottom extends Command {
     public KarmaBottom() {
@@ -43,10 +45,14 @@ public class KarmaBottom extends Command {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("KarmaBottom")
                     .setDescription("Updated every 10 Minutes");
-            List<UserData> karmaTop = UserDataManager.getInstance().getKarmaSorted();
-            for (int i = 0; i < 10; i++) {
-                UserData data = karmaTop.get(karmaTop.size()-(i+1));
-                builder.addField(i + 1 + ".", data.getTag(jda) + " " + data.getKarma(), false);
+            List<UserData> karmaTop = UserDataManager.getInstance().getKarmaSorted().stream()
+                    .sorted(Comparator.comparingInt(UserData::getKarma)) // aufsteigend sortieren
+                    .filter(data -> !data.getId().equals("290368310711681024")) // ghost rausfiltern
+                    .limit(10) // erste 10 Elemente nehmen
+                    .collect(Collectors.toList());
+            for (int i = 0; i < karmaTop.size(); i++) {
+                UserData data = karmaTop.get(i);
+                builder.addField((i + 1) + ".", data.getTag(jda) + " " + data.getKarma(), false);
             }
             this.karmaTop = builder.build();
             lastUpdated = System.currentTimeMillis();
