@@ -181,12 +181,33 @@ public class MensaUtil {
     }
 
     public static Date wordToDate(String word) {
-        if (word.equalsIgnoreCase("today"))
+        word = word.toLowerCase();
+        if (word.equals("today") || word.equals("heute"))
             return new Date();
-        if (word.equalsIgnoreCase("yesterday"))
+        if (word.equals("yesterday") || word.equals("gestern"))
             return new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
-        if (word.equalsIgnoreCase("tomorrow"))
+        if (word.equals("tomorrow") || word.equals("morgen"))
             return new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+        if (word.endsWith("morgen")) {
+            int i = 1;
+            while (word.startsWith("über")) {
+                i++;
+                word = word.substring(4);
+            }
+            if (word.equals("morgen")) {
+                return new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * i);
+            }
+        }
+        if (word.endsWith("gestern")) {
+            int i = 1;
+            while (word.startsWith("vor")) {
+                i++;
+                word = word.substring(3);
+            }
+            if (word.equals("gestern")) {
+                return new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24 * i);
+            }
+        }
         return null;
     }
 }

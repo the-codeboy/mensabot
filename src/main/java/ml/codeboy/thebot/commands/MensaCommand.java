@@ -31,7 +31,7 @@ public class MensaCommand extends Command {
     public SlashCommandData getCommandData() {
         return super.getCommandData()
                 .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187", false)
-                .addOption(OptionType.STRING, "date", "Today, tomorrow or yesterday", false, true)
+                .addOption(OptionType.STRING, "date", "The date", false, true)
                 .addOption(OptionType.STRING, "name", "Name of the mensa", false, true);
     }
 
@@ -39,9 +39,10 @@ public class MensaCommand extends Command {
     public void autoComplete(String option, List<String> options) {
         switch (option) {
             case "date": {
-                options.add("today");
-                options.add("tomorrow");
-                options.add("yesterday");
+                options.add("gestern");
+                options.add("heute");
+                options.add("morgen");
+                options.add("übermorgen");
                 break;
             }
             case "name": {
