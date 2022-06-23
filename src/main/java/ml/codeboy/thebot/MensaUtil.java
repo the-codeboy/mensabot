@@ -29,10 +29,10 @@ public class MensaUtil {
                             + " (" + toPrice(meal.getPrices().getOthers()) + ")" : "");
             String title = symbol + " " + meal.getName();
             double rating = FoodRatingManager.getInstance().getRating(meal.getName());
+            title += getRatingString(rating);
             if (rating != -1) {
                 title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
             }
-            title += getRatingString(rating);
             if (!beilagen
                     && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
                 beilagen = true;
