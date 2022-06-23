@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class Command {
@@ -51,6 +50,8 @@ public abstract class Command {
 
     private boolean hasPermission(CommandEvent event) {
         Member member = event.getMember();
+        if (member == null)
+            return getRequiredPermisions().length == 0;
         return member.hasPermission(getRequiredPermisions());
     }
 
@@ -101,7 +102,7 @@ public abstract class Command {
         event.replyChoices(choices).queue();
     }
 
-    public void register(CommandHandler handler){
+    public void register(CommandHandler handler) {
         //do nothing
     }
 

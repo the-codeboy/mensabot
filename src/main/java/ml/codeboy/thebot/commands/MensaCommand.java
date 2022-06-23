@@ -3,6 +3,7 @@ package ml.codeboy.thebot.commands;
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.apis.RWTHMensa;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +20,11 @@ public class MensaCommand extends Command {
     public MensaCommand() {
         super("mensa", "Sends the current food in mensa Academica", "food");
         OpenMensa.getInstance().reloadCanteens();//doesn't work without this
+        Collection<Mensa> mensas = OpenMensa.getInstance().searchMensa("aachen");
+
+        for (Mensa mensa : mensas) {
+            OpenMensa.getInstance().addMensa(new RWTHMensa(mensa));
+        }
     }
 
     @Override
@@ -129,7 +136,11 @@ public class MensaCommand extends Command {
     }
 
     private void sendDefaultMenu(CommandEvent event) {
-        Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
+        Mensa mensa;
+        if (event.getGuild() == null)
+            mensa = OpenMensa.getInstance().getMensa(187);
+        else
+            mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
         sendMensaMenu(event, mensa);
     }
 

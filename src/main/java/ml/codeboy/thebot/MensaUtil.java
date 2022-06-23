@@ -21,6 +21,7 @@ public class MensaUtil {
         }
         builder.setTitle("Meals in " + mensa.getName());
         builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
+        boolean beilagen = false;
         for (Meal meal : mensa.getMeals(date)) {
             String symbol = getEmojiForMeal(meal);
             String description = meal.getCategory() +
@@ -29,37 +30,50 @@ public class MensaUtil {
             String title = symbol + " " + meal.getName();
             double rating = FoodRatingManager.getInstance().getRating(meal.getName());
             if (rating != -1) {
-                title += "\n";
-                while (rating >= 1) {
-                    title += ":star:";
-                    rating--;
-                }
-                if (rating > 0.9)
-                    title += "<:09:982648330666528769>";
-                else if (rating > 0.8)
-                    title += "<:08:982648332801441852>";
-                else if (rating > 0.7)
-                    title += "<:07:982648330666528769>";
-                else if (rating > 0.6)
-                    title += "<:06:982648332801441852>";
-                else if (rating > 0.5)
-                    title += "<:05:982648334621736960>";
-                else if (rating > 0.4)
-                    title += "<:04:982648321132855315>";
-                else if (rating > 0.3)
-                    title += "<:03:982648322944819280>";
-                else if (rating > 0.2)
-                    title += "<:02:982648324228268084>";
-                else if (rating > 0.1)
-                    title += "<:01:982648326103134319>";
                 title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
             }
-            boolean inline = !(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
+            title += getRatingString(rating);
+            if (!beilagen
+                    && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
+                beilagen = true;
+                builder.addBlankField(false);
+            }
+            boolean inline = true;//!(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
             builder.addField(title, description,
                     inline);
         }
 
         return builder;
+    }
+
+    public static String getRatingString(double rating) {
+        String title = "";
+        if (rating != -1) {
+            title += "\n";
+            while (rating >= 1) {
+                title += ":star:";
+                rating--;
+            }
+            if (rating > 0.9)
+                title += "<:09:982648330666528769>";
+            else if (rating > 0.8)
+                title += "<:08:982648332801441852>";
+            else if (rating > 0.7)
+                title += "<:07:982648330666528769>";
+            else if (rating > 0.6)
+                title += "<:06:982648332801441852>";
+            else if (rating > 0.5)
+                title += "<:05:982648334621736960>";
+            else if (rating > 0.4)
+                title += "<:04:982648321132855315>";
+            else if (rating > 0.3)
+                title += "<:03:982648322944819280>";
+            else if (rating > 0.2)
+                title += "<:02:982648324228268084>";
+            else if (rating > 0.1)
+                title += "<:01:982648326103134319>";
+        }
+        return title;
     }
 
     private static String toPrice(String f) {
@@ -74,6 +88,8 @@ public class MensaUtil {
 
         if (name.contains("schnitzel"))
             return "<:schnitzel:943559144135336047>";
+        if (name.contains("beeren"))
+            return ":bear:";
         if (name.contains("burger"))
             return ":hamburger:";
         if (name.contains("pizza"))
@@ -92,8 +108,14 @@ public class MensaUtil {
             return ":poultry_leg:";
         if (name.contains("steak"))
             return ":cut_of_meat:";
-        if (name.contains("hähnchen") || name.contains("huhn"))
+        if (name.contains("hähnchen") || name.contains("huhn") || name.contains("chicken"))
             return ":chicken:";
+        if (name.contains("schwein") || name.contains("pork"))
+            return ":pig:";
+        if (name.contains("kuh") || name.contains("rind"))
+            return ":cow:";
+        if (name.contains("ente") || name.contains("gans"))
+            return ":duck:";
         if (name.contains("fisch") || name.contains("lachs"))
             return ":fish:";
         if (name.contains("reis"))
@@ -102,6 +124,8 @@ public class MensaUtil {
             return ":fries:";
         if (name.contains("apfel"))
             return ":apple:";
+        if (name.contains("zitrone") || name.contains("lemon") || name.contains("limette"))
+            return ":lemon:";
         if (name.contains("brokkoli"))
             return ":broccoli:";
         if (name.contains("paprika"))

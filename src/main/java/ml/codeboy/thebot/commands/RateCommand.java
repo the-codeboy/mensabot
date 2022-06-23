@@ -1,6 +1,8 @@
 package ml.codeboy.thebot.commands;
 
 import com.github.codeboy.api.Meal;
+import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
@@ -70,12 +72,12 @@ public class RateCommand extends Command {
             if (rating <= 5 && rating >= 1) {
                 if (GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa().getMeals().stream().anyMatch(m -> m.getName().equals(meal))) {//check if meal exists
                     UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
-                    scie.reply("Rating added").setEphemeral(true).queue();
+                    event.reply("Rating added: " + meal + "\n" + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ")");
                 } else {
-                    scie.reply("Meal not found").setEphemeral(true).queue();
+                    event.reply("Meal not found");
                 }
             } else {
-                scie.reply("Invalid number. Has to be between 1 and 5").setEphemeral(true).queue();
+                event.reply("Invalid number. Has to be between 1 and 5");
             }
         }
     }

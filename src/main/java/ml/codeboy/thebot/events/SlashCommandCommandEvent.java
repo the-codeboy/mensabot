@@ -14,7 +14,7 @@ public class SlashCommandCommandEvent extends CommandEvent {
     @Override
     public void reply(String message) {
         SlashCommandInteractionEvent event = getSlashCommandEvent();
-        event.reply(message).queue();
+        event.getHook().sendMessage(message).queue();
     }
 
     @Override

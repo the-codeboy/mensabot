@@ -260,7 +260,7 @@ public class CommandHandler extends ListenerAdapter {
             event.getMessage().addReaction(sus).queue();
         }
 
-        if (event.getAuthor().getId().equals("290368310711681024")) {
+        if (event.getAuthor().getId().equals("290368310711681024") && !event.getChannel().getId().equals("917201826271604736")) {
             event.getMessage().addReaction(downvote).queue();
         }
     }
@@ -268,8 +268,9 @@ public class CommandHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         amogus(event);
+        counter(event);
         String content = event.getMessage().getContentRaw();
-        if (!event.isFromGuild()) {
+        if (!event.isFromGuild() && !event.getAuthor().isBot()) {
             TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
                     .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build()).queue();
@@ -287,12 +288,23 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
+    private void counter(MessageReceivedEvent event) {
+        if (event.getChannel().getId().equals("898271566880727130") && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
+            try {
+                int i = Integer.parseInt(event.getMessage().getContentRaw());
+                event.getChannel().sendMessage(i + 1 + "").queue();
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
-            MensaBot.logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getMember().getUser().getAsTag()
+            MensaBot.logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getPrivateChannel().getName())
+                    + ": " + event.getUser().getAsTag()
                     + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event));
         }
