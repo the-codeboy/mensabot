@@ -63,6 +63,11 @@
             <artifactId>lavaplayer</artifactId>
             <version>1.3.77</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.the-codeboy</groupId>
+            <artifactId>Jokes4J</artifactId>
+            <version>7507dcbce3</version>
+        </dependency>
     </dependencies>
 
     <build>
