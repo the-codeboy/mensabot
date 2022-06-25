@@ -12,19 +12,8 @@ public class UserDataManager {
     private static final UserDataManager instance = new UserDataManager();
     private final HashMap<String, UserData> userData = new HashMap<>();
 
-    private UserDataManager() {
-        File folder = new File(userDataFolder);
-        if (folder.exists()) {
-            for (File file : folder.listFiles()) {
-                try {
-                    userData.put(file.getName(), loadData(file.getName()));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        updateKarmaTop();
-    }
+    private final long karmaTopUpdate = 600000;
+    private long lastUpdatedKarmaTop = 0;
 
     public static UserDataManager getInstance() {
         return instance;
@@ -75,7 +64,24 @@ public class UserDataManager {
     }
 
     private List<UserData> karmaSorted;
-    private long lastUpdatedKarmaTop = 0, karmaTopUpdate = 600000;
+
+    private UserDataManager() {
+        new Thread(this::loadUserData).start();
+    }
+
+    private void loadUserData() {
+        File folder = new File(userDataFolder);
+        if (folder.exists()) {
+            for (File file : folder.listFiles()) {
+                try {
+                    userData.put(file.getName(), loadData(file.getName()));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        updateKarmaTop();
+    }
 
 
     public List<UserData> getKarmaSorted() {
