@@ -52,10 +52,12 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAnnouncements() {
         Date date = new Date();
-        announceIn(60 * 60 * 24 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600) + 10);//10 seconds extra
+        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600));
     }
 
     private void announceIn(int seconds) {
+        if (seconds < 0)
+            seconds += 24 * 60 * 60;
         executorService.schedule(() -> {
             registerAnnouncements();
             sendToAllGuilds();
@@ -81,7 +83,7 @@ public class CommandHandler extends ListenerAdapter {
                     });
                 } catch (Exception ignored) {
                 }
-                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date()).build()).complete();
+                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 24)).build()).complete();
                 data.setLatestAnnouncementId(message.getId());
             }
         } catch (Exception ignored) {
@@ -326,7 +328,7 @@ public class CommandHandler extends ListenerAdapter {
             EmbedBuilder builder = new EmbedBuilder();
 
             builder.setTitle("Wilkommen " + event.getMember().getEffectiveName())
-                    .setDescription(event.getMember().getAsMention() + "Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
+                    .setDescription(event.getMember().getAsMention() + " Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
                     .setColor(Util.getRandomColor());
 
             channel.sendMessageEmbeds(builder.build()).queue();
