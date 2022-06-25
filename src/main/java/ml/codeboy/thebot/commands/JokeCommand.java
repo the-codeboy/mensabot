@@ -1,10 +1,18 @@
 package ml.codeboy.thebot.commands;
 
 import com.github.codeboy.jokes4j.Jokes4J;
+import com.github.codeboy.jokes4j.api.Category;
 import com.github.codeboy.jokes4j.api.Joke;
 import com.github.codeboy.jokes4j.api.JokeType;
+import com.github.codeboy.jokes4j.api.Language;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+
+import java.awt.*;
+import java.util.List;
 
 public class JokeCommand extends Command {
     public JokeCommand() {
@@ -12,10 +20,37 @@ public class JokeCommand extends Command {
     }
 
     @Override
+    public SlashCommandData getCommandData() {
+        return super.getCommandData().addOption(OptionType.STRING, "category", "A specific category for a joke", false);
+    }
+
+    @Override
+    public void autoComplete(String option, List<String> options) {
+        if("category".equals(option)) {
+            for(Category category : Category.values()) {
+                options.add(category.toString());
+            }
+        }
+    }
+
+    @Override
     public void run(CommandEvent event) {
         Joke joke = null;
 
-        joke = Jokes4J.getInstance().getJoke();
+        OptionMapping categoryMapping = event.getSlashCommandEvent().getOption("category");
+        Category category = null;
+        if(categoryMapping != null) {
+            try {
+                category = Category.valueOf(categoryMapping.getAsString());
+            } catch (IllegalArgumentException e) {
+                event.setEphermal(true);
+                event.reply(event.getBuilder().setTitle("Joke - Error")
+                        .setDescription("The given category is invalid. Please try again").setColor(Color.RED));
+                return;
+            }
+        }
+        Jokes4J instance = Jokes4J.getInstance();
+        joke = category == null ? instance.getJoke() : instance.getJoke(Language.ENGLISH, category);
 
         EmbedBuilder builder = event.getBuilder();
         if (joke.getType() == JokeType.single) {
