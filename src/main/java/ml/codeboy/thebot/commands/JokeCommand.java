@@ -21,7 +21,7 @@ public class JokeCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.STRING, "category", "A specific category for a joke", false);
+        return super.getCommandData().addOption(OptionType.STRING, "category", "A specific category for a joke", false, true);
     }
 
     @Override
