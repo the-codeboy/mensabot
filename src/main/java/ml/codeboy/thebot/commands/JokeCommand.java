@@ -37,7 +37,7 @@ public class JokeCommand extends Command {
     public void run(CommandEvent event) {
         Joke joke = null;
 
-        OptionMapping categoryMapping = event.getSlashCommandEvent().getOption("category");
+        OptionMapping categoryMapping = event.isSlashCommandEvent() ? event.getSlashCommandEvent().getOption("category") : null;
         Category category = null;
         if(categoryMapping != null) {
             try {
