@@ -61,6 +61,7 @@ public class ExecuteCommand extends Command {
         } else {
             //Execute code
             ExecutionResult result = r.execute(code);
+            ExecutionOutput output = result.getOutput();
             //Message builder
             EmbedBuilder input = new EmbedBuilder();
             EmbedBuilder out = new EmbedBuilder();
@@ -73,7 +74,6 @@ public class ExecuteCommand extends Command {
             if(errValue.length()>1024)
                 errValue="Error is too long to fit in this message";
             input.addField("code", codeValue, false);
-            ExecutionOutput output = result.getOutput();
 
             err.setTitle("Error output");
             err.addField("stderr", errValue, false);
