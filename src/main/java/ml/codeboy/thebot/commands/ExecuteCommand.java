@@ -54,23 +54,35 @@ public class ExecuteCommand extends Command {
     }
 
     private void run(CommandEvent event, String language, String code) {
+        //Initialise runtime
         Runtime r = Piston.getDefaultApi().getRuntimeUnsafe(language);
         if (r == null) {
             event.replyError("Language not found");
         } else {
+            //Execute code
             ExecutionResult result = r.execute(code);
+            //Message builder
             EmbedBuilder input = new EmbedBuilder();
+            EmbedBuilder out = new EmbedBuilder();
+            EmbedBuilder err = new EmbedBuilder();
             input.setTitle("Execution output").setDescription("Language: " + result.getLanguage());
             String codeValue="```" + language + "\n" + code + "\n```";
+            String errValue = "```bash\n"+output.getStderr()+"```";
             if(codeValue.length()>1024)
                 codeValue="Code too long to fit in this message :(";
+            if(errValue.length()>1024)
+                errValue="Error is too long to fit in this message";
             input.addField("code", codeValue, false);
             ExecutionOutput output = result.getOutput();
 
-            EmbedBuilder out = new EmbedBuilder();
+            err.setTitle("Error output");
+            err.addField("stderr", errValue, false);
             System.out.println(output.getOutput().length());
             out.addField("output", output.getOutput(), false);
-            event.reply(input.build(),out.build());
+            if(true/*stderr ist nicht leer, keine ahnung wie das aus sieht*/)
+                event.reply(input.build(),out.build(),err.build());
+            else
+                event.reply(input.build(),out.build());
         }
     }
 }
