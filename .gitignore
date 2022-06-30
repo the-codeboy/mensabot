@@ -177,3 +177,5 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/java,kotlin,gradle,intellij,dotenv
 
 .idea/
+config.json
+target/classes/logback.xml
