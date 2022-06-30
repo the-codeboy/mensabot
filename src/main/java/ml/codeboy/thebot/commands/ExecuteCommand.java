@@ -7,6 +7,7 @@ import com.github.codeboy.piston4j.api.Runtime;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -59,30 +60,39 @@ public class ExecuteCommand extends Command {
         if (r == null) {
             event.replyError("Language not found");
         } else {
-            //Execute code
+            //ExecutionResults
             ExecutionResult result = r.execute(code);
             ExecutionOutput output = result.getOutput();
+            ExecutionOutput error = result.getCompileOutput();
             //Message builder
             EmbedBuilder input = new EmbedBuilder();
             EmbedBuilder out = new EmbedBuilder();
             EmbedBuilder err = new EmbedBuilder();
+            //Messages
+            MessageEmbed[] ret;
+            //Strings
+            String errValue;
+            String codeValue;
+            //input builder
             input.setTitle("Execution output").setDescription("Language: " + result.getLanguage());
-            String codeValue="```" + language + "\n" + code + "\n```";
-            String errValue = "```bash\n"+output.getStderr()+"```";
+            codeValue="```" + language + "\n" + code + "\n```";
             if(codeValue.length()>1024)
                 codeValue="Code too long to fit in this message :(";
-            if(errValue.length()>1024)
-                errValue="Error is too long to fit in this message";
             input.addField("code", codeValue, false);
-
-            err.setTitle("Error output");
-            err.addField("stderr", errValue, false);
-            System.out.println(output.getOutput().length());
+            //out builder
             out.addField("output", output.getOutput(), false);
-            if(true/*stderr ist nicht leer, keine ahnung wie das aus sieht*/)
-                event.reply(input.build(),out.build(),err.build());
+            //err builder
+            err.setTitle("Error output");
+            if(error.getCode()!=0)
+            {
+                err.addField("Error:","```bash\n"+error.getStderr()+"\n```",false);
+                ret = new MessageEmbed[]{input.build(), out.build(), err.build()};
+            }
             else
-                event.reply(input.build(),out.build());
+            {
+                ret = new MessageEmbed[]{input.build(), out.build()};
+            }
+            event.reply(ret);
         }
     }
 }
