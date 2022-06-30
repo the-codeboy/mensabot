@@ -4,7 +4,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 
 public class Play extends AudioCommand {
     public Play() {
-        super("play");
+        super("fplay");
     }
 
     @Override
