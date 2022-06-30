@@ -200,8 +200,9 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerAudioCommands() {
-        registerCommand(new Play());
+        registerCommand(new fPlay());
         registerCommand(new Pause());
+        registerCommand(new Resume());
 //        registerCommand(new Echo());
         registerCommand(new Loop());
         registerCommand(new PlayNext());
