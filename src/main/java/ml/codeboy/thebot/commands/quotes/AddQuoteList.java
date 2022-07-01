@@ -1,5 +1,7 @@
 package ml.codeboy.thebot.commands.quotes;
 
+import com.mongodb.client.MongoCollection;
+import ml.codeboy.thebot.apis.mongoDB.databaseClass;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Person;
@@ -8,6 +10,7 @@ import ml.codeboy.thebot.quotes.QuoteManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.bson.Document;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -60,19 +63,15 @@ public class AddQuoteList extends Command {
     }
 
     private void addQuote(CommandEvent event, String name, String content) {
-        Person person = QuoteManager.getInstance().getOrCreate(name);
+        Document quote;
+        MongoCollection coll = databaseClass.getInstance().getDatabase().getCollection(name);
         EmbedBuilder reply = new EmbedBuilder().setTitle("Added quote").setColor(Color.GREEN);
-        Quote quote;
         int i=0;
         for(String s : content.split("`")) {
-            quote = new Quote();
-            quote.setTime(System.currentTimeMillis());
-            quote.setContent(s);
-            quote.setAuthorId(event.getMember().getId());
-            quote.setPerson(person.getName());
-            person.getQuotes().add(quote);
-            person.save();
-            QuoteManager.getInstance().addQuote(quote);
+            quote = new Document("content", s);
+            quote.append("time", System.currentTimeMillis());
+            quote.append("authorId", event.getMember().getId());
+            coll.insertOne(quote);
             i++;
         }
         reply.addField("Counter","Added "+i+" quotes",false);

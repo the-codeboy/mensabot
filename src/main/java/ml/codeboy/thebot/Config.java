@@ -29,6 +29,8 @@ public class Config {
     }
 
     public String token = "token";
+    public String mongoDB_username = "";
+    public String mongoDB_passw = "";
     public String serverId = "0";
     public String prefix = "!";
     public boolean quoteStatus = true;

@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands.quotes;
 
+import ml.codeboy.thebot.apis.mongoDB.databaseClass;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Person;
@@ -8,6 +9,7 @@ import ml.codeboy.thebot.quotes.QuoteManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.bson.Document;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -60,16 +62,13 @@ public class AddQuote extends Command {
     }
 
     private void addQuote(CommandEvent event, String name, String content) {
-        Person person = QuoteManager.getInstance().getOrCreate(name);
-        Quote quote = new Quote();
-        quote.setTime(System.currentTimeMillis());
-        quote.setContent(content);
-        quote.setAuthorId(event.getMember().getId());
-        quote.setPerson(person.getName());
-        person.getQuotes().add(quote);
-        person.save();
-        QuoteManager.getInstance().addQuote(quote);
+        Document quote = new Document("content", content);
+        quote.append("time", System.currentTimeMillis());
+        quote.append("authorId", event.getMember().getId());
+
+        databaseClass.getInstance().getDatabase().getCollection(name).insertOne(quote);
+
         event.reply(new EmbedBuilder().setTitle("Added quote").setColor(Color.GREEN).build(),
-                quote.builder().build());
+                new EmbedBuilder().addField(" ",content+"\n||"+name+"||", false).build());
     }
 }
