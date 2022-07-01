@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.ArrayList;
 
+/**
+ * Echos all the quotes of the given person
+ */
 public class getQuotes extends DebugCommand {
     public getQuotes() {
         super("getQuotes", "", "gq");
@@ -17,9 +20,14 @@ public class getQuotes extends DebugCommand {
     @Override
     public void run(CommandEvent event) {
         EmbedBuilder m = null;
+        MessageEmbed[] msg;
         int i = 0;
-        MessageEmbed[] msg = new MessageEmbed[10];
+        if(QuoteManager.getInstance().getQuotes(event.getArgs()[0]).size()>10)
+            msg = new MessageEmbed[10];
+        else
+            msg = new MessageEmbed[QuoteManager.getInstance().getQuotes(event.getArgs()[0]).size()];
         for(Quote q : QuoteManager.getInstance().getQuotes(event.getArgs()[0])) {
+            System.out.println("Quote: "+q);
             m = new EmbedBuilder();
             m.setTitle(event.getArgs()[0]);
             m.addField("Quote", q.getContent(),false);
@@ -30,5 +38,6 @@ public class getQuotes extends DebugCommand {
                 i=0;
             }
         }
+        event.reply(msg);
     }
 }

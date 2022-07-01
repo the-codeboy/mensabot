@@ -1,13 +1,9 @@
 package ml.codeboy.thebot.quotes;
 
-import com.google.gson.Gson;
 import ml.codeboy.thebot.MensaBot;
-import ml.codeboy.thebot.apis.quoteAPI;
+import ml.codeboy.thebot.apis.quote_DB_API;
 import org.bson.Document;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +24,7 @@ public class QuoteManager {
     }
 
     private void loadPersons() {
-        for (String p : quoteAPI.getPersons()) {
+        for (String p : quote_DB_API.getPersons()) {
             loadPerson(p);
         }
         MensaBot.logger.info("loaded " + persons.size() + " persons with a total of " + quotes.size() + " quotes");
@@ -47,7 +43,7 @@ public class QuoteManager {
         Person person = new Person(p);
         Quote q = null;
         ArrayList<Quote> list = new ArrayList<>();
-        for(Document d : quoteAPI.getQuotes(p)) {
+        for(Document d : quote_DB_API.getQuotes(p)) {
             q = new Quote(
                     d.getString("content"),
                     d.getLong("time"),
@@ -91,6 +87,11 @@ public class QuoteManager {
         quotes.add(quote);
     }
 
+    /**
+     * This function returns all quotes from the given person
+     * @param person
+     * @return A list of all the quotes
+     */
     public ArrayList<Quote>getQuotes(String person)
     {
         return persons.get(person).getQuotes();
