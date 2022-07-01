@@ -180,3 +180,5 @@ gradle-app.setting
 config.json
 target/classes/logback.xml
 
+*.pem
+quotes/
