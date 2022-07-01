@@ -51,7 +51,7 @@ public class MensaUtil {
         if (rating != -1) {
             title += "\n";
             while (rating >= 1) {
-                title += ":star:";
+                title += "<:star:992412997886693476>";
                 rating--;
             }
             if (rating > 0.9)
