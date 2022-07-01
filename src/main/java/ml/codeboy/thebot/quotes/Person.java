@@ -6,6 +6,12 @@ public class Person {
     private String name;
     private ArrayList<Quote> quotes = new ArrayList<>();
 
+    public Person(){}
+    public Person(String name)
+    {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
@@ -22,7 +28,4 @@ public class Person {
         this.quotes = quotes;
     }
 
-    public void save() {
-        QuoteManager.getInstance().save(this);
-    }
 }
