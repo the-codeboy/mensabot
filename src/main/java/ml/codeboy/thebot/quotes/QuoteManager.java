@@ -84,6 +84,13 @@ public class QuoteManager {
     }
 
     public void addQuote(Quote quote) {
+        try {
+            persons.get(quote.getPerson()).getQuotes().add(quote);
+        }catch (NullPointerException e)
+        {
+            persons.put(quote.getPerson(),new Person(quote.getPerson()));
+            persons.get(quote.getPerson()).getQuotes().add(quote);
+        }
         quotes.add(quote);
     }
 

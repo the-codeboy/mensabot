@@ -27,7 +27,6 @@ public class getQuotes extends DebugCommand {
         else
             msg = new MessageEmbed[QuoteManager.getInstance().getQuotes(event.getArgs()[0]).size()];
         for(Quote q : QuoteManager.getInstance().getQuotes(event.getArgs()[0])) {
-            System.out.println("Quote: "+q);
             m = new EmbedBuilder();
             m.setTitle(event.getArgs()[0]);
             m.addField("Quote", q.getContent(),false);
