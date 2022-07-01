@@ -29,7 +29,7 @@ public class ListQuotes extends DebugCommand {
         {
             m = new EmbedBuilder();
             m.setTitle(p.getName());
-            for(Quote q : p.getQuotes().toArray(new Quote[0]))
+            for(Quote q : p.getQuotes())
             {
                 if(s+q.getContent().length()>1024)
                 {
