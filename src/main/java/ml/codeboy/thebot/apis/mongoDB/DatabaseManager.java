@@ -2,6 +2,7 @@ package ml.codeboy.thebot.apis.mongoDB;
 import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.MensaBot;
@@ -18,6 +19,7 @@ public class DatabaseManager {
         database_instance = new DatabaseManager();
     }
     private MongoDatabase quotesDatabase;
+    private MongoCollection karma;
     private MongoClient mongoClient;
 
     public DatabaseManager()
@@ -31,6 +33,7 @@ public class DatabaseManager {
                 .build();
         mongoClient = MongoClients.create(settings);
         quotesDatabase = mongoClient.getDatabase("quotes");
+        karma = mongoClient.getDatabase("karma").getCollection("karma");
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
             Document commandResult = quotesDatabase.runCommand(command);
@@ -43,4 +46,5 @@ public class DatabaseManager {
     public static DatabaseManager getInstance(){return database_instance;}
 
     public MongoDatabase getQuotesDatabase(){return quotesDatabase;}
+    public MongoCollection getKarma(){return karma;}
 }
