@@ -4,6 +4,7 @@ import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Person;
+import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -63,7 +64,7 @@ public class AddQuoteList extends Command {
         EmbedBuilder reply = new EmbedBuilder().setTitle("Added quote").setColor(Color.GREEN);
         int i=0;
         for(String s : content.split("`")) {
-            DatabaseQuoteAPI.saveQuote(event,name,s);
+            DatabaseQuoteAPI.saveQuote(new Quote(s,System.currentTimeMillis(),name,event.getMember().getId()));
             i++;
         }
         reply.addField("Counter","Added "+i+" quotes",false);
