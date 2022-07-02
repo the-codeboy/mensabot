@@ -95,7 +95,7 @@ public class QuoteManager {
     }
 
     /**
-     * This function returns all quotes from the given person
+     * This method returns all quotes from the given person
      * @param person
      * @return A list of all the quotes
      */
