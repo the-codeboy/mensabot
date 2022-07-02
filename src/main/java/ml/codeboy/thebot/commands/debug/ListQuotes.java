@@ -21,28 +21,31 @@ public class ListQuotes extends DebugCommand {
 
     @Override
     public void run(CommandEvent event) {
+        event.replyError("Wäre vermutlich spam");
+        /*
         Person[] persons = QuoteManager.getInstance().getPersons().toArray(new Person[0]);
         ArrayList<MessageEmbed> rep = new ArrayList<>();
         EmbedBuilder m = null;
-        int s = 0;
-        for(Person p : persons)
-        {
-            m = new EmbedBuilder();
-            m.setTitle(p.getName());
-            for(Quote q : p.getQuotes())
-            {
-                if(s+q.getContent().length()>1024)
-                {
-                    s=0;
-                    rep.add(m.build());
-                    m = new EmbedBuilder();
-                    m.setTitle(p.getName());
+        MessageEmbed[] msg;
+        int i = 0;
+        for (Person p : persons) {
+            i=0;
+            if (QuoteManager.getInstance().getQuotes(p.getName()).size() > 10)
+                msg = new MessageEmbed[10];
+            else
+                msg = new MessageEmbed[QuoteManager.getInstance().getQuotes(p.getName()).size()];
+            for (Quote q : QuoteManager.getInstance().getQuotes(p.getName())) {
+                m = new EmbedBuilder();
+                m.setTitle(p.getName());
+                m.addField("Quote", q.getContent(), false);
+                msg[i] = m.build();
+                i++;
+                if (i == 10) {
+                    event.reply(msg);
+                    i = 0;
                 }
-                m.addField("",q.getContent(), false);
-                s+=q.getContent().length();
             }
-           rep.add(m.build());
-        }
-        event.reply(rep.toArray(new MessageEmbed[0]));
+            event.reply(msg);
+        }*/
     }
 }
