@@ -2,7 +2,7 @@ package ml.codeboy.thebot.apis;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoIterable;
-import ml.codeboy.thebot.apis.mongoDB.databaseClass;
+import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
@@ -21,7 +21,7 @@ public class quote_DB_API {
         quote.append("time", System.currentTimeMillis());
         quote.append("authorId", event.getMember().getId());
         quote.append("name",name);
-        databaseClass.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).insertOne(quote);
+        DatabaseManager.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).insertOne(quote);
     }
 
     /**
@@ -29,7 +29,7 @@ public class quote_DB_API {
      * @return
      */
     public static MongoIterable<String> getPersons(){
-         return databaseClass.getInstance().getQuotesDatabase().listCollectionNames();
+         return DatabaseManager.getInstance().getQuotesDatabase().listCollectionNames();
     }
 
     /**
@@ -39,6 +39,6 @@ public class quote_DB_API {
      */
     public static FindIterable<Document> getQuotes(String name)
     {
-        return databaseClass.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).find();
+        return DatabaseManager.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).find();
     }
 }

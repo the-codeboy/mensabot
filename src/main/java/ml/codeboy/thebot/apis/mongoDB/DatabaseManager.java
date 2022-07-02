@@ -10,19 +10,19 @@ import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-public class databaseClass {
+public class DatabaseManager {
 
-    private static databaseClass database_instance;
+    private static DatabaseManager database_instance;
 
     static {
-        database_instance = new databaseClass();
+        database_instance = new DatabaseManager();
     }
     private MongoDatabase quotesDatabase;
     private MongoClient mongoClient;
 
-    public databaseClass()
+    public DatabaseManager()
     {
-        ConnectionString connectionString = new ConnectionString("mongodb+srv://"+Config.getInstance().mongoDB_username+":"+ Config.getInstance().mongoDB_passw +"@mensabot.wv6sk.mongodb.net/?retryWrites=true&w=majority");
+        ConnectionString connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .serverApi(ServerApi.builder()
@@ -40,7 +40,7 @@ public class databaseClass {
         }
     }
 
-    public static databaseClass getInstance(){return database_instance;}
+    public static DatabaseManager getInstance(){return database_instance;}
 
     public MongoDatabase getQuotesDatabase(){return quotesDatabase;}
 }

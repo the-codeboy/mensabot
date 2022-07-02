@@ -29,13 +29,12 @@ public class Config {
     }
 
     public String token = "token";
-    public String mongoDB_username = "";
-    public String mongoDB_passw = "";
     public String serverId = "0";
     public String prefix = "!";
     public boolean quoteStatus = true;
     public HashSet<String> debugAccounts = new HashSet<String>(Arrays.asList("412330776886247424", "902979780394221648", "358247499531681803"));
     public List<String> upvoteEmotes= Arrays.asList("903336533992550420"), downVoteEmotes = Arrays.asList("903336514644222033");
+    public String mongoDB_URL = "";
 
     public static Config getInstance() {
         return instance;
