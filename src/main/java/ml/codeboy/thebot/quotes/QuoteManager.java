@@ -1,7 +1,7 @@
 package ml.codeboy.thebot.quotes;
 
 import ml.codeboy.thebot.MensaBot;
-import ml.codeboy.thebot.apis.quote_DB_API;
+import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class QuoteManager {
     }
 
     private void loadPersons() {
-        for (String p : quote_DB_API.getPersons()) {
+        for (String p : DatabaseQuoteAPI.getPersons()) {
             loadPerson(p);
         }
         MensaBot.logger.info("loaded " + persons.size() + " persons with a total of " + quotes.size() + " quotes");
@@ -43,7 +43,7 @@ public class QuoteManager {
         Person person = new Person(p);
         Quote q = null;
         ArrayList<Quote> list = new ArrayList<>();
-        for(Document d : quote_DB_API.getQuotes(p)) {
+        for(Document d : DatabaseQuoteAPI.getQuotes(p)) {
             q = new Quote(
                     d.getString("content"),
                     d.getLong("time"),

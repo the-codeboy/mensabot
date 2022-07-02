@@ -1,14 +1,13 @@
-package ml.codeboy.thebot.apis;
+package ml.codeboy.thebot.apis.mongoDB;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoIterable;
-import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import org.bson.Document;
 
-public class quote_DB_API {
+public class DatabaseQuoteAPI {
     /**
      * Saves the given quote in the database and adds ist to the quote manager
      * @param event
