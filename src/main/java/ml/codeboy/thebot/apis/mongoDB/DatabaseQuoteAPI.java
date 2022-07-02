@@ -9,18 +9,16 @@ import org.bson.Document;
 
 public class DatabaseQuoteAPI {
     /**
-     * Saves the given quote in the database and adds ist to the quote manager
-     * @param event
-     * @param name
-     * @param content
+     * Saves the given quote in the database and adds it to the quote manager
+     * @param q
      */
-    public static void saveQuote(CommandEvent event, String name, String content) {
-        QuoteManager.getInstance().addQuote(new Quote(content,System.currentTimeMillis(),name,event.getMember().getId()));
-        Document quote = new Document("content", content);
-        quote.append("time", System.currentTimeMillis());
-        quote.append("authorId", event.getMember().getId());
-        quote.append("name",name);
-        DatabaseManager.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).insertOne(quote);
+    public static void saveQuote(Quote q) {
+        QuoteManager.getInstance().addQuote(q);
+        Document quote = new Document("content", q.getContent());
+        quote.append("time", q.getTime());
+        quote.append("authorId", q.getAuthorId());
+        quote.append("name",q.getPerson());
+        DatabaseManager.getInstance().getQuotesDatabase().getCollection(q.getPerson().toLowerCase()).insertOne(quote);
     }
 
     /**
