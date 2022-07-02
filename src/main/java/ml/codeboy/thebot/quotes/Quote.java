@@ -8,6 +8,13 @@ public class Quote {
     private transient String person;
     private String authorId;
 
+    public Quote(String content, long time, String person, String authorId) {
+        this.content = content;
+        this.time = time;
+        this.person = person;
+        this.authorId = authorId;
+    }
+
     public String getAuthorId() {
         return authorId;
     }
