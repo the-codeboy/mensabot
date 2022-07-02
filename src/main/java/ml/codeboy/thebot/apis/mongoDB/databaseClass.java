@@ -17,7 +17,7 @@ public class databaseClass {
     static {
         database_instance = new databaseClass();
     }
-    private MongoDatabase database;
+    private MongoDatabase quotesDatabase;
     private MongoClient mongoClient;
 
     public databaseClass()
@@ -30,10 +30,10 @@ public class databaseClass {
                         .build())
                 .build();
         mongoClient = MongoClients.create(settings);
-        database = mongoClient.getDatabase("quotes");
+        quotesDatabase = mongoClient.getDatabase("quotes");
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
-            Document commandResult = database.runCommand(command);
+            Document commandResult = quotesDatabase.runCommand(command);
             MensaBot.logger.info("Connected successfully to server.");
         } catch (MongoException me) {
             MensaBot.logger.error("An error occurred while attempting to run a command: " + me);
@@ -42,5 +42,5 @@ public class databaseClass {
 
     public static databaseClass getInstance(){return database_instance;}
 
-    public MongoDatabase getDatabase(){return database;}
+    public MongoDatabase getQuotesDatabase(){return quotesDatabase;}
 }

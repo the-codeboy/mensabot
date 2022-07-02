@@ -21,7 +21,7 @@ public class quote_DB_API {
         quote.append("time", System.currentTimeMillis());
         quote.append("authorId", event.getMember().getId());
         quote.append("name",name);
-        databaseClass.getInstance().getDatabase().getCollection(name.toLowerCase()).insertOne(quote);
+        databaseClass.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).insertOne(quote);
     }
 
     /**
@@ -29,7 +29,7 @@ public class quote_DB_API {
      * @return
      */
     public static MongoIterable<String> getPersons(){
-         return databaseClass.getInstance().getDatabase().listCollectionNames();
+         return databaseClass.getInstance().getQuotesDatabase().listCollectionNames();
     }
 
     /**
@@ -39,6 +39,6 @@ public class quote_DB_API {
      */
     public static FindIterable<Document> getQuotes(String name)
     {
-        return databaseClass.getInstance().getDatabase().getCollection(name.toLowerCase()).find();
+        return databaseClass.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).find();
     }
 }
