@@ -130,6 +130,7 @@ public class CommandHandler extends ListenerAdapter {
         this.registerCommand(new Help(bot));
 
         registerCommand(new ChuckNorrisJokeCommand());
+        registerCommand(new JermaCommand());
         registerCommand(new TrumpQuoteCommand());
         registerCommand(new AdviceCommand());
         registerCommand(new NewsCommand());
