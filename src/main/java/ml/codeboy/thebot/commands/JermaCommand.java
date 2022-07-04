@@ -28,7 +28,10 @@ public class JermaCommand extends Command {
             "https://64.media.tumblr.com/472bd9a075535cc689e76c73bf18d555/0edff908cb6a2d13-0a/s250x400/91e055646ac1581ce4d1dc316454193fa4525032.png",
             "https://64.media.tumblr.com/d65ecb339455ef61ef1629fbd7f87eba/dd50bbf401aef9ec-c7/s500x750/097e4d8538f30d2c15ea0600b16b6d62c8cd2691.jpg",
             "https://78.media.tumblr.com/6f068d4ce745609347de4e77ea3214ec/dd50bbf401aef9ec-10/s640x960/8f499e2b4b30d26ec958763701077496f0cb9d17.jpg",
-            "https://i.redd.it/zp755s2j4g281.jpg"
+            "https://i.redd.it/zp755s2j4g281.jpg",
+            "https://img.wattpad.com/cover/192991135-256-k278173.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2e8Us8bGMKnc7dPKQieKTM8w6FeoWuYRzUg&usqp=CAU",
+            "https://ih1.redbubble.net/image.2755485180.2949/fposter,small,wall_texture,product,750x1000.jpg"
     };
     private Random rand;
     public JermaCommand() {
