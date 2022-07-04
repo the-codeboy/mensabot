@@ -2,7 +2,6 @@ package ml.codeboy.thebot.commands;
 
 import ml.codeboy.thebot.events.CommandEvent;
 
-import java.util.Queue;
 import java.util.Random;
 
 public class JermaCommand extends Command {
@@ -39,7 +38,7 @@ public class JermaCommand extends Command {
             "https://i.redd.it/xul49obdim861.jpg",
             "https://i.ytimg.com/vi/pd5Rpaw-f_E/maxresdefault.jpg"
     };
-    private Random rand;
+    private final Random rand;
 
     private int p = 0;
 
@@ -68,7 +67,7 @@ public class JermaCommand extends Command {
             tmpString = a[i];
             tmpInt = rand.nextInt(a.length);
             a[i] = a[tmpInt];
-            a[tmpInt] = a[i];
+            a[tmpInt] = tmpString;
         }
     }
 }
