@@ -31,18 +31,43 @@ public class JermaCommand extends Command {
             "https://i.redd.it/zp755s2j4g281.jpg",
             "https://img.wattpad.com/cover/192991135-256-k278173.jpg",
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2e8Us8bGMKnc7dPKQieKTM8w6FeoWuYRzUg&usqp=CAU",
-            "https://ih1.redbubble.net/image.2755485180.2949/fposter,small,wall_texture,product,750x1000.jpg"
+            "https://ih1.redbubble.net/image.2755485180.2949/fposter,small,wall_texture,product,750x1000.jpg",
+            "https://preview.redd.it/7p8593qd1fx21.png?auto=webp&s=d7221076095eca74441e322794d8ed4df88db36f",
+            "https://i.ytimg.com/vi/9c6WKX9i-2g/maxresdefault.jpg",
+            "https://i.ytimg.com/vi/XxWJSbr0NwQ/maxresdefault.jpg",
+            "https://i.redd.it/xul49obdim861.jpg",
+            "https://i.ytimg.com/vi/pd5Rpaw-f_E/maxresdefault.jpg"
     };
-    private Random rand;
+    private final Random rand;
+
+    private int p = 0;
 
     public JermaCommand() {
         super("jerma", "Sends a Jerma");
         rand = new Random();
-        rand.setSeed(System.currentTimeMillis());
+        shuffle(imgs);
     }
 
     @Override
     public void run(CommandEvent event) {
-        event.reply(imgs[rand.nextInt(imgs.length)]);
+        event.reply(imgs[p++]);
+        if(p>= imgs.length)
+        {
+            shuffle(imgs);
+            p=0;
+        }
+    }
+
+    private void shuffle(String[] a)
+    {
+        String tmpString;
+        int tmpInt = 0;
+        for(int i = 0; i < a.length; i++)
+        {
+            tmpString = a[i];
+            tmpInt = rand.nextInt(a.length);
+            a[i] = a[tmpInt];
+            a[tmpInt] = tmpString;
+        }
     }
 }
