@@ -2,13 +2,14 @@ package ml.codeboy.thebot.commands;
 
 import ml.codeboy.thebot.events.CommandEvent;
 
+import java.util.Queue;
 import java.util.Random;
 
 public class JermaCommand extends Command {
     
     private static final String[] imgs = {
-        "https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609",
-        "https://static.wikia.nocookie.net/jerma-lore/images/9/91/Evil_Jerma.png/revision/latest?cb=20180210022646",
+            "https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609",
+            "https://static.wikia.nocookie.net/jerma-lore/images/9/91/Evil_Jerma.png/revision/latest?cb=20180210022646",
             "https://static.wikia.nocookie.net/youtube/images/d/da/Jerma985-2018.jpg/revision/latest?cb=20210112042437",
             "https://preview.redd.it/zhol0457vjo71.jpg?width=640&crop=smart&auto=webp&s=4f9d6fdfd179e343eceb00bf67e95dbc62dc4371",
             "https://m.media-amazon.com/images/I/31VPBUdCm7L._AC_SY450_.jpg",
@@ -28,17 +29,46 @@ public class JermaCommand extends Command {
             "https://64.media.tumblr.com/472bd9a075535cc689e76c73bf18d555/0edff908cb6a2d13-0a/s250x400/91e055646ac1581ce4d1dc316454193fa4525032.png",
             "https://64.media.tumblr.com/d65ecb339455ef61ef1629fbd7f87eba/dd50bbf401aef9ec-c7/s500x750/097e4d8538f30d2c15ea0600b16b6d62c8cd2691.jpg",
             "https://78.media.tumblr.com/6f068d4ce745609347de4e77ea3214ec/dd50bbf401aef9ec-10/s640x960/8f499e2b4b30d26ec958763701077496f0cb9d17.jpg",
-            "https://i.redd.it/zp755s2j4g281.jpg"
+            "https://i.redd.it/zp755s2j4g281.jpg",
+            "https://img.wattpad.com/cover/192991135-256-k278173.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2e8Us8bGMKnc7dPKQieKTM8w6FeoWuYRzUg&usqp=CAU",
+            "https://ih1.redbubble.net/image.2755485180.2949/fposter,small,wall_texture,product,750x1000.jpg",
+            "https://preview.redd.it/7p8593qd1fx21.png?auto=webp&s=d7221076095eca74441e322794d8ed4df88db36f",
+            "https://i.ytimg.com/vi/9c6WKX9i-2g/maxresdefault.jpg",
+            "https://i.ytimg.com/vi/XxWJSbr0NwQ/maxresdefault.jpg",
+            "https://i.redd.it/xul49obdim861.jpg",
+            "https://i.ytimg.com/vi/pd5Rpaw-f_E/maxresdefault.jpg"
     };
     private Random rand;
+
+    private int p = 0;
+
     public JermaCommand() {
         super("jerma", "Sends a Jerma");
         rand = new Random();
-        rand.setSeed(System.currentTimeMillis());
+        shuffle(imgs);
     }
 
     @Override
     public void run(CommandEvent event) {
-        event.reply(imgs[rand.nextInt(imgs.length)]);
+        event.reply(imgs[p++]);
+        if(p>= imgs.length)
+        {
+            shuffle(imgs);
+            p=0;
+        }
+    }
+
+    private void shuffle(String[] a)
+    {
+        String tmpString;
+        int tmpInt = 0;
+        for(int i = 0; i < a.length; i++)
+        {
+            tmpString = a[i];
+            tmpInt = rand.nextInt(a.length);
+            a[i] = a[tmpInt];
+            a[tmpInt] = a[i];
+        }
     }
 }
