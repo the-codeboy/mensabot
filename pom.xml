@@ -73,6 +73,11 @@
             <artifactId>mongodb-driver-sync</artifactId>
             <version>4.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.the-codeboy</groupId>
+            <artifactId>Weather4J</artifactId>
+            <version>e3554ab405</version>
+        </dependency>
 
     </dependencies>
 
