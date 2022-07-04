@@ -1,10 +1,11 @@
 package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
+import com.github.codeboy.jokes4j.Jokes4J;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
-import ml.codeboy.thebot.commands.debug.ListQuotes;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
+import ml.codeboy.thebot.commands.debug.ListQuotes;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -193,7 +194,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private String getRandomStatus() {
-        return getRandomQuoteStatus();
+        return Jokes4J.getJokeString();
     }
 
     private String getRandomAdviceStatus() {
