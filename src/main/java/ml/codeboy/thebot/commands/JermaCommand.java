@@ -5,10 +5,10 @@ import ml.codeboy.thebot.events.CommandEvent;
 import java.util.Random;
 
 public class JermaCommand extends Command {
-    
+
     private static final String[] imgs = {
-        "https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609",
-        "https://static.wikia.nocookie.net/jerma-lore/images/9/91/Evil_Jerma.png/revision/latest?cb=20180210022646",
+            "https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609",
+            "https://static.wikia.nocookie.net/jerma-lore/images/9/91/Evil_Jerma.png/revision/latest?cb=20180210022646",
             "https://static.wikia.nocookie.net/youtube/images/d/da/Jerma985-2018.jpg/revision/latest?cb=20210112042437",
             "https://preview.redd.it/zhol0457vjo71.jpg?width=640&crop=smart&auto=webp&s=4f9d6fdfd179e343eceb00bf67e95dbc62dc4371",
             "https://m.media-amazon.com/images/I/31VPBUdCm7L._AC_SY450_.jpg",
@@ -34,6 +34,7 @@ public class JermaCommand extends Command {
             "https://ih1.redbubble.net/image.2755485180.2949/fposter,small,wall_texture,product,750x1000.jpg"
     };
     private Random rand;
+
     public JermaCommand() {
         super("jerma", "Sends a Jerma");
         rand = new Random();
