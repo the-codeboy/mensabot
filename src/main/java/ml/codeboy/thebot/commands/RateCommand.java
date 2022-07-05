@@ -92,7 +92,9 @@ public class RateCommand extends Command {
                 }
                 if (found) {//check if meal exists
                     UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
-                    event.reply("Rating added: " + meal + "\n" + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ")");
+                    event.reply("Rating added: " + meal + "\n"
+                            + MensaUtil.getRatingString(rating) + " added \n"
+                            + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ") total");
                 } else {
                     event.reply("Meal not found");
                 }
