@@ -35,7 +35,7 @@ public class Config {
     public HashSet<String> debugAccounts = new HashSet<String>(Arrays.asList("412330776886247424", "902979780394221648", "358247499531681803"));
     public List<String> upvoteEmotes = Arrays.asList("903336533992550420"), downVoteEmotes = Arrays.asList("903336514644222033");
     public String mongoDB_URL = "";
-    public List<String> debugServers = Arrays.asList("0-966789128375140412");//ServerID-ChannelID //@Leo das ist, glaub ich, dein server ne?
+    public List<String> debugChannels = Arrays.asList("993961018919235644","966789128375140412");//ChannelID //@Leo das eine ist, glaub ich, dein server ne?
 
     public String openWeatherApiKey = "";
 
