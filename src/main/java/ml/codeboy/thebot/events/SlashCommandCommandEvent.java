@@ -41,6 +41,16 @@ public class SlashCommandCommandEvent extends CommandEvent {
     }
 
     @Override
+    public void edit(String message) {
+        getSlashCommandEvent().getHook().editOriginal(message).queue();
+    }
+
+    @Override
+    public void edit(MessageEmbed... embed) {
+        getSlashCommandEvent().getHook().editOriginalEmbeds(embed).queue();
+    }
+
+    @Override
     public MessageChannel getChannel() {
         return getSlashCommandEvent().getChannel();
     }

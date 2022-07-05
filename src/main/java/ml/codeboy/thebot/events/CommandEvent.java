@@ -35,6 +35,15 @@ public abstract class CommandEvent {
         reply(builder.build());
     }
 
+
+    public abstract void edit(String message);
+
+    public abstract void edit(MessageEmbed... embed);
+
+    public void edit(EmbedBuilder builder) {
+        edit(builder.build());
+    }
+
     public void replyError(String error) {
         reply(new EmbedBuilder().setTitle("Error").setDescription(error).setColor(Color.RED).build());
     }

@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.Arrays;
 
 public class MessageCommandEvent extends CommandEvent {
+
+    private Message reply = null;
+
     public MessageCommandEvent(MessageReceivedEvent jdaEvent) {
         super(jdaEvent);
     }
@@ -13,12 +16,12 @@ public class MessageCommandEvent extends CommandEvent {
     @Override
     public void reply(String message) {
         MessageReceivedEvent event = getMessageReceivedEvent();
-        event.getChannel().sendMessage(message).queue();
+        reply = event.getChannel().sendMessage(message).complete();
     }
 
     @Override
     public void reply(MessageEmbed... embed) {
-        getMessageReceivedEvent().getChannel().sendMessageEmbeds(Arrays.asList(embed)).queue();
+        reply = getMessageReceivedEvent().getChannel().sendMessageEmbeds(Arrays.asList(embed)).complete();
     }
 
     @Override
@@ -29,6 +32,20 @@ public class MessageCommandEvent extends CommandEvent {
     @Override
     public Member getMember() {
         return getMessageReceivedEvent().getMember();
+    }
+
+    @Override
+    public void edit(String message) {
+        if (reply == null)
+            throw new IllegalStateException("Can not edit message without replying first");
+        reply = reply.editMessage(message).complete();
+    }
+
+    @Override
+    public void edit(MessageEmbed... embed) {
+        if (reply == null)
+            throw new IllegalStateException("Can not edit message without replying first");
+        reply = reply.editMessageEmbeds(embed).complete();
     }
 
     @Override
