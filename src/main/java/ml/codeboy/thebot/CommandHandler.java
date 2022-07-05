@@ -114,6 +114,11 @@ public class CommandHandler extends ListenerAdapter {
 
         registerAnnouncements();
         registerBedTimeTracker();
+
+        for(String s : Config.getInstance().debugServers) {
+            String[] split = s.split("-");
+            getBot().getJda().getGuildById(split[0]).getTextChannelById(split[1]).sendMessage("Bot started").queue();
+        }
     }
 
     @Override
@@ -290,9 +295,11 @@ public class CommandHandler extends ListenerAdapter {
         counter(event);
         String content = event.getMessage().getContentRaw();
         if (!event.isFromGuild() && !event.getAuthor().isBot()) {
-            TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById("966789128375140412");
-            channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
-                    .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build()).queue();
+            for(String s : Config.getInstance().debugServers) {
+                TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById(s.split("-")[1]);
+                channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
+                        .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).build()).queue();
+            }
             return;
         }
         if (!content.startsWith(Config.getInstance().prefix))
