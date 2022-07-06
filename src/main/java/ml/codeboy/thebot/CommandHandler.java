@@ -6,6 +6,9 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
+import ml.codeboy.thebot.commands.image.meme.*;
+import ml.codeboy.thebot.commands.image.MorbCommand;
+import ml.codeboy.thebot.commands.image.ShitCommand;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -164,6 +167,8 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new KarmaTop());
         registerCommand(new KarmaBottom());
 
+        registerImageCommands();
+
         registerSecretCommands();
 
         registerDebugCommands();
@@ -173,6 +178,17 @@ public class CommandHandler extends ListenerAdapter {
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
+    }
+
+    private void registerImageCommands(){
+        registerCommand(new MorbCommand());
+        registerCommand(new ShitCommand());
+        registerCommand(new ChangeMyMindCommand());
+        registerCommand(new HotlineBlingCommand());
+        registerCommand(new TwoButtonsCommand());
+        registerCommand(new Draw25Command());
+        registerCommand(new DisasterGirlCommand());
+        registerCommand(new SupermanCommand());
     }
 
     private void registerSecretCommands() {

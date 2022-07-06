@@ -10,7 +10,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -139,6 +144,29 @@ public class Util {
         UserData data = UserDataManager.getInstance().getData(user);
         data.setKarma(data.getKarma() + amount);
         UserDataManager.getInstance().save(data);
+    }
+
+    public static BufferedImage getAvatarImage(User user) throws IOException {
+        return getImageFromUrl(user.getEffectiveAvatarUrl());
+    }
+
+    public static BufferedImage getImageFromUrl(String adress) throws IOException {
+        URL url = new URL(adress);
+        URLConnection hc = url.openConnection();
+        hc.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+        return ImageIO.read(hc.getInputStream());
+    }
+
+    public static BufferedImage ensureOpaque(BufferedImage bi) {
+        if (bi.getTransparency() == BufferedImage.OPAQUE)
+            return bi;
+        int w = bi.getWidth();
+        int h = bi.getHeight();
+        int[] pixels = new int[w * h];
+        bi.getRGB(0, 0, w, h, pixels, 0, w);
+        BufferedImage bi2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        bi2.setRGB(0, 0, w, h, pixels, 0, w);
+        return bi2;
     }
 
 
