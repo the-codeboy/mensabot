@@ -79,6 +79,12 @@
             <version>e3554ab405</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.RealCerus</groupId>
+            <artifactId>JGif</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

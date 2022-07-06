@@ -6,7 +6,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 public class TrumpQuoteCommand extends Command {
 
     public TrumpQuoteCommand() {
-        super("trump", "sends trump quotes", "shit");
+        super("trump", "sends trump quotes");
     }
 
     @Override
