@@ -8,6 +8,7 @@ import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import org.bson.Document;
 
+import javax.print.Doc;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -17,7 +18,7 @@ public class JermaCommand extends Command {
 
     private MongoCollection collection;
 
-    private FindIterable docs;
+    private Document[] docs;
 
     private final Random rand;
 
@@ -27,7 +28,12 @@ public class JermaCommand extends Command {
         super("jerma", "Sends a Jerma");
         collection = DatabaseManager.getInstance().getTextDatabase().getCollection("jerma");
         databaseSize = collection.countDocuments();
-        docs = collection.find();
+        docs = new Document[(int)databaseSize];
+        {
+            int i = 0;
+            for(Object d : collection.find())
+                docs[i++] = (Document) d;
+        }
         rand = new Random();
     }
 
@@ -36,9 +42,28 @@ public class JermaCommand extends Command {
         if(databaseSize!=collection.countDocuments())
         {
             databaseSize = collection.countDocuments();
-            docs = collection.find();
+            int i = 0;
+            for(Object d : collection.find())
+                docs[i++] = (Document) d;
             MensaBot.logger.info("Reloaded Jerma urls");
         }
-        event.reply(((Document)docs.limit(1).skip(rand.nextInt((int)databaseSize)).first()).getString("url"));
+        if(p==databaseSize)
+        {
+            shuffle(docs);
+            p=0;
+        }
+        event.reply(docs[p++].getString("url"));
+    }
+    private void shuffle(Document[] a)
+    {
+        Document tmpDoc;
+        int tmpInt = 0;
+        for(int i = 0; i < a.length; i++)
+        {
+            tmpDoc = a[i];
+            tmpInt = rand.nextInt(a.length);
+            a[i] = a[tmpInt];
+            a[tmpInt] = tmpDoc;
+        }
     }
 }
