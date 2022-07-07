@@ -19,6 +19,7 @@ public class DatabaseManager {
         database_instance = new DatabaseManager();
     }
     private MongoDatabase quotesDatabase;
+    private MongoDatabase textDatabase;
     private MongoCollection karma;
     private MongoClient mongoClient;
 
@@ -33,6 +34,7 @@ public class DatabaseManager {
                 .build();
         mongoClient = MongoClients.create(settings);
         quotesDatabase = mongoClient.getDatabase("quotes");
+        textDatabase = mongoClient.getDatabase("text");
         karma = mongoClient.getDatabase("karma").getCollection("karma");
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
@@ -47,4 +49,5 @@ public class DatabaseManager {
 
     public MongoDatabase getQuotesDatabase(){return quotesDatabase;}
     public MongoCollection getKarma(){return karma;}
+    public MongoDatabase getTextDatabase(){return textDatabase;}
 }
