@@ -180,7 +180,7 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    private void registerImageCommands(){
+    private void registerImageCommands() {
         registerCommand(new MorbCommand());
         registerCommand(new ShitCommand());
         registerCommand(new ChangeMyMindCommand());
@@ -336,7 +336,15 @@ public class CommandHandler extends ListenerAdapter {
     private void counter(MessageReceivedEvent event) {
         if (event.getChannel().getId().equals("898271566880727130") && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
             try {
-                int i = Integer.parseInt(event.getMessage().getContentRaw());
+                String content = event.getMessage().getContentRaw();
+                if (content.contains("pi")) {
+                    event.getChannel().sendMessage(Math.PI+1 + "").queue();
+                } else if (content.contains("e")) {
+                    event.getChannel().sendMessage(Math.exp(1)+1 + "").queue();
+                } else if (content.contains("g")) {
+                    event.getChannel().sendMessage(9.780327+1 + "").queue();
+                }
+                int i = Integer.parseInt(content);
                 event.getChannel().sendMessage(i + 1 + "").queue();
             } catch (NumberFormatException ignored) {
             }
