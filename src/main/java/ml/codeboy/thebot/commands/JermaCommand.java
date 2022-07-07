@@ -35,6 +35,7 @@ public class JermaCommand extends Command {
                 docs[i++] = (Document) d;
         }
         rand = new Random();
+        shuffle(docs);
     }
 
     @Override
@@ -43,6 +44,7 @@ public class JermaCommand extends Command {
         {
             databaseSize = collection.countDocuments();
             int i = 0;
+            docs = new Document[(int)databaseSize];
             for(Object d : collection.find())
                 docs[i++] = (Document) d;
             MensaBot.logger.info("Reloaded Jerma urls");
