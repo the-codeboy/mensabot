@@ -47,6 +47,8 @@ public class JermaCommand extends Command {
             docs = new Document[(int)databaseSize];
             for(Object d : collection.find())
                 docs[i++] = (Document) d;
+            shuffle(docs);
+            p=0;
             MensaBot.logger.info("Reloaded Jerma urls");
         }
         if(p==databaseSize)
