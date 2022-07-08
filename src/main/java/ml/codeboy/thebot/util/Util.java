@@ -169,5 +169,16 @@ public class Util {
         return bi2;
     }
 
+    public static <T> void shuffle(T[] a) {
+        T tmp;
+        int tmpInt = 0;
+        for (int i = 0; i < a.length; i++) {
+            tmp = a[i];
+            tmpInt = rand.nextInt(a.length);
+            a[i] = a[tmpInt];
+            a[tmpInt] = tmp;
+        }
+    }
+
 
 }
