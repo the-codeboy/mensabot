@@ -4,9 +4,14 @@ import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.data.FoodRatingManager;
+import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -84,7 +89,8 @@ public class RateCommand extends Command {
                 Mensa mensa = event.getGuildData().getDefaultMensa();
                 boolean found = false;
 
-                for (int i = 0; i <= maxDaysAgo; i++) {
+                int i = 0;
+                for (; i <= maxDaysAgo; i++) {
                     Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
                     found = mensa.getMeals(date).stream().anyMatch(m -> m.getName().equals(meal));
                     if (found)
@@ -95,12 +101,35 @@ public class RateCommand extends Command {
                     event.reply("Rating added: " + meal + "\n"
                             + MensaUtil.getRatingString(rating) + " added \n"
                             + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ") total");
+
+
+                    if (i == 0)//the rated meal was from today
+                        for (Guild guild : event.getJdaEvent().getJDA().getGuilds()) {
+                            updateGuildAnnouncements(guild, event.getJdaEvent().getJDA());//update the meal announcements of the day to include the new rating
+                        }
                 } else {
                     event.reply("Meal not found");
                 }
             } else {
                 event.reply("Invalid number. Has to be between 1 and 5");
             }
+        }
+
+    }
+
+    private void updateGuildAnnouncements(Guild guild, JDA jda) {
+        GuildData data = GuildManager.getInstance().getData(guild);
+        try {
+            Mensa mensa = data.getDefaultMensa();
+            MessageChannel channel = (MessageChannel) jda.getGuildChannelById(data.getUpdateChannelId());
+            if (channel != null) {
+                try {
+                    Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
+                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build()).complete();
+                } catch (Exception ignored) {
+                }
+            }
+        } catch (Exception ignored) {
         }
     }
 }

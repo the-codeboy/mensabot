@@ -6,9 +6,9 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
-import ml.codeboy.thebot.commands.image.meme.*;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
+import ml.codeboy.thebot.commands.image.meme.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -85,14 +85,9 @@ public class CommandHandler extends ListenerAdapter {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                try {
-                    channel.retrieveMessageById(data.getLatestAnnouncementId()).queue((message) -> {
-                        message.delete().reason("idk");
-                    });
-                } catch (Exception ignored) {
-                }
                 Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 24)).build()).complete();
                 data.setLatestAnnouncementId(message.getId());
+                data.save();
             }
         } catch (Exception ignored) {
         }
