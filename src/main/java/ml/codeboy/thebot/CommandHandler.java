@@ -2,6 +2,7 @@ package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
 import com.github.codeboy.jokes4j.Jokes4J;
+import com.github.codeboy.piston4j.api.Piston;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
@@ -332,11 +333,29 @@ public class CommandHandler extends ListenerAdapter {
     private void counter(MessageReceivedEvent event) {
         if (event.getChannel().getId().equals("898271566880727130") && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
             try {
-                int i = Integer.parseInt(event.getMessage().getContentRaw());
+                float i = evaluate(event.getMessage().getContentRaw());
                 event.getChannel().sendMessage(i + 1 + "").queue();
-            } catch (NumberFormatException ignored) {
+            } catch (Exception ignored) {
             }
         }
+    }
+
+    private float evaluate(String text) {
+        try {
+            float value = Float.parseFloat(text);
+            return value;
+        } catch (NumberFormatException ignored) {//assume this is an expression that needs to be evaluated first
+        }
+        text = text.replace("pi", "math.pi");
+        text = text.replace("e", "math.e");
+        text = text.replace("sqrt", "math.sqrt");
+        text = text.replace("abs", "math.abs");
+        text = text.replace("g", "9.81");
+        text = text.replace("R", "8.314");
+        System.out.println(text);
+        String result = Piston.getDefaultApi().execute("python", "import math\nprint(" + text + ",end=\"\")").getOutput().getOutput();
+        System.out.println("\"" + result + "\"");
+        return Float.parseFloat(result);
     }
 
 
