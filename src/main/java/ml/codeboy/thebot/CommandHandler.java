@@ -2,6 +2,8 @@ package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Mensa;
 import com.github.codeboy.jokes4j.Jokes4J;
+import com.github.codeboy.jokes4j.api.Flag;
+import com.github.codeboy.jokes4j.api.JokeRequest;
 import com.github.codeboy.piston4j.api.Piston;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
@@ -210,11 +212,11 @@ public class CommandHandler extends ListenerAdapter {
                 } while (status.length() > 128 || status.length() == 0);
                 getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status, "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
             }
-        }, 0, 5 * 60_000);
+        }, 0, 60_000);
     }
 
     private String getRandomStatus() {
-        return Jokes4J.getJokeString();
+        return Jokes4J.getInstance().getJoke(new JokeRequest.Builder().blackList(Flag.explicit, Flag.nsfw, Flag.racist, Flag.sexist).build()).getJoke();
     }
 
     private String getRandomAdviceStatus() {
