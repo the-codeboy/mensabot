@@ -28,13 +28,13 @@ public class ShortsCommand extends Command {
         }
         int sunrise = response.getCity().getSunrise();
         int sunset = response.getCity().getSunset();
-        int lowestTempForShorts = 20;
+        int lowestTempForShorts = 15;
         float lowestTempToday = 100;
         boolean shortsWeather = true;
         for (HourlyForecast hf : response.getList()) {
             if (hf.getDt() > sunrise && hf.getDt() < sunset) {
                 if (hf.getMain().getTemp_min() < lowestTempToday) {
-                    lowestTempToday = hf.getMain().getTemp_min();
+                    lowestTempToday = hf.getMain().getFeels_like();
                 }
             }
         }
