@@ -12,9 +12,11 @@ public abstract class CachedAPI<T> extends API {
     }
 
     protected CachedAPI(int cacheSize) {
+        cacheSize = 1;
         this.cacheSize = cacheSize;
+        int finalCacheSize = cacheSize;
         new Thread(() -> {
-            while (cache.size() < cacheSize)
+            while (cache.size() < finalCacheSize)
                 cache.add(requestObject());
         }).start();
     }
