@@ -12,7 +12,7 @@ public abstract class CachedAPI<T> extends API {
     }
 
     protected CachedAPI(int cacheSize) {
-        cacheSize = 1;
+        cacheSize = 0;
         this.cacheSize = cacheSize;
         int finalCacheSize = cacheSize;
         new Thread(() -> {
