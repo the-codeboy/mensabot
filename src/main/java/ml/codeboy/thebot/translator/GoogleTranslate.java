@@ -185,7 +185,6 @@ public final class GoogleTranslate { //Class marked as final since all methods a
 //        for (int i = 0; i < sentences; i++) {
 //            String sentence = "{ \"s\":\"" + (i == 0 ? "" : " ") + raw[1 + 8 * i] + "\"}";
 //            sentence = sentence.replace("\\'", "\\\"");
-//            //System.out.println("sentence "+sentence);
 //            JsonElement object = JsonParser.parseString(sentence);
 //            sentence = object.getAsJsonObject().get("s").getAsString();
 //            result.append(sentence);

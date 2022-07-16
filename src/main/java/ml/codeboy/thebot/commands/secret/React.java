@@ -19,7 +19,6 @@ public class React extends SecretCommand {
             String reaction = args[2];
             JDA jda = event.getJdaEvent().getJDA();
             TextChannel channel = (TextChannel) jda.getGuildChannelById(channelId);
-            System.out.println(messageId);
             Message message = channel.getHistoryAround(messageId, 1).complete().getMessageById(messageId);
             message.addReaction(jda.getEmoteById(reaction)).complete();
         }

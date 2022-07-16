@@ -16,8 +16,6 @@ public class Help extends Command {
 
     @Override
     public void run(CommandEvent event) {
-        System.out.println(bot);
-        System.out.println(bot.getCmdHandler());
         Collection<Command> commands = bot.getCmdHandler().getCommands();
         EmbedBuilder embedBuilder = newBuilder();
         embedBuilder.setTitle("Help for commands", "https://cntr.click/g3PZ5hm");

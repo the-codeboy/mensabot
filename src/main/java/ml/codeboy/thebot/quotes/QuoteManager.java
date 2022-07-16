@@ -1,8 +1,9 @@
 package ml.codeboy.thebot.quotes;
 
-import ml.codeboy.thebot.MensaBot;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +11,12 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class QuoteManager {
-    private static QuoteManager instance = new QuoteManager();
-    private HashMap<String, Person> persons = new HashMap<>();
-    private ArrayList<Quote> quotes = new ArrayList<>();
-    private Random random = new Random();
+    private static final QuoteManager instance = new QuoteManager();
+    private final HashMap<String, Person> persons = new HashMap<>();
+    private final ArrayList<Quote> quotes = new ArrayList<>();
+    private final Random random = new Random();
+    private final Logger logger
+            = LoggerFactory.getLogger(getClass());
 
     private QuoteManager() {
         loadPersons();
@@ -27,7 +30,7 @@ public class QuoteManager {
         for (String p : DatabaseQuoteAPI.getPersons()) {
             loadPerson(p);
         }
-        MensaBot.logger.info("loaded " + persons.size() + " persons with a total of " + quotes.size() + " quotes");
+        logger.info("loaded " + persons.size() + " persons with a total of " + quotes.size() + " quotes");
     }
 
     public void registerPerson(Person person) {
@@ -36,7 +39,7 @@ public class QuoteManager {
             quote.setPerson(person.getName());
         }
         quotes.addAll(person.getQuotes());
-        MensaBot.logger.info("registered " + person.getName() + " with " + person.getQuotes().size() + " quotes");
+        logger.info("registered " + person.getName() + " with " + person.getQuotes().size() + " quotes");
     }
 
     private void loadPerson(String p) {

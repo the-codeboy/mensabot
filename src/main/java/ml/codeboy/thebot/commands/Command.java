@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ public abstract class Command {
     private final String[] aliases;
     private Permission[] requiredPermisions = new Permission[0];
     private boolean hidden = false;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public Command(String name, String description, String... aliases) {
         this.name = name;
@@ -108,5 +111,9 @@ public abstract class Command {
 
     public void autoComplete(String option, List<String> options) {
         //do nothing by default
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

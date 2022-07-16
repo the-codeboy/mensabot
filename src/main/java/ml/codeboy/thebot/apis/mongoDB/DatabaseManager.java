@@ -1,30 +1,34 @@
 package ml.codeboy.thebot.apis.mongoDB;
+
 import com.mongodb.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import ml.codeboy.thebot.Config;
-import ml.codeboy.thebot.MensaBot;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatabaseManager {
 
-    private static DatabaseManager database_instance;
+    private static final DatabaseManager database_instance;
 
     static {
         database_instance = new DatabaseManager();
     }
-    private MongoDatabase quotesDatabase;
-    private MongoDatabase textDatabase;
-    private MongoCollection karma;
-    private MongoClient mongoClient;
 
-    public DatabaseManager()
-    {
+    private final MongoDatabase quotesDatabase;
+    private final MongoDatabase textDatabase;
+    private final MongoCollection karma;
+    private final MongoClient mongoClient;
+    private final Logger logger
+            = LoggerFactory.getLogger(getClass());
+
+    public DatabaseManager() {
         ConnectionString connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
@@ -39,9 +43,9 @@ public class DatabaseManager {
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
             Document commandResult = quotesDatabase.runCommand(command);
-            MensaBot.logger.info("Connected successfully to server.");
+            logger.info("Connected successfully to server.");
         } catch (MongoException me) {
-            MensaBot.logger.error("An error occurred while attempting to run a command: " + me);
+            logger.error("An error occurred while attempting to run a command: " + me);
         }
     }
 

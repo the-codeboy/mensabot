@@ -91,7 +91,6 @@ public class Util {
                 message.editMessageEmbeds(Util.getSongInfo(track, event.getBuilder()).build()).complete();
                 if (track.getPosition() >= track.getDuration() - 300 || player.getPlayingTrack() != track) {
                     cancel();
-//                    System.out.println("cancelled current track display");
                 }
             }
         }, 1000, 5000);

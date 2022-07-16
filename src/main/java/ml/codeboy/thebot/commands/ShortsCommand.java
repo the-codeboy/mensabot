@@ -39,7 +39,6 @@ public class ShortsCommand extends Command {
             }
         }
         shortsWeather = lowestTempToday > lowestTempForShorts;
-        System.out.println(lowestTempToday);
         EmbedBuilder builder = event.getBuilder();
         builder.setColor(shortsWeather ? Color.GREEN : Color.RED);
         builder.setTitle(shortsWeather ? "It is shorts weather today" : "It isn't shorts weather today");

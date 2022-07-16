@@ -17,7 +17,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private CommandEvent latestEvent = null;
     private int loop = 0, currentLoop = 0;
     private boolean destroyed = false;
-    private GuildMusicManager manager;
+    private final GuildMusicManager manager;
 
     public TrackScheduler(GuildMusicManager manager) {
         this.player = manager.audioPlayer;
@@ -75,7 +75,6 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void loop(int times) {
         loop = times;
-//        System.out.println("looping "+times+" times");
     }
 
     public void loopQueue() {
@@ -89,7 +88,6 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason == AudioTrackEndReason.FINISHED && currentLoop++ < loop) {
-            System.out.println("looping");
             play(track.makeClone());
         } else if (endReason != AudioTrackEndReason.REPLACED) {
             if (endReason.mayStartNext || nextQueue != null)

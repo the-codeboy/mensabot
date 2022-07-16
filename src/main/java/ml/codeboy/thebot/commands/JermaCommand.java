@@ -1,7 +1,6 @@
 package ml.codeboy.thebot.commands;
 
 import com.mongodb.client.MongoCollection;
-import ml.codeboy.thebot.MensaBot;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import org.bson.Document;
@@ -41,8 +40,8 @@ public class JermaCommand extends Command {
             for(Object d : collection.find())
                 docs[i++] = (Document) d;
             shuffle(docs);
-            p=0;
-            MensaBot.logger.info("Reloaded Jerma urls");
+            p = 0;
+            getLogger().info("Reloaded Jerma urls");
         }
         if(p==databaseSize)
         {
