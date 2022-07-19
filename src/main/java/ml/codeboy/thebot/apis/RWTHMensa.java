@@ -3,14 +3,27 @@ package ml.codeboy.thebot.apis;
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import com.github.codeboy.api.MensaImpl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RWTHMensa implements Mensa {
-    private final Mensa mensa;
+    private Mensa mensa;
 
     public RWTHMensa(Mensa mensa) {
+        this.mensa = mensa;
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                setMensa(new MensaImpl(mensa.getId(), mensa.getName(), mensa.getCity(), mensa.getAddress(), mensa.getCoordinates()));
+            }
+        }, 1000 * 60 * 60, 1000 * 60 * 60);//clears the mensas cache once per hour
+    }
+
+    private void setMensa(Mensa mensa) {
         this.mensa = mensa;
     }
 
