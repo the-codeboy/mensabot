@@ -12,24 +12,28 @@ import java.awt.*;
 import java.util.List;
 
 public class KarmaTop extends Command {
+    public static final long updateInterval = 6000;
+
     public KarmaTop() {
         super("KarmaTop", "Karma Bestenliste", "kt");
     }
 
+    private CommandEvent latestEvent;
+    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaTop")
+            .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
+
     @Override
     public void register(CommandHandler handler) {
-        updateKarmaTop(handler.getServer().getJDA());
+//        updateKarmaTop(handler.getServer().getJDA());//initialisation is done when the command is first run
     }
+
+    private long lastUpdated = 0;
 
     @Override
     public void run(CommandEvent event) {
+        latestEvent = event;
         event.reply(getKarmaTop(event.getJdaEvent().getJDA()));
     }
-
-    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaTop")
-            .setDescription("please use the command again").setColor(Color.RED).build();
-    private long lastUpdated = 0;
-    private final long updateInterval = 60000;
 
     private MessageEmbed getKarmaTop(JDA jda) {
         if (lastUpdated + updateInterval < System.currentTimeMillis()) {
@@ -41,8 +45,7 @@ public class KarmaTop extends Command {
     private void updateKarmaTop(JDA jda) {
         new Thread(() -> {
             EmbedBuilder builder = new EmbedBuilder();
-            builder.setTitle("KarmaTop")
-                    .setDescription("Updated every 10 Minutes");
+            builder.setTitle("KarmaTop");
             List<UserData> karmaTop = UserDataManager.getInstance().getKarmaSorted();
             for (int i = 0; i < 10; i++) {
                 UserData data = karmaTop.get(i);
@@ -50,6 +53,8 @@ public class KarmaTop extends Command {
             }
             this.karmaTop = builder.build();
             lastUpdated = System.currentTimeMillis();
+            if (latestEvent != null)
+                latestEvent.edit(this.karmaTop);
         }).start();
     }
 }

@@ -20,6 +20,7 @@ import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
+import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
@@ -82,6 +83,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     public CommandHandler(Bot bot) {
+        UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
         this.bot = bot;
         bot.getJda().addEventListener(this);
         String serverID = Config.getInstance().serverId;

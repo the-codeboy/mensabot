@@ -2,11 +2,14 @@ package ml.codeboy.thebot.data;
 
 import com.google.gson.Gson;
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
 
 public class UserDataManager {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String userDataFolder = "users";
 
     private static final UserDataManager instance = new UserDataManager();
@@ -81,6 +84,7 @@ public class UserDataManager {
             }
         }
         updateKarmaTop();
+        logger.info("finished loading user data for " + getAllUserData().size() + " users");
     }
 
 
