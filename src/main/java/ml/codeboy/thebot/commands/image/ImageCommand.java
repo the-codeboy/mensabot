@@ -18,7 +18,7 @@ public abstract class ImageCommand extends Command {
     }
 
 
-    protected void drawString(Graphics g, String s, Rectangle position) {
+    protected boolean drawString(Graphics g, String s, Rectangle position) {
         g.setFont(g.getFont().deriveFont(1f));
 
         while (fits(g, s, position)) {
@@ -26,8 +26,12 @@ public abstract class ImageCommand extends Command {
         }
         changeSize(g, -1);
 
+        if (g.getFont().getSize() < 8)
+            return false;//this is too small to read
+
         g.setColor(Color.BLACK);
         g.drawString(s, position.x, position.y + position.height);
+        return true;
     }
 
     private boolean fits(Graphics g, String msg, Rectangle pos) {

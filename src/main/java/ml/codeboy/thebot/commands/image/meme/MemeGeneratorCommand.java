@@ -54,7 +54,12 @@ public class MemeGeneratorCommand extends ImageCommand {
         for (int i = 0; i < bounds.length; i++) {
             if (captions.length <= i)
                 break;
-            drawString(g, captions[i], bounds[i]);
+            boolean success = drawString(g, captions[i], bounds[i]);
+            if (!success) {
+                g.dispose();
+                event.replyError("That is too much text!");
+                return;
+            }
         }
         g.dispose();
 
