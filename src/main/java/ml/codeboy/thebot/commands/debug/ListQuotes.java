@@ -1,18 +1,13 @@
 package ml.codeboy.thebot.commands.debug;
 
-import ml.codeboy.thebot.Config;
-import ml.codeboy.thebot.data.UserData;
-import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Person;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class ListQuotes extends DebugCommand {
     public ListQuotes() {

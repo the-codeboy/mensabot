@@ -3,6 +3,7 @@ package ml.codeboy.thebot.events;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class SlashCommandCommandEvent extends CommandEvent {
@@ -26,6 +27,14 @@ public class SlashCommandCommandEvent extends CommandEvent {
     }
 
     @Override
+    public void reply(File file, String name) {
+        if (getSlashCommandEvent().isAcknowledged()) {
+            getSlashCommandEvent().getHook().editOriginal(file, name).complete();
+        } else
+            getSlashCommandEvent().replyFile(file, name).complete();
+    }
+
+    @Override
     public Guild getGuild() {
         return getSlashCommandEvent().getGuild();
     }
@@ -38,6 +47,16 @@ public class SlashCommandCommandEvent extends CommandEvent {
     @Override
     public Member getMember() {
         return getSlashCommandEvent().getMember();
+    }
+
+    @Override
+    public void edit(String message) {
+        getSlashCommandEvent().getHook().editOriginal(message).queue();
+    }
+
+    @Override
+    public void edit(MessageEmbed... embed) {
+        getSlashCommandEvent().getHook().editOriginalEmbeds(embed).queue();
     }
 
     @Override

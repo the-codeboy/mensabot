@@ -12,10 +12,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class CommandEvent {
+    private static final Random random = new Random();
     private final Event jdaEvent;
     private boolean ephermal = false;
 
@@ -33,6 +39,32 @@ public abstract class CommandEvent {
 
     public void reply(EmbedBuilder builder) {
         reply(builder.build());
+    }
+
+
+    public abstract void edit(String message);
+
+    public abstract void edit(MessageEmbed... embed);
+
+    public void edit(EmbedBuilder builder) {
+        edit(builder.build());
+    }
+
+    public abstract void reply(File file, String name);
+
+    public void reply(BufferedImage image, String type) {
+        reply(image, type, "image");
+    }
+
+    public void reply(BufferedImage image, String type, String name) {
+        File file = new File("images/" + random.nextInt() + "." + type);
+        try {
+            ImageIO.write(image, type, file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        reply(file, name + "." + type);
+        file.delete();
     }
 
     public void replyError(String error) {

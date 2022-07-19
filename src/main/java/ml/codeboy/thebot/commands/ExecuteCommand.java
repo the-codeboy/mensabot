@@ -26,7 +26,6 @@ public class ExecuteCommand extends Command {
     }
 
 
-
     @Override
     public void autoComplete(String option, List<String> options) {
         switch (option) {
@@ -75,21 +74,18 @@ public class ExecuteCommand extends Command {
             String codeValue;
             //input builder
             input.setTitle("Execution output").setDescription("Language: " + result.getLanguage());
-            codeValue="```" + language + "\n" + code + "\n```";
-            if(codeValue.length()>1024)
-                codeValue="Code too long to fit in this message :(";
+            codeValue = "```" + language + "\n" + code + "\n```";
+            if (codeValue.length() > 1024)
+                codeValue = "Code too long to fit in this message :(";
             input.addField("code", codeValue, false);
             //out builder
             out.addField("output", output.getOutput(), false);
             //err builder
             err.setTitle("Error output");
-            if(error.getCode()!=0)
-            {
-                err.addField("Error:","```bash\n"+error.getStderr()+"\n```",false);
+            if (error != null && error.getCode() != 0) {
+                err.addField("Error:", "```bash\n" + error.getStderr() + "\n```", false);
                 ret = new MessageEmbed[]{input.build(), out.build(), err.build()};
-            }
-            else
-            {
+            } else {
                 ret = new MessageEmbed[]{input.build(), out.build()};
             }
             event.reply(ret);
