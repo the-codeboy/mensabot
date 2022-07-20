@@ -16,6 +16,7 @@ public class ShortsCommand extends Command {
     public ShortsCommand() {
         super("ShouldIWearShortsToday", "Lets you know if you should wear shorts today", "shorts");
         weather4J = new OpenWeatherApi(Config.getInstance().openWeatherApiKey);
+        setGuildOnlyCommand(false);
     }
 
     @Override

@@ -25,6 +25,7 @@ public class WeatherCommand extends ImageCommand {
     public WeatherCommand() {
         super("weather", "send forecast", "forecast");
         setHidden(false);
+        setGuildOnlyCommand(false);
     }
 
     @Override

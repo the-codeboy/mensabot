@@ -7,6 +7,7 @@ public class InsultCommand extends Command {
 
     public InsultCommand() {
         super("insult", "Insults you");
+        setGuildOnlyCommand(false);
     }
 
     @Override

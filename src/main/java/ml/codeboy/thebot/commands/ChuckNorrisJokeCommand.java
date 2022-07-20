@@ -6,6 +6,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 public class ChuckNorrisJokeCommand extends Command {
     public ChuckNorrisJokeCommand() {
         super("chuckNorrisJoke", "Sends a Chuck Norris joke");
+        setGuildOnlyCommand(false);
     }
 
     @Override

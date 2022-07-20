@@ -19,7 +19,7 @@ public abstract class Command {
     private final String name, description;
     private final String[] aliases;
     private Permission[] requiredPermisions = new Permission[0];
-    private boolean hidden = false;
+    private boolean hidden = false, guildOnlyCommand = true;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public Command(String name, String description, String... aliases) {
@@ -39,6 +39,10 @@ public abstract class Command {
     }
 
     public void execute(CommandEvent event) {
+        if (isGuildOnlyCommand() && event.getGuild() == null) {
+            event.replyError("You can only use this command on a server. If you think this is a mistake just send the bot a message");
+            return;
+        }
         if (!hasPermission(event)) {
             event.reply("Insufficient permissions");
             return;
@@ -88,6 +92,14 @@ public abstract class Command {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public boolean isGuildOnlyCommand() {
+        return guildOnlyCommand;
+    }
+
+    protected void setGuildOnlyCommand(boolean guildOnlyCommand) {
+        this.guildOnlyCommand = guildOnlyCommand;
     }
 
     public void autoComplete(CommandAutoCompleteInteractionEvent event) {

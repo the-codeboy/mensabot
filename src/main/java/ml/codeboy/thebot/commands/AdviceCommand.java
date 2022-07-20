@@ -6,6 +6,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 public class AdviceCommand extends Command {
     public AdviceCommand() {
         super("advice", "Gives you advice");
+        setGuildOnlyCommand(false);
     }
 
     @Override

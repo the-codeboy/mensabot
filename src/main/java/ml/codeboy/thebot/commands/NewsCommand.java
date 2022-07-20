@@ -7,6 +7,7 @@ public class NewsCommand extends Command {
 
     public NewsCommand() {
         super("news", "Sends news articles");
+        setGuildOnlyCommand(false);
     }
 
     @Override

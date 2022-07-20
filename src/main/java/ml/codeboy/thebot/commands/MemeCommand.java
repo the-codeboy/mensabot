@@ -9,6 +9,7 @@ public class MemeCommand extends Command {
 
     public MemeCommand() {
         super("meme", "sends a meme");
+        setGuildOnlyCommand(false);
     }
 
     @Override

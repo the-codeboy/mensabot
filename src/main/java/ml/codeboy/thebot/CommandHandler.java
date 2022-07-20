@@ -338,7 +338,6 @@ public class CommandHandler extends ListenerAdapter {
                     }
                 }
             }
-            return;
         }
         if (!content.startsWith(Config.getInstance().prefix))
             return;
@@ -346,8 +345,13 @@ public class CommandHandler extends ListenerAdapter {
         String cmd = content.split(" ", 2)[0];
         Command command = getCommand(cmd);
         if (command != null) {
-            logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
-                    + ": " + event.getMessage().getContentRaw());
+            if (event.isFromGuild()) {
+                logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
+                        + ": " + event.getMessage().getContentRaw());
+            } else {
+                logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
+            }
+
             command.execute(new MessageCommandEvent(event));
         }
     }

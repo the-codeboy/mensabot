@@ -14,6 +14,7 @@ import java.util.List;
 public class Karma extends Command {
     public Karma() {
         super("Karma", "gives the karma of a user");
+        setGuildOnlyCommand(false);
     }
 
     @Override

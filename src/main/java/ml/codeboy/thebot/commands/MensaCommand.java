@@ -25,6 +25,7 @@ public class MensaCommand extends Command {
         for (Mensa mensa : mensas) {
             OpenMensa.getInstance().addMensa(new RWTHMensa(mensa));
         }
+        setGuildOnlyCommand(false);
     }
 
     @Override

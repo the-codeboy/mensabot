@@ -18,6 +18,7 @@ public class KarmaBottom extends Command {
 
     public KarmaBottom() {
         super("KarmaBottom", "Karma Schlechtestenliste", "kb");
+        setGuildOnlyCommand(false);
     }
 
     private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaBottom")
