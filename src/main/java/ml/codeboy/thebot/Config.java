@@ -32,8 +32,8 @@ public class Config {
     public boolean quoteStatus = true;
     public Set<String> debugAccounts = new HashSet<>(Arrays.asList("412330776886247424",
             "902979780394221648", "358247499531681803"));//eg contributers - for debugging
-    public List<String> upvoteEmotes = Collections.singletonList("903336533992550420"),
-            downVoteEmotes = Collections.singletonList("903336514644222033");
+    public List<String> upvoteEmotes = Collections.singletonList("hochwaehli:903336533992550420"),
+            downVoteEmotes = Collections.singletonList("runterwaehli:903336514644222033");
     public String mongoDB_URL = "";
     public List<String> debugChannels = Arrays.asList("993961018919235644", "966789128375140412");//will receive logs
 
