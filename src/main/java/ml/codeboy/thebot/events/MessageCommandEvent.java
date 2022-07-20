@@ -2,7 +2,6 @@ package ml.codeboy.thebot.events;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.utils.AttachmentOption;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,8 +26,13 @@ public class MessageCommandEvent extends CommandEvent {
     }
 
     @Override
-    public void reply(File file,String name) {
-        reply = getMessageReceivedEvent().getChannel().sendFile(file,name).complete();
+    public void reply(File file, String name) {
+        reply = getMessageReceivedEvent().getChannel().sendFile(file, name).complete();
+    }
+
+    @Override
+    public void reply(String message, File file, String name) {
+        reply = getMessageReceivedEvent().getChannel().sendMessage(message).addFile(file, name).complete();
     }
 
     @Override

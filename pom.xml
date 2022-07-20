@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.github.the-codeboy</groupId>
             <artifactId>Weather4J</artifactId>
-            <version>e2c21a9fa6</version>
+            <version>f2da6092b3</version>
         </dependency>
 
         <dependency>

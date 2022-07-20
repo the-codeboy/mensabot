@@ -19,6 +19,10 @@ public abstract class ImageCommand extends Command {
 
 
     protected void drawString(Graphics g, String s, Rectangle position) {
+        drawString(g, s, position, Color.BLACK);
+    }
+
+    protected void drawString(Graphics g, String s, Rectangle position, Color color) {
         g.setFont(g.getFont().deriveFont(1f));
 
         while (fits(g, s, position)) {
@@ -26,7 +30,7 @@ public abstract class ImageCommand extends Command {
         }
         changeSize(g, -1);
 
-        g.setColor(Color.BLACK);
+        g.setColor(color);
         g.drawString(s, position.x, position.y + position.height);
     }
 

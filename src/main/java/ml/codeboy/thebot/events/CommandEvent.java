@@ -33,6 +33,8 @@ public abstract class CommandEvent {
 
     public abstract void reply(MessageEmbed... embed);
 
+    public abstract void reply(String message, File file, String name);
+
     public abstract User getUser();
 
     public abstract Member getMember();
@@ -57,13 +59,23 @@ public abstract class CommandEvent {
     }
 
     public void reply(BufferedImage image, String type, String name) {
+        reply(null, image, type, name);
+    }
+
+    public void reply(String message, BufferedImage image, String type) {
+        reply(message, image, type, "image");
+    }
+
+    public void reply(String message, BufferedImage image, String type, String name) {
         File file = new File("images/" + random.nextInt() + "." + type);
         try {
             ImageIO.write(image, type, file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        reply(file, name + "." + type);
+        if (message == null)
+            reply(file, name + "." + type);
+        else reply(message, file, name + "." + type);
         file.delete();
     }
 
