@@ -18,12 +18,11 @@ public abstract class ImageCommand extends Command {
     }
 
 
-
-    protected void drawString(Graphics g, String s, Rectangle position) {
+    public static void drawString(Graphics g, String s, Rectangle position) {
         drawString(g, s, position, Color.BLACK);
     }
 
-    protected void drawString(Graphics g, String s, Rectangle position, Color color) {
+    public static void drawString(Graphics g, String s, Rectangle position, Color color) {
         g.setFont(g.getFont().deriveFont(1f));
 
         while (fits(g, s, position)) {
@@ -39,15 +38,15 @@ public abstract class ImageCommand extends Command {
         return true;
     }
 
-    private boolean fits(Graphics g, String msg, Rectangle pos) {
+    public static boolean fits(Graphics g, String msg, Rectangle pos) {
         return biggerThan(pos, g.getFontMetrics().getStringBounds(msg, g));
     }
 
-    private boolean biggerThan(Rectangle2D r, Rectangle2D r2) {
+    public static boolean biggerThan(Rectangle2D r, Rectangle2D r2) {
         return r.getWidth() > r2.getWidth() && r.getHeight() > r2.getHeight();
     }
 
-    private void changeSize(Graphics g, int amount) {
+    public static void changeSize(Graphics g, int amount) {
         g.setFont(g.getFont().deriveFont((float) g.getFont().getSize() + amount));
     }
 

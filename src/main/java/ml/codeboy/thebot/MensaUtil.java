@@ -26,7 +26,7 @@ public class MensaUtil {
             String symbol = getEmojiForMeal(meal);
             String description = meal.getCategory() +
                     (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
-                            + " (" + toPrice(meal.getPrices().getOthers()) + ")" : "");
+                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
             String title = symbol + " " + meal.getName();
             double rating = FoodRatingManager.getInstance().getRating(meal.getName());
             title += getRatingString(rating);

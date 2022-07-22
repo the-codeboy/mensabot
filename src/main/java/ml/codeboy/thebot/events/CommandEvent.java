@@ -1,5 +1,7 @@
 package ml.codeboy.thebot.events;
 
+import com.github.codeboy.OpenMensa;
+import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.sound.GuildMusicManager;
 import ml.codeboy.thebot.commands.sound.PlayerManager;
@@ -163,6 +165,12 @@ public abstract class CommandEvent {
 
     public void setEphermal(boolean ephermal) {
         this.ephermal = ephermal;
+    }
+
+    public Mensa getDefaultMensa() {
+        if (getGuild() == null)
+            return OpenMensa.getInstance().getMensa(187);
+        return getGuildData().getDefaultMensa();
     }
 
     //endregion
