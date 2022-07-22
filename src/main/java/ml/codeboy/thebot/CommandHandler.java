@@ -5,6 +5,8 @@ import com.github.codeboy.jokes4j.Jokes4J;
 import com.github.codeboy.jokes4j.api.Flag;
 import com.github.codeboy.jokes4j.api.JokeRequest;
 import com.github.codeboy.piston4j.api.Piston;
+import ml.codeboy.met.Weather4J;
+import ml.codeboy.met.data.Forecast;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
@@ -45,12 +47,18 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
 
 public class CommandHandler extends ListenerAdapter {
     private final Logger logger
@@ -69,16 +77,20 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAnnouncements() {
         Date date = new Date();
-        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600));
+        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), false);
+        announceIn(60 * 60 * 8 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
     }
 
-    private void announceIn(int seconds) {
+    private void announceIn(int seconds, boolean includeWeather) {
         if (seconds < 0)
             seconds += 24 * 60 * 60;
         seconds += 10;//make sure it doesn't send to early
         executorService.schedule(() -> {
-            registerAnnouncements();
-            sendToAllGuilds();
+            sendMealsToAllGuilds();
+            if (includeWeather)
+                sendWeatherToAllGuilds();
+            else
+                registerAnnouncements();
         }, seconds, TimeUnit.SECONDS);
     }
 
@@ -105,13 +117,13 @@ public class CommandHandler extends ListenerAdapter {
 
     }
 
-    private void sendToGuild(Guild guild) {
+    private void sendMealsToGuild(Guild guild) {
         GuildData data = GuildManager.getInstance().getData(guild);
         try {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 24)).build()).complete();
+                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 5)).build()).complete();
                 data.setLatestAnnouncementId(message.getId());
                 data.save();
             }
@@ -119,10 +131,46 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    private void sendToAllGuilds() {
+    private void sendMealsToAllGuilds() {
         logger.info("Sending meals to guilds");
         for (Guild guild : getBot().getJda().getGuilds()) {
-            sendToGuild(guild);
+            sendMealsToGuild(guild);
+        }
+    }
+
+    private void sendWeatherToGuild(Guild guild) {
+        GuildData data = GuildManager.getInstance().getData(guild);
+        try {
+            Mensa mensa = data.getDefaultMensa();
+            MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
+            if (channel != null) {
+                List<Double> coordinates = mensa.getCoordinates();
+                String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
+                List<Forecast> forecasts = Weather4J.getForecasts(lat, lon);
+                Instant now = Instant.now();
+                while (forecasts.get(1).getTime().isBefore(now)) {
+                    forecasts.remove(0);
+                }
+
+                BufferedImage image = generateForecastImage(forecasts, 16);
+                File file = new File("images/" + new Random().nextInt() + ".png");
+                try {
+                    ImageIO.write(image, "png", file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                channel.sendMessage("Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
+                        .addFile(file, "weather_forecast").complete();
+                file.delete();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void sendWeatherToAllGuilds() {
+        logger.info("Sending weather to guilds");
+        for (Guild guild : getBot().getJda().getGuilds()) {
+            sendWeatherToGuild(guild);
         }
     }
 
