@@ -103,6 +103,8 @@ public abstract class Command {
     }
 
     public void autoComplete(CommandAutoCompleteInteractionEvent event) {
+        if (!event.isFromGuild() && isGuildOnlyCommand())//no autocompletion if the command isn't supported
+            return;
         List<String> options = new ArrayList<>();
         autoComplete(event.getFocusedOption().getName(), options);
 
