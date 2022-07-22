@@ -3,27 +3,58 @@ package ml.codeboy.thebot.commands;
 import ml.codeboy.openweathermap.OpenWeatherApi;
 import ml.codeboy.openweathermap.data.ApiResponse;
 import ml.codeboy.openweathermap.data.HourlyForecast;
+import ml.codeboy.openweathermap.data.Location;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 
 public class ShortsCommand extends Command {
-    private final OpenWeatherApi weather4J;
+    private static OpenWeatherApi openWeather;
 
     public ShortsCommand() {
         super("ShouldIWearShortsToday", "Lets you know if you should wear shorts today", "shorts");
-        weather4J = new OpenWeatherApi(Config.getInstance().openWeatherApiKey);
+        openWeather = new OpenWeatherApi(Config.getInstance().openWeatherApiKey);
         setGuildOnlyCommand(false);
+    }
+
+    public static OpenWeatherApi getOpenWeather() {
+        return openWeather;
+    }
+
+    @Override
+    public SlashCommandData getCommandData() {
+        return super.getCommandData().addOption(OptionType.STRING, "city", "The city you are in");
     }
 
     @Override
     public void run(CommandEvent event) {
         ApiResponse response = null;
+        List<Double> coordinates = event.getDefaultMensa().getCoordinates();
+        String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
+
+        if (event.getArgs().length > 0) {
+            String city = String.join(" ", event.getArgs());
+            Location loc = ShortsCommand.getOpenWeather().getLocation(city);
+            lat = String.valueOf(loc.getLat());
+            lon = String.valueOf(loc.getLon());
+        } else if (event.isSlashCommandEvent()) {
+            OptionMapping option = event.getSlashCommandEvent().getOption("city");
+            if (option != null) {
+                String city = option.getAsString();
+                Location loc = ShortsCommand.getOpenWeather().getLocation(city);
+                lat = String.valueOf(loc.getLat());
+                lon = String.valueOf(loc.getLon());
+            }
+        }
         try {
-            response = weather4J.getForecast("50.775345", "6.083887", "metric", "de");
+            response = openWeather.getForecast(lat, lon, "metric", "de");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
