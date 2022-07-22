@@ -30,8 +30,12 @@ public abstract class ImageCommand extends Command {
         }
         changeSize(g, -1);
 
+        if (g.getFont().getSize() < 8)
+            return false;//this is too small to read
+
         g.setColor(color);
         g.drawString(s, position.x, position.y + position.height);
+        return true;
     }
 
     public static boolean fits(Graphics g, String msg, Rectangle pos) {
