@@ -1,8 +1,8 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.Weather4J;
-import ml.codeboy.data.ApiResponse;
-import ml.codeboy.data.HourlyForecast;
+import ml.codeboy.openweathermap.OpenWeatherApi;
+import ml.codeboy.openweathermap.data.ApiResponse;
+import ml.codeboy.openweathermap.data.HourlyForecast;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -11,11 +11,12 @@ import java.awt.*;
 import java.io.IOException;
 
 public class ShortsCommand extends Command {
-    private final Weather4J weather4J;
+    private final OpenWeatherApi weather4J;
 
     public ShortsCommand() {
         super("ShouldIWearShortsToday", "Lets you know if you should wear shorts today", "shorts");
-        weather4J = new Weather4J(Config.getInstance().openWeatherApiKey);
+        weather4J = new OpenWeatherApi(Config.getInstance().openWeatherApiKey);
+        setGuildOnlyCommand(false);
     }
 
     @Override

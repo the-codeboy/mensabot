@@ -25,6 +25,7 @@ public class MensaCommand extends Command {
         for (Mensa mensa : mensas) {
             OpenMensa.getInstance().addMensa(new RWTHMensa(mensa));
         }
+        setGuildOnlyCommand(false);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class MensaCommand extends Command {
     }
 
     private void sendMensas(CommandEvent event, List<Mensa> mensas, String query) {
-        EmbedBuilder builder = new EmbedBuilder();
+        EmbedBuilder builder = event.getBuilder();
 
         builder.setTitle("Mensas matching " + query);
 

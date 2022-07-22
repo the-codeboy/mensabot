@@ -10,6 +10,7 @@ import java.io.IOException;
 public class ShittyTranslateCommand extends Command {
     public ShittyTranslateCommand() {
         super("shittyTranslate", "", "st");
+        setGuildOnlyCommand(false);
     }
 
     @Override

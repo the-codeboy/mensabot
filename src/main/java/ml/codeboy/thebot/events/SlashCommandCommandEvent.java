@@ -35,6 +35,14 @@ public class SlashCommandCommandEvent extends CommandEvent {
     }
 
     @Override
+    public void reply(String message, File file, String name) {
+        if (getSlashCommandEvent().isAcknowledged()) {
+            getSlashCommandEvent().getHook().editOriginal(message).addFile(file, name).complete();
+        } else
+            getSlashCommandEvent().reply(message).addFile(file, name).complete();
+    }
+
+    @Override
     public Guild getGuild() {
         return getSlashCommandEvent().getGuild();
     }

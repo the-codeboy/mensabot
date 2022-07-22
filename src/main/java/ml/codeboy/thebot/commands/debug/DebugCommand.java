@@ -12,7 +12,7 @@ public abstract class DebugCommand extends Command {
 
     @Override
     public void execute(CommandEvent event) {
-        if (!Config.getInstance().isDebugAccount(event.getUser().getId())) {
+        if (!Config.getInstance().isDebugAccount(event.getUser())) {
             return;
         }
         super.execute(event);

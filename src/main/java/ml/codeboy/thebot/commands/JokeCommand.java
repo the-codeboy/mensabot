@@ -17,6 +17,7 @@ import java.util.List;
 public class JokeCommand extends Command {
     public JokeCommand() {
         super("joke", "tells a joke");
+        setGuildOnlyCommand(false);
     }
 
     @Override

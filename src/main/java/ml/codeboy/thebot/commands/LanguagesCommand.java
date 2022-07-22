@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 public class LanguagesCommand extends Command {
     public LanguagesCommand() {
         super("languages", "sends available languages");
+        setGuildOnlyCommand(false);
     }
 
     @Override

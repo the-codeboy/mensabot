@@ -150,6 +150,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new MemeCommand());
         registerCommand(new JokeCommand());
         registerCommand(new ShortsCommand());
+        registerCommand(new WeatherCommand());
         registerCommand(new ShittyTranslateCommand());
 
         registerCommand(new MensaCommand());
@@ -337,7 +338,6 @@ public class CommandHandler extends ListenerAdapter {
                     }
                 }
             }
-            return;
         }
         if (!content.startsWith(Config.getInstance().prefix))
             return;
@@ -345,8 +345,13 @@ public class CommandHandler extends ListenerAdapter {
         String cmd = content.split(" ", 2)[0];
         Command command = getCommand(cmd);
         if (command != null) {
-            logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
-                    + ": " + event.getMessage().getContentRaw());
+            if (event.isFromGuild()) {
+                logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
+                        + ": " + event.getMessage().getContentRaw());
+            } else {
+                logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
+            }
+
             command.execute(new MessageCommandEvent(event));
         }
     }
@@ -415,29 +420,28 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        MessageReaction.ReactionEmote reaction = event.getReaction().getReactionEmote();
-        if (reaction.isEmote()) {
-            String id = reaction.getEmote().getId();
-            boolean upvote = Config.getInstance().isUpvote(id),
-                    downVote = Config.getInstance().isDownvote(id);
-            if (upvote || downVote) {
-                Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-                Util.addKarma(message.getAuthor(), upvote ? 1 : -1);
-            }
+        String emote = event.getReaction().getReactionEmote().getAsReactionCode();
+
+        boolean upvote = Config.getInstance().isUpvote(emote);
+        boolean downVote = Config.getInstance().isDownvote(emote);
+
+        if (upvote || downVote) {
+            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+            Util.addKarma(message.getAuthor(), upvote ? 1 : -1);
         }
+
     }
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        MessageReaction.ReactionEmote reaction = event.getReaction().getReactionEmote();
-        if (reaction.isEmote()) {
-            String id = reaction.getEmote().getId();
-            boolean upvote = Config.getInstance().isUpvote(id),
-                    downVote = Config.getInstance().isDownvote(id);
-            if (upvote || downVote) {
-                Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-                Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma
-            }
+        String emote = event.getReaction().getReactionEmote().getAsReactionCode();
+
+        boolean upvote = Config.getInstance().isUpvote(emote);
+        boolean downVote = Config.getInstance().isDownvote(emote);
+
+        if (upvote || downVote) {
+            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+            Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma
         }
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 public class RhymeCommand extends Command {
     public RhymeCommand() {
         super("rhyme", "Gives you a word that rhymes with the one provided");
+        setGuildOnlyCommand(false);
     }
 
     @Override

@@ -28,6 +28,7 @@ public class JermaCommand extends Command {
                 docs[i++] = (Document) d;
         }
         shuffle(docs);
+        setGuildOnlyCommand(false);
     }
 
     @Override

@@ -7,6 +7,7 @@ public class TrumpQuoteCommand extends Command {
 
     public TrumpQuoteCommand() {
         super("trump", "sends trump quotes");
+        setGuildOnlyCommand(false);
     }
 
     @Override

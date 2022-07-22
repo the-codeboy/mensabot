@@ -2,11 +2,12 @@ package ml.codeboy.thebot.data;
 
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.apis.MensaVeganika;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class GuildData {
     private final transient Guild guild;
-    private String guildId;
+    private final String guildId;
     private String latestAnnouncementId = "";
     private int defaultMensaId = 187;
     private String updateChannelId = "";
@@ -23,7 +24,10 @@ public class GuildData {
 
 
     public Mensa getDefaultMensa() {
-        return OpenMensa.getInstance().getMensa(getDefaultMensaId());
+        Mensa mensa = OpenMensa.getInstance().getMensa(getDefaultMensaId());
+        if (getId().equals("896116435875668019"))
+            mensa = new MensaVeganika(mensa);//such a useless feature
+        return mensa;
     }
 
     public int getDefaultMensaId() {

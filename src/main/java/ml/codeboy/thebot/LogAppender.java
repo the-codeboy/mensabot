@@ -18,13 +18,13 @@ public class LogAppender extends AppenderBase<ILoggingEvent> {
     private boolean initialised = false;
 
     @Override
-    protected void append(ILoggingEvent iLoggingEvent) {
-        if (iLoggingEvent.getLoggerName().startsWith("org.mongodb.driver"))
+    protected void append(ILoggingEvent event) {
+        if (event.getLoggerName().startsWith("org.mongodb.driver"))
             return;//do not log messages from mongodb
         if (initialised) {
-            log(iLoggingEvent);
+            log(event);
         } else {
-            loggingQueue.add(iLoggingEvent);
+            loggingQueue.add(event);
             attemptInit();
         }
     }

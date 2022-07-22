@@ -12,6 +12,7 @@ public class Help extends Command {
     public Help(Bot bot) {
         super("help", "gives help");
         this.bot = bot;
+        setGuildOnlyCommand(false);
     }
 
     @Override

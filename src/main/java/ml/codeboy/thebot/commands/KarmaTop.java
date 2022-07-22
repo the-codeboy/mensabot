@@ -16,6 +16,7 @@ public class KarmaTop extends Command {
 
     public KarmaTop() {
         super("KarmaTop", "Karma Bestenliste", "kt");
+        setGuildOnlyCommand(false);
     }
 
     private CommandEvent latestEvent;

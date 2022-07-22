@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands.secret;
 
+import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 
@@ -11,7 +12,7 @@ public abstract class SecretCommand extends Command {
 
     @Override
     public void execute(CommandEvent event) {
-        if (!event.getUser().getId().equals("412330776886247424"))
+        if (!Config.getInstance().admins.contains(event.getUser().getId()))
             return;
         super.execute(event);
     }

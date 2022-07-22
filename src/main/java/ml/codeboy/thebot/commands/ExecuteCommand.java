@@ -17,6 +17,7 @@ import java.util.List;
 public class ExecuteCommand extends Command {
     public ExecuteCommand() {
         super("run", "runs code in the specified language");
+        setGuildOnlyCommand(false);
     }
 
     @Override
