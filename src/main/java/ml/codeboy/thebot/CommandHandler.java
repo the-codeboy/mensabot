@@ -78,13 +78,13 @@ public class CommandHandler extends ListenerAdapter {
     private void registerAnnouncements() {
         Date date = new Date();
         announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), false);
-        announceIn(60 * 60 * 8 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
+        announceIn(60 * 60 * 7 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
     }
 
     private void announceIn(int seconds, boolean includeWeather) {
         if (seconds < 0)
             seconds += 24 * 60 * 60;
-        seconds += 10;//make sure it doesn't send to early
+        seconds += 30;//make sure it doesn't send to early
         executorService.schedule(() -> {
             sendMealsToAllGuilds();
             if (includeWeather)
@@ -160,7 +160,7 @@ public class CommandHandler extends ListenerAdapter {
                     throw new RuntimeException(e);
                 }
                 channel.sendMessage("Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
-                        .addFile(file, "weather_forecast").complete();
+                        .addFile(file, "weather_forecast.png").complete();
                 file.delete();
             }
         } catch (Exception ignored) {
