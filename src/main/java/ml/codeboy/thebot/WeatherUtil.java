@@ -22,7 +22,7 @@ public class WeatherUtil {
 
     public static BufferedImage generateForecastImage(List<Forecast> forecasts, int values) {
         final int size = 200, space = size / 5;
-        BufferedImage image = new BufferedImage((space + size) * values, 6 * size, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage((space + size) * values + space, 6 * size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
         g.setColor(new Color(54, 57, 63));
@@ -52,7 +52,7 @@ public class WeatherUtil {
 
             g.setColor(Color.ORANGE);
 
-            int startX = (i - 1) * (size + space), endX = i * (size + space);
+            int startX = (i - 1) * (size + space) + space, endX = i * (size + space) + space;
             g.drawLine(startX, startY, endX, endY);
 
             g.setColor(transparentYellow);
@@ -61,8 +61,8 @@ public class WeatherUtil {
 
             if (i == values - 1) {
                 g.setColor(Color.ORANGE);
-                startX = i * (size + space);
-                endX = (i + 1) * (size + space);
+                startX += (size + space);
+                endX += (size + space);
 
                 g.drawLine(startX, endY, endX, endY);
 
@@ -74,18 +74,19 @@ public class WeatherUtil {
             g.setColor(Color.BLACK);
             int x = i * (size + space) - space / 2;
             if (i != 0)
-                g.drawLine(x, 0, x, image.getHeight());
+                g.drawLine(x + space, 0, x + space, image.getHeight());
 
-            drawString(g, formatter.format(forecast.getTime()), new Rectangle((size + space) * i, 4 * size, size, size), Color.WHITE);
-            drawString(g, forecast.getAirTemperature() + "°", new Rectangle((size + space) * i, 3 * size, size, size), Color.WHITE);
+            drawString(g, formatter.format(forecast.getTime()), new Rectangle((size + space) * i + space, 4 * size, size, size), Color.WHITE);
+            drawString(g, forecast.getAirTemperature() + "°", new Rectangle((size + space) * i + space, 3 * size, size, size), Color.WHITE);
             try {
                 Image symbol = ImageIO.read(new File("images/weather/png/" + forecast.getSymbol() + ".png"));
 
-                g.drawImage(symbol, (size + space) * i, space, size, size, null);
+                g.drawImage(symbol, (size + space) * i + space, space, size, size, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+        drawString(g, "Data from The Norwegian Meteorological Institute", new Rectangle(image.getWidth() - 4 * size, image.getHeight() - 4 * space, 4 * size - space, 3 * space), Color.WHITE);
         g.dispose();
         return image;
     }
