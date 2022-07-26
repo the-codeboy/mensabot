@@ -206,6 +206,9 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new DefaultMensaCommand());
         registerCommand(new MensaAnnounceChannelCommand());
 
+        registerCommand(new DönerrateCommand());
+        registerCommand(new Dönertop());
+
         registerCommand(new ExecuteCommand());
         registerCommand(new LanguagesCommand());
 

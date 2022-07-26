@@ -10,7 +10,8 @@ public class UserData {
     private final String userId;
     private int bedTime = -1;
     private int karma = 0;
-    private Map<String,Integer> ratings=new HashMap<>();
+    private Map<String, Integer> ratings = new HashMap<>();
+    private Map<String, Integer> restaurantRatings = new HashMap<>();
 
     public UserData(String userId) {
         this.userId = userId;
@@ -48,19 +49,35 @@ public class UserData {
         this.karma = karma;
     }
 
-    public void addRating(String meal,int rating){
+    public void addRating(String meal, int rating) {
         if (ratings == null)
             ratings = new HashMap<>();
         if (ratings.containsKey(meal)) {
             FoodRatingManager.getInstance().removeRating(meal, ratings.get(meal));
         } else karma++;//add one karma for rating
-        FoodRatingManager.getInstance().addRating(meal,rating);
-        ratings.put(meal,rating);
+        FoodRatingManager.getInstance().addRating(meal, rating);
+        ratings.put(meal, rating);
         UserDataManager.getInstance().save(this);
     }
 
+    public boolean addRestaurantRating(String restaurant, int rating) {
+        if (restaurantRatings == null)
+            restaurantRatings = new HashMap<>();
+        Restaurant r = RestaurantManager.getInstance().getRestaurant(restaurant);
+        if (restaurant == null)
+            return false;
+        if (restaurantRatings.containsKey(restaurant)) {
+            r.getRating().removeRating(restaurantRatings.get(restaurant));
+        } else karma++;//add one karma for rating
+        r.getRating().addRating(rating);
+        restaurantRatings.put(restaurant, rating);
+        RestaurantManager.getInstance().save();
+        UserDataManager.getInstance().save(this);
+        return true;
+    }
+
     public void clearRatings() {
-        if(ratings!=null&&!ratings.isEmpty()) {
+        if (ratings != null && !ratings.isEmpty()) {
             ratings = new HashMap<>();
             UserDataManager.getInstance().save(this);
         }
