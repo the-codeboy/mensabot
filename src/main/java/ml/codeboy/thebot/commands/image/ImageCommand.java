@@ -18,11 +18,11 @@ public abstract class ImageCommand extends Command {
     }
 
 
-    public static void drawString(Graphics g, String s, Rectangle position) {
-        drawString(g, s, position, Color.BLACK);
+    public static boolean drawString(Graphics g, String s, Rectangle position) {
+        return drawString(g, s, position, Color.BLACK);
     }
 
-    public static void drawString(Graphics g, String s, Rectangle position, Color color) {
+    public static boolean drawString(Graphics g, String s, Rectangle position, Color color) {
         g.setFont(g.getFont().deriveFont(1f));
 
         while (fits(g, s, position)) {
