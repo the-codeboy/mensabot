@@ -84,14 +84,11 @@ public class CommandHandler extends ListenerAdapter {
     private void announceIn(int seconds, boolean includeWeather) {
         if (seconds < 0)
             seconds += 24 * 60 * 60;
-        seconds += 30;//make sure it doesn't send to early
-        executorService.schedule(() -> {
+        executorService.scheduleAtFixedRate(() -> {
             sendMealsToAllGuilds();
             if (includeWeather)
                 sendWeatherToAllGuilds();
-            else
-                registerAnnouncements();
-        }, seconds, TimeUnit.SECONDS);
+        }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
     public CommandHandler(Bot bot) {
