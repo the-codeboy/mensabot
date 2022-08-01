@@ -42,9 +42,8 @@ public class ASCIICommand extends Command {
         try {
             BufferedImage image = Util.getImageFromUrl(url);
             String ascii = ASCII.convert(ASCII.scale(image));
-            System.out.println("\n" + ascii);
             if (ascii.length() < 2000)
-                event.reply("\n" + ascii);
+                event.reply("\n```" + ascii + "```");
             else event.replyError("too much text " + ascii.length());
         } catch (IOException e) {
             event.replyError("unable to load image from url");

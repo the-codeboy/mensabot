@@ -45,7 +45,6 @@ public final class ASCII {
             double scale = Math.sqrt(1999f / size);
             x = (int) (x * scale) - 1;
             y = (int) (y * scale);
-            System.out.println(x + " " + y + " " + ((x + 1) * y + 1));
             BufferedImage after = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
             AffineTransform at = new AffineTransform();
             at.scale(scale, scale);
