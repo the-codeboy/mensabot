@@ -197,6 +197,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new ShortsCommand());
         registerCommand(new WeatherCommand());
         registerCommand(new ShittyTranslateCommand());
+        registerCommand(new ASCIICommand());
 
         registerCommand(new MensaCommand());
         registerCommand(new RateCommand());
@@ -496,8 +497,9 @@ public class CommandHandler extends ListenerAdapter {
     private void registerAllSlashCommands() {
         CommandListUpdateAction action = getBot().getJda().updateCommands();
         for (Command command : allCommands) {
-            if (!command.isHidden())
-                action = action.addCommands(command.getCommandData());
+            CommandData commandData = command.getCommandData();
+            if (!command.isHidden() && commandData != null)
+                action = action.addCommands(commandData);
         }
         action.queue();
     }
