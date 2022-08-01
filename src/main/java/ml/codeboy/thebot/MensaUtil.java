@@ -3,7 +3,9 @@ package ml.codeboy.thebot;
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
+import ml.codeboy.thebot.data.MealEmoji;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.text.NumberFormat;
@@ -23,16 +25,11 @@ public class MensaUtil {
         builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
         boolean beilagen = false;
         for (Meal meal : mensa.getMeals(date)) {
-            String symbol = getEmojiForMeal(meal);
+            String title = getTitleString(meal);
             String description = meal.getCategory() +
                     (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
                             + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
-            String title = symbol + " " + meal.getName();
-            double rating = FoodRatingManager.getInstance().getRating(meal.getName());
-            title += getRatingString(rating);
-            if (rating != -1) {
-                title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
-            }
+
             if (!beilagen
                     && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
                 beilagen = true;
@@ -44,6 +41,27 @@ public class MensaUtil {
         }
 
         return builder;
+    }
+
+    public static String getTitleString(Meal meal) {
+        String title = getEmojiForMeal(meal);
+        title += " " + meal.getName();
+        title += getVeggieString(meal);
+        double rating = FoodRatingManager.getInstance().getRating(meal.getName());
+        title += getRatingString(rating);
+        if (rating != -1) {
+            title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
+        }
+        return title;
+    }
+
+    public static String getVeggieString(Meal meal) {
+        if (meal.getNotes().contains("vegan")) {
+            return "<:vegan:1003629202739822702>";
+        } else if (meal.getNotes().contains("vegetarisch") || meal.getCategory().toLowerCase().contains("vegetarisch")) {
+            return "<:vegetarian:1003629571104591923>";
+        }
+        return "";
     }
 
     public static String getRatingString(double rating) {
@@ -84,66 +102,16 @@ public class MensaUtil {
     }
 
     private static String getEmojiForMeal(Meal meal) {
-        String name = meal.getName().toLowerCase();
+        String name = meal.getName();
 
-        if (name.contains("schnitzel"))
-            return "<:schnitzel:943559144135336047>";
-        if (name.contains("beeren"))
-            return ":bear:";
-        if (name.contains("burger"))
-            return ":hamburger:";
-        if (name.contains("pizza"))
-            return ":pizza:";
-        if (name.contains("pfannkuchen"))
-            return ":pancakes:";
-        if (name.contains("kuchen") || name.contains("küchlein"))
-            return ":cake:";
-        if (name.contains("spaghetti"))
-            return ":spaghetti:";
-        if (name.contains("suppe"))
-            return ":stew:";
-        if (name.contains("chili") || name.contains("scharf"))
-            return ":hot_pepper:";
-        if (name.contains("keule"))
-            return ":poultry_leg:";
-        if (name.contains("steak"))
-            return ":cut_of_meat:";
-        if (name.contains("hähnchen") || name.contains("huhn") || name.contains("chicken"))
-            return ":chicken:";
-        if (name.contains("schwein") || name.contains("pork"))
-            return ":pig:";
-        if (name.contains("kuh") || name.contains("rind"))
-            return ":cow:";
-        if (name.contains("ente") || name.contains("gans"))
-            return ":duck:";
-        if (name.contains("fisch") || name.contains("lachs"))
-            return ":fish:";
-        if (name.contains("reis"))
-            return ":rice:";
-        if (name.contains("pommes"))
-            return ":fries:";
-        if (name.contains("apfel"))
-            return ":apple:";
-        if (name.contains("zitrone") || name.contains("lemon") || name.contains("limette"))
-            return ":lemon:";
-        if (name.contains("brokkoli"))
-            return ":broccoli:";
-        if (name.contains("paprika"))
-            return ":bell_pepper:";
-        if (name.contains("mais"))
-            return ":corn:";
-        if (name.contains("karotte"))
-            return ":carrot:";
-        if (name.contains("kartoffel"))
-            return ":potato:";
-        if (name.contains("salat"))
-            return ":salad:";
-        if (name.contains("eintopf"))
-            return ":stew:";
-        if (name.contains("käse"))
-            return ":cheese:";
-        if (name.contains("zwiebel"))
-            return ":onion:";
+        String emoji = getEmojiForWord(name);
+        if (emoji.length() > 0)
+            return emoji;
+        for (String text : meal.getNotes()) {
+            emoji = getEmojiForWord(text);
+            if (emoji.length() > 0)
+                return emoji;
+        }
 
         switch (meal.getCategory()) {
             case "Vegetarisch":
@@ -159,6 +127,14 @@ public class MensaUtil {
                 return ":salad:";
         }
         return ":fork_knife_plate:";
+    }
+
+    public static String getEmojiForWord(String word) {
+        word = word.toLowerCase();
+
+        MealEmoji emoji = EmojiManager.getInstance().getMatching(word);
+
+        return emoji != null ? emoji.getEmoji() : "";
     }
 
     public static String dateToWord(Date date) {
