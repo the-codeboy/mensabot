@@ -203,6 +203,8 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new RateCommand());
         registerCommand(new DefaultMensaCommand());
         registerCommand(new MensaAnnounceChannelCommand());
+        registerCommand(new DetailCommand());
+        registerCommand(new AddImageCommand());
 
         registerCommand(new DönerrateCommand());
         registerCommand(new Dönertop());
@@ -249,6 +251,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new Msg());
         registerCommand(new LoadKarma());
         registerCommand(new Bee());
+        registerCommand(new AcceptImage());
     }
 
     private void registerDebugCommands() {
