@@ -47,8 +47,8 @@ public class WeatherUtil {
             }
             last = forecast;
 
-            int startY = (int) (size * 3 + space - size * 2 * (lastTemp - min) / (max - min));
-            int endY = (int) (size * 3 + space - size * 2 * (forecast.getAirTemperature() - min) / (max - min));
+            int startY = (int) (size * 3.3 + space - size * 2.5 * (lastTemp - min) / (max - min));
+            int endY = (int) (size * 3.3 + space - size * 2.5 * (forecast.getAirTemperature() - min) / (max - min));
 
             g.setColor(Color.ORANGE);
 
