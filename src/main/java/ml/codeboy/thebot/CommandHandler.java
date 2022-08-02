@@ -196,6 +196,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new JokeCommand());
         registerCommand(new ShortsCommand());
         registerCommand(new WeatherCommand());
+        registerCommand(new PingCommand());
         registerCommand(new ShittyTranslateCommand());
         registerCommand(new ASCIICommand());
 
