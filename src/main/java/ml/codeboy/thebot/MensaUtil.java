@@ -104,14 +104,15 @@ public class MensaUtil {
     private static String getEmojiForMeal(Meal meal) {
         String name = meal.getName();
 
-        String emoji = getEmojiForWord(name);
-        if (emoji.length() > 0)
-            return emoji;
+        MealEmoji emoji = getEmojiForWord(name);
         for (String text : meal.getNotes()) {
-            emoji = getEmojiForWord(text);
-            if (emoji.length() > 0)
-                return emoji;
+            MealEmoji newEmoji = getEmojiForWord(text);
+            if (newEmoji != null && (emoji == null || newEmoji.getPriority() > emoji.getPriority()))
+                emoji = newEmoji;
         }
+
+        if (emoji != null)
+            return emoji.getEmoji();
 
         switch (meal.getCategory()) {
             case "Vegetarisch":
@@ -129,12 +130,10 @@ public class MensaUtil {
         return ":fork_knife_plate:";
     }
 
-    public static String getEmojiForWord(String word) {
+    public static MealEmoji getEmojiForWord(String word) {
         word = word.toLowerCase();
 
-        MealEmoji emoji = EmojiManager.getInstance().getMatching(word);
-
-        return emoji != null ? emoji.getEmoji() : "";
+        return EmojiManager.getInstance().getMatching(word);
     }
 
     public static String dateToWord(Date date) {

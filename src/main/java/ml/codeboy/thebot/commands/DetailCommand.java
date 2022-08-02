@@ -6,6 +6,7 @@ import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
+import ml.codeboy.thebot.data.MealEmoji;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -104,8 +105,8 @@ public class DetailCommand extends Command {
             builder.setImage(url);
         builder.addBlankField(false);
         for (String note : meal.getNotes()) {
-            String emoji = MensaUtil.getEmojiForWord(note);
-            builder.addField(emoji + " " + note, "", true);
+            MealEmoji emoji = MensaUtil.getEmojiForWord(note);
+            builder.addField(emoji.getEmoji() + " " + note, "", true);
         }
         event.reply(builder);
     }
