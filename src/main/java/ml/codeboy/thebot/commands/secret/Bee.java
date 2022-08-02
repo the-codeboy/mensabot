@@ -20,8 +20,8 @@ public class Bee extends SecretCommand{
         String s=script;
         PrivateChannel pc=user.openPrivateChannel().complete();
         while (s.length()>0){
-            int chars=Math.min(1000,s.length());
-            String toSend=s.substring(0,chars-1);
+            int chars = Math.min(2000, s.length());
+            String toSend = s.substring(0, chars - 1);
             s=s.substring(chars);
             pc.sendMessage(toSend).queue();
         }
