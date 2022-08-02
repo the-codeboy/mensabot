@@ -1,5 +1,10 @@
 package ml.codeboy.thebot.data;
 
+import ml.codeboy.thebot.MensaBot;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.User;
+
+import java.awt.*;
 import java.util.UUID;
 
 public class MealImage {
@@ -31,5 +36,40 @@ public class MealImage {
 
     public UUID getId() {
         return id;
+    }
+
+    public void accept() {
+        setAccepted(true);
+        FoodRatingManager.getInstance().saveImages();
+        UserData data = UserDataManager.getInstance().getData(getAuthor());
+        data.setKarma(data.getKarma() + 5);
+        UserDataManager.getInstance().save(data);
+        User user = MensaBot.getInstance().getJda().getUserById(getAuthor());
+        if (user != null) {
+            user.openPrivateChannel().complete()
+                    .sendMessageEmbeds(
+                            new EmbedBuilder().setTitle("Your image has been accepted")
+                                    .setThumbnail(getUrl())
+                                    .setDescription("Thank you for your contribution. You received 5 karma for this")
+                                    .setColor(Color.GREEN)
+                                    .build()
+                    ).queue();
+        }
+    }
+
+    public void reject(String message) {
+        setAccepted(false);
+        FoodRatingManager.getInstance().removeImage(this);
+        User user = MensaBot.getInstance().getJda().getUserById(getAuthor());
+        if (user != null) {
+            user.openPrivateChannel().complete()
+                    .sendMessageEmbeds(
+                            new EmbedBuilder().setTitle("Your image has been rejected")
+                                    .setThumbnail(getUrl())
+                                    .setDescription(message)
+                                    .setColor(Color.RED)
+                                    .build()
+                    ).queue();
+        }
     }
 }

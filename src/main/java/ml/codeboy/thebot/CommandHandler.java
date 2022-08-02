@@ -255,6 +255,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new LoadKarma());
         registerCommand(new Bee());
         registerCommand(new AcceptImage());
+        registerCommand(new RejectImage());
     }
 
     private void registerDebugCommands() {

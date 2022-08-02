@@ -63,6 +63,14 @@ public class FoodRatingManager {
         return image;
     }
 
+    public void removeImage(MealImage image) {
+        for (Collection<MealImage> im : images.values()) {
+            if (im != null)
+                im.remove(image);
+        }
+        saveImages();
+    }
+
     public String getImage(String meal) {
         for (MealImage image : images.getOrDefault(meal, Collections.emptyList())) {
             if (image != null && image.isAccepted() && image.getUrl() != null)

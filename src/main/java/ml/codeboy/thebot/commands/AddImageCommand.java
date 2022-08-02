@@ -24,6 +24,7 @@ public class AddImageCommand extends Command implements SelectMenuListener {
 
     public AddImageCommand() {
         super("addImage", "add a meal image");
+        setGuildOnlyCommand(false);
     }
 
     @Override

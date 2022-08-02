@@ -3,7 +3,6 @@ package ml.codeboy.thebot.commands;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
-import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.MealEmoji;
@@ -24,7 +23,6 @@ public class DetailCommand extends Command {
 
     public DetailCommand() {
         super("detail", "gives details about a meal", "meal");
-        EmojiManager.getInstance();
     }
 
     @Override
