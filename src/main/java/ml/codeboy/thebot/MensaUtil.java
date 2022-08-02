@@ -1,15 +1,27 @@
 package ml.codeboy.thebot;
 
+import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import com.github.instagram4j.instagram4j.IGClient;
 import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealEmoji;
 import net.dv8tion.jda.api.EmbedBuilder;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
+
+import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
 public class MensaUtil {
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date) {
@@ -183,4 +195,98 @@ public class MensaUtil {
         }
         return null;
     }
+
+    public static BufferedImage generateMealsImage(Mensa mensa, Date date) {
+        int width = 1080, height = 1350;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+
+        g.setColor(Color.WHITE);
+
+        g.fillRect(0, 0, width, height);
+
+        int size = 50, space = size / 10;
+
+        drawString(g, mensa.getName(), new Rectangle(space, space, width - space, size * 2 - space));
+        //2*size
+
+        List<Meal> meals = mensa.getMeals(date);
+
+        int heightOfMeals = 800;
+        int heightPerMeal = heightOfMeals * 2 / meals.size();
+
+        for (int i = 0; i < meals.size(); i++) {
+            boolean secondColumn = i >= meals.size() / 2;
+            Meal meal = meals.get(i);
+            int id = secondColumn ? i - meals.size() / 2 : i;
+
+            Rectangle rectangle = new Rectangle((secondColumn ? width / 2 : 0) + space, size * 3 + id * heightPerMeal, width / 2 - 2 * space, heightPerMeal / 4);
+            drawString(g, meal.getName(), rectangle);
+
+            String description = meal.getCategory() +
+                    (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
+                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+
+            rectangle.y += size;
+
+            drawString(g, description, rectangle);
+
+            rectangle.y += size;
+
+            int ratings = FoodRatingManager.getInstance().getRatings(meal.getName());
+            if (ratings > 0) {
+                String rating = FoodRatingManager.getInstance().getRating(meal.getName()) + "/5 (" + ratings + ")";
+                drawString(g, rating, rectangle);
+            }
+        }
+
+
+        g.dispose();
+        return image;
+    }
+
+    public static void display(BufferedImage image) {
+        JFrame frame = new JFrame() {
+            @Override
+            public void paint(Graphics g) {
+                g.drawImage(image, 0, 0, g.getClipBounds().width, g.getClipBounds().height, null);
+            }
+        };
+        frame.setUndecorated(true);
+        frame.setSize(image.getWidth() / 2, image.getHeight() / 2);
+        frame.setVisible(true);
+    }
+
+    public static void post(BufferedImage image, String caption) throws IOException {
+        IGClient client = IGClient.builder()
+                .username("mensabot_ac")
+                .password("FGHJF6dtr6u2z(T")
+                .login();
+        File dir = new File("tmp/" + UUID.randomUUID());
+        dir.mkdirs();
+        File file = new File(dir, "image.jpg");
+        ImageIO.write(image, "jpg", file);
+        client.actions().timeline()
+                .uploadPhoto(file, caption)
+                .thenAccept(res -> {
+                    // perform actions with response
+                    System.out.println("Uploaded photo");
+                    dir.delete();
+                })
+                .exceptionally(tr -> {
+                    // something has terribly gone wrong!
+                    // handle exception
+                    tr.printStackTrace();
+                    dir.delete();
+                    return null;
+                })
+                .join(); // blocks currect thread until completion
+    }
+
+    public static void main(String[] args) throws IOException {
+        OpenMensa.getInstance().reloadCanteens();
+        display(generateMealsImage(OpenMensa.getInstance().getMensa(187), new Date()));
+        post(generateMealsImage(OpenMensa.getInstance().getMensa(187), new Date()), "");
+    }
+
 }
