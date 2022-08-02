@@ -1,6 +1,5 @@
 package ml.codeboy.thebot;
 
-import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.data.EmojiManager;
@@ -9,8 +8,6 @@ import ml.codeboy.thebot.data.MealEmoji;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.text.NumberFormat;
-import java.time.DayOfWeek;
-import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.Locale;
 
@@ -22,7 +19,8 @@ public class MensaUtil {
             return builder;
         }
         builder.setTitle("Meals in " + mensa.getName());
-        builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
+        builder.setDescription("<t:" + date.getTime() / 1000 + ":R>");
+//        builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
         boolean beilagen = false;
         for (Meal meal : mensa.getMeals(date)) {
             String title = getTitleString(meal);
@@ -101,7 +99,7 @@ public class MensaUtil {
         return currencyFormatter.format(value).replace(" ", "");
     }
 
-    private static String getEmojiForMeal(Meal meal) {
+    public static String getEmojiForMeal(Meal meal) {
         String name = meal.getName();
 
         MealEmoji emoji = getEmojiForWord(name);

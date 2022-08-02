@@ -106,7 +106,7 @@ public class DetailCommand extends Command {
         builder.addBlankField(false);
         for (String note : meal.getNotes()) {
             MealEmoji emoji = MensaUtil.getEmojiForWord(note);
-            builder.addField(emoji.getEmoji() + " " + note, "", true);
+            builder.addField((emoji == null ? "" : emoji.getEmoji()) + " " + note, "", true);
         }
         event.reply(builder);
     }

@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -68,6 +69,7 @@ public class CommandHandler extends ListenerAdapter {
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private Guild server;
+    private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
 
     private final Emote amogus, sus, downvote;
 
@@ -495,6 +497,18 @@ public class CommandHandler extends ListenerAdapter {
         if (upvote || downVote) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
             Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma
+        }
+    }
+
+    public void registerSelectMenuListener(String id, SelectMenuListener listener) {
+        selectMenuListeners.put(id, listener);
+    }
+
+    @Override
+    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+        SelectMenuListener listener = selectMenuListeners.get(event.getComponentId());
+        if (listener != null) {
+            listener.onSelectMenuInteraction(event);
         }
     }
 
