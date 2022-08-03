@@ -27,7 +27,7 @@ public class MorbCommand extends ImageCommand {
         BufferedImage img= null;
         User user=event.getUser();
         if (event.isMessageEvent()){
-            List<Member>members=event.getMessageReceivedEvent().getMessage().getMentionedMembers();
+            List<Member> members = event.getMessageReceivedEvent().getMessage().getMentions().getMembers();
             if(!members.isEmpty()){
                 user=members.get(0).getUser();
             }

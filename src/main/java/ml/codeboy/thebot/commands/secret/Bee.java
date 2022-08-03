@@ -12,17 +12,17 @@ public class Bee extends SecretCommand{
     @Override
     public void run(CommandEvent event) {
         User user = null;
-        if(event.getMessageReceivedEvent().getMessage().getMentionedMembers().size()>0){
-            user=event.getMessageReceivedEvent().getMessage().getMentionedMembers().get(0).getUser();
+        if (event.getMessageReceivedEvent().getMessage().getMentions().getMembers().size() > 0) {
+            user = event.getMessageReceivedEvent().getMessage().getMentions().getMembers().get(0).getUser();
         }
-        if(user==null)
-            user=event.getJdaEvent().getJDA().retrieveUserById(event.getArgs()[0]).complete();
-        String s=script;
-        PrivateChannel pc=user.openPrivateChannel().complete();
-        while (s.length()>0){
+        if (user == null)
+            user = event.getJdaEvent().getJDA().retrieveUserById(event.getArgs()[0]).complete();
+        String s = script;
+        PrivateChannel pc = user.openPrivateChannel().complete();
+        while (s.length() > 0) {
             int chars = Math.min(2000, s.length());
             String toSend = s.substring(0, chars - 1);
-            s=s.substring(chars);
+            s = s.substring(chars);
             pc.sendMessage(toSend).queue();
         }
     }

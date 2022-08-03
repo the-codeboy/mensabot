@@ -20,7 +20,7 @@ public class React extends SecretCommand {
             JDA jda = event.getJdaEvent().getJDA();
             TextChannel channel = (TextChannel) jda.getGuildChannelById(channelId);
             Message message = channel.getHistoryAround(messageId, 1).complete().getMessageById(messageId);
-            message.addReaction(jda.getEmoteById(reaction)).complete();
+            message.addReaction(jda.getEmojiById(reaction)).complete();
         }
     }
 }

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.User;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ShitCommand extends ImageCommand{
         BufferedImage img= null;
         User user=event.getUser();
         if (event.isMessageEvent()){
-            List<Member> members=event.getMessageReceivedEvent().getMessage().getMentionedMembers();
+            List<Member> members = event.getMessageReceivedEvent().getMessage().getMentions().getMembers();
             if(!members.isEmpty()){
                 user=members.get(0).getUser();
             }

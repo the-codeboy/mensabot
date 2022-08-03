@@ -24,7 +24,7 @@ public class MensaAnnounceChannelCommand extends Command {
     @Override
     public void run(CommandEvent event) {
         if (event.isMessageEvent()) {
-            List<TextChannel> channels = event.getMessageReceivedEvent().getMessage().getMentionedChannels();
+            List<TextChannel> channels = event.getMessageReceivedEvent().getMessage().getMentions().getChannels(TextChannel.class);
             if (channels.isEmpty()) {
                 deactivate(event);
             } else {
@@ -34,7 +34,7 @@ public class MensaAnnounceChannelCommand extends Command {
             List<OptionMapping> options = event.getSlashCommandEvent().getOptions();
             MessageChannel channel = null;
             if (!options.isEmpty()) {
-                channel = options.get(0).getAsMessageChannel();
+                channel = options.get(0).getAsChannel().asTextChannel();
             }
             if (channel == null) {
                 deactivate(event);

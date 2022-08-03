@@ -4,6 +4,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 public class Msg extends SecretCommand {
     public Msg() {
@@ -25,6 +26,6 @@ public class Msg extends SecretCommand {
         String message = String.join(" ", event.getArgs());
         message = message.substring(event.getArgs()[0].length() + 1);
         channel.sendMessage(message).complete();
-        event.getMessageReceivedEvent().getMessage().addReaction("✅").queue();
+        event.getMessageReceivedEvent().getMessage().addReaction(Emoji.fromFormatted("✅")).queue();
     }
 }

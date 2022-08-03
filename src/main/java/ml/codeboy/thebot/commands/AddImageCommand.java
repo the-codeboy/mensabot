@@ -3,23 +3,27 @@ package ml.codeboy.thebot.commands;
 import com.github.codeboy.api.Meal;
 import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.Config;
-import ml.codeboy.thebot.SelectMenuListener;
+import ml.codeboy.thebot.commands.secret.AcceptImage;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealImage;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
-import java.util.HashMap;
+import java.util.UUID;
 
-public class AddImageCommand extends Command implements SelectMenuListener {
-    private final HashMap<User, String> uploadedImages = new HashMap<>();
-    private final String selectMenuId = "add-image";
+public class AddImageCommand extends Command {
+    private final String selectMenuId = "add-image", acceptImageId = "accept-image", rejectImageId = "reject-image",
+            rejectImageModalId = "reject-image-modal";
     private CommandHandler commandHandler;
 
     public AddImageCommand() {
@@ -51,8 +55,7 @@ public class AddImageCommand extends Command implements SelectMenuListener {
         if (name.length() > 0) {
             addImage(e.getJDA(), name, url, e.getAuthor());
         } else {
-            String id = e.getAuthor().getId() + selectMenuId;
-            uploadedImages.put(e.getAuthor(), url);
+            String id = UUID.randomUUID() + selectMenuId;
             SelectMenu.Builder builder = SelectMenu.create(id);
             builder.setRequiredRange(1, 1);
             for (Meal meal : event.getDefaultMensa().getMeals()) {
@@ -63,7 +66,15 @@ public class AddImageCommand extends Command implements SelectMenuListener {
                     break;
                 }
             }
-            commandHandler.registerSelectMenuListener(id, this);
+            commandHandler.registerSelectMenuListener(id, ev -> {
+                if (!ev.getComponentId().equals(id)) {
+                    return false;//this is not the right menu
+                }
+                String n = ev.getInteraction().getSelectedOptions().get(0).getValue();
+                addImage(ev.getJDA(), n, url, event.getUser());
+                ev.getMessage().delete().queue();
+                return true;
+            });
             e.getChannel().sendMessage("please select the meal this image is for")
                     .setActionRow(builder.build()).queue();
         }
@@ -73,24 +84,39 @@ public class AddImageCommand extends Command implements SelectMenuListener {
         TextChannel channel = (TextChannel) jda.getGuildChannelById(Config.getInstance().dmDebugChannel);
         MealImage image = FoodRatingManager.getInstance().addImage(name, url, author);
         if (channel != null) {
-            channel.sendMessage(author.getAsTag() + " added image for " + name + " with id " + image.getId() + "\n" + url).queue();
+            String acceptId = image.getId() + acceptImageId;
+            String rejectId = image.getId() + rejectImageId;
+            commandHandler.registerButtonListener(acceptId, e -> {
+                if (Config.getInstance().admins.contains(e.getMember().getId())) {
+                    AcceptImage.accept(image, e.getChannel());
+                    return true;
+                }
+                return false;
+            });
+            commandHandler.registerButtonListener(rejectId, e -> {
+                if (Config.getInstance().admins.contains(e.getMember().getId())) {
+                    String modalId = image.getId() + rejectImageModalId;
+                    TextInput reason = TextInput.create("reason", "Reason", TextInputStyle.SHORT)
+                            .setPlaceholder("The reason for rejecting this image")
+                            .build();
+
+                    Modal modal = Modal.create(modalId, "Reject Image")
+                            .addActionRows(ActionRow.of(reason))
+                            .build();
+
+                    commandHandler.registerModalListener(modalId, ev -> {
+                        image.reject(ev.getValue("reason").getAsString());
+                        ev.reply("Image rejected").setEphemeral(true).queue();
+                        return true;
+                    });
+                    e.replyModal(modal).queue();
+                    return true;
+                }
+                return false;
+            });
+            channel.sendMessage(author.getAsTag() + " added image for " + name + " with id " + image.getId() + "\n" + url)
+                    .setActionRow(Button.primary(acceptId, "accept"), Button.danger(rejectId, "reject")).queue();
         }
         author.openPrivateChannel().flatMap(c -> c.sendMessage("Your image for " + name + " has been submitted. I will let you know when it gets accepted")).queue();
-    }
-
-    @Override
-    public void onSelectMenuInteraction(SelectMenuInteractionEvent event) {
-        event.deferEdit().queue();
-        if (!event.getComponentId().equals(event.getUser().getId() + selectMenuId)) {
-            return;//this is not their menu
-        }
-        String url = uploadedImages.remove(event.getUser());
-        if (url == null) {
-            event.getChannel().sendMessage("Please upload an image first using " + Config.getInstance().prefix + getName()).queue();
-            return;
-        }
-        String name = event.getInteraction().getSelectedOptions().get(0).getValue();
-        addImage(event.getJDA(), name, url, event.getUser());
-        event.getMessage().delete().queue();
     }
 }

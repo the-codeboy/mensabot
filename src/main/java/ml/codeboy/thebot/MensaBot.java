@@ -21,6 +21,7 @@ public class MensaBot implements Bot {
         jda = JDABuilder.createDefault(Config.getInstance().token)
                 .enableIntents(GatewayIntent.DIRECT_MESSAGES,
                         GatewayIntent.GUILD_MEMBERS,
+                        GatewayIntent.MESSAGE_CONTENT,
                         GatewayIntent.GUILD_PRESENCES)
                 .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY).build();
         jda.awaitReady();

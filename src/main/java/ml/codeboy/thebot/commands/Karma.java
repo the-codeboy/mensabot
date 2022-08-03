@@ -30,7 +30,7 @@ public class Karma extends Command {
             if (om != null)
                 user = om.getAsMember().getUser();
         } else if (event.isMessageEvent()) {
-            List<Member> members = event.getMessageReceivedEvent().getMessage().getMentionedMembers();
+            List<Member> members = event.getMessageReceivedEvent().getMessage().getMentions().getMembers();
             if (!members.isEmpty() && members.get(0) != null)
                 user = members.get(0).getUser();
         }

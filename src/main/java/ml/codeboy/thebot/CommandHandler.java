@@ -31,10 +31,13 @@ import ml.codeboy.thebot.tracker.BedTimeTracker;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -70,8 +73,10 @@ public class CommandHandler extends ListenerAdapter {
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private Guild server;
     private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
+    private final HashMap<String, ButtonListener> buttonListeners = new HashMap<>();
+    private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
 
-    private final Emote amogus, sus, downvote;
+    private final Emoji amogus, sus, downvote;
 
     private void registerBedTimeTracker() {
         BedTimeTracker tracker = new BedTimeTracker(getBot());
@@ -105,9 +110,9 @@ public class CommandHandler extends ListenerAdapter {
         }
         if (serverID != null)
             server = bot.getJda().getGuildById(serverID);
-        amogus = getBot().getJda().getEmoteById("909891436625944646");
-        sus = getBot().getJda().getEmoteById("930765635913408532");
-        downvote = getBot().getJda().getEmoteById("903336514644222033");
+        amogus = getBot().getJda().getEmojiById("909891436625944646");
+        sus = getBot().getJda().getEmojiById("930765635913408532");
+        downvote = getBot().getJda().getEmojiById("903336514644222033");
 
         this.registerKnowCommands();
 
@@ -445,7 +450,7 @@ public class CommandHandler extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
-            logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getPrivateChannel().getName())
+            logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getChannel().getName())
                     + ": " + event.getUser().getAsTag()
                     + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event));
@@ -476,7 +481,7 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        String emote = event.getReaction().getReactionEmote().getAsReactionCode();
+        String emote = event.getReaction().getEmoji().getAsReactionCode();
 
         boolean upvote = Config.getInstance().isUpvote(emote);
         boolean downVote = Config.getInstance().isDownvote(emote);
@@ -490,7 +495,7 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        String emote = event.getReaction().getReactionEmote().getAsReactionCode();
+        String emote = event.getReaction().getEmoji().getAsReactionCode();
 
         boolean upvote = Config.getInstance().isUpvote(emote);
         boolean downVote = Config.getInstance().isDownvote(emote);
@@ -507,9 +512,42 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
+        event.deferEdit().queue();
         SelectMenuListener listener = selectMenuListeners.get(event.getComponentId());
         if (listener != null) {
-            listener.onSelectMenuInteraction(event);
+            boolean remove = listener.onSelectMenuInteraction(event);
+            if (remove)
+                selectMenuListeners.remove(event.getComponentId());
+        }
+    }
+
+    public void registerButtonListener(String id, ButtonListener listener) {
+        buttonListeners.put(id, listener);
+    }
+
+    @Override
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        event.deferEdit().queue();
+        ButtonListener listener = buttonListeners.get(event.getComponentId());
+        if (listener != null) {
+            boolean remove = listener.onButtonInteraction(event);
+            if (remove)
+                selectMenuListeners.remove(event.getComponentId());
+        }
+    }
+
+    public void registerModalListener(String id, ModalListener listener) {
+        modalListeners.put(id, listener);
+    }
+
+    @Override
+    public void onModalInteraction(ModalInteractionEvent event) {
+        event.deferEdit().queue();
+        ModalListener listener = modalListeners.get(event.getModalId());
+        if (listener != null) {
+            boolean remove = listener.onModalInteraction(event);
+            if (remove)
+                selectMenuListeners.remove(event.getModalId());
         }
     }
 

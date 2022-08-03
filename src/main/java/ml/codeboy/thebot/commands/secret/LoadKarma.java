@@ -5,6 +5,7 @@ import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +38,11 @@ public class LoadKarma extends SecretCommand {
                         User user = message.getAuthor();
                         int karma = karmaMap.getOrDefault(user, 0);
                         for (MessageReaction r : message.getReactions()) {
-                            if (r.getReactionEmote().isEmote()) {
+                            if (r.getEmoji().getType() == Emoji.Type.CUSTOM) {
                                 int multiplier = 0;
-                                if (Config.getInstance().isDownvote(r.getReactionEmote().getEmote().getId()))
+                                if (Config.getInstance().isDownvote(r.getEmoji().asCustom().getId()))
                                     multiplier = 1;
-                                if (Config.getInstance().isUpvote(r.getReactionEmote().getEmote().getId()))
+                                if (Config.getInstance().isUpvote(r.getEmoji().asCustom().getId()))
                                     multiplier = -1;
                                 karma += r.getCount() * multiplier;
                             }
