@@ -1,25 +1,19 @@
 package ml.codeboy.thebot;
 
-import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
-import com.github.instagram4j.instagram4j.IGClient;
 import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealEmoji;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
@@ -255,38 +249,6 @@ public class MensaUtil {
         frame.setUndecorated(true);
         frame.setSize(image.getWidth() / 2, image.getHeight() / 2);
         frame.setVisible(true);
-    }
-
-    public static void post(BufferedImage image, String caption) throws IOException {
-        IGClient client = IGClient.builder()
-                .username("mensabot_ac")
-                .password("FGHJF6dtr6u2z(T")
-                .login();
-        File dir = new File("tmp/" + UUID.randomUUID());
-        dir.mkdirs();
-        File file = new File(dir, "image.jpg");
-        ImageIO.write(image, "jpg", file);
-        client.actions().timeline()
-                .uploadPhoto(file, caption)
-                .thenAccept(res -> {
-                    // perform actions with response
-                    System.out.println("Uploaded photo");
-                    dir.delete();
-                })
-                .exceptionally(tr -> {
-                    // something has terribly gone wrong!
-                    // handle exception
-                    tr.printStackTrace();
-                    dir.delete();
-                    return null;
-                })
-                .join(); // blocks currect thread until completion
-    }
-
-    public static void main(String[] args) throws IOException {
-        OpenMensa.getInstance().reloadCanteens();
-        display(generateMealsImage(OpenMensa.getInstance().getMensa(187), new Date()));
-        post(generateMealsImage(OpenMensa.getInstance().getMensa(187), new Date()), "");
     }
 
 }
