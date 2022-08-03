@@ -1,8 +1,9 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.api.Meal;
 import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.Config;
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.commands.secret.AcceptImage;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealImage;

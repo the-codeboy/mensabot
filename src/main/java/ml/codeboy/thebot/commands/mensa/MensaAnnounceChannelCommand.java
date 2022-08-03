@@ -1,5 +1,6 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;

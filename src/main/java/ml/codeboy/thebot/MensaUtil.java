@@ -6,6 +6,9 @@ import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealEmoji;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +21,10 @@ import java.util.Locale;
 import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
 public class MensaUtil {
+
+    public static ActionRow mealButtons = ActionRow.of(Button.primary("rate", Emoji.fromFormatted("⭐")),
+            Button.secondary("detail", "details"));
+
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date) {
         EmbedBuilder builder = new EmbedBuilder();
         if (!mensa.isOpen(date) || mensa.getMeals(date).isEmpty()) {

@@ -7,6 +7,7 @@ import ml.codeboy.thebot.commands.sound.GuildMusicManager;
 import ml.codeboy.thebot.commands.sound.PlayerManager;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
+import ml.codeboy.thebot.util.Replyable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.Event;
@@ -22,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class CommandEvent {
+public abstract class CommandEvent implements Replyable {
     private static final Random random = new Random();
     private final Event jdaEvent;
     private boolean ephermal = false;

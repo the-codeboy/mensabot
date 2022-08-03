@@ -1,12 +1,14 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.MealEmoji;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.Replyable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -95,8 +97,8 @@ public class DetailCommand extends Command {
         event.replyError("Can not find meal");
     }
 
-    private void sendDetails(CommandEvent event, Meal meal) {
-        EmbedBuilder builder = event.getBuilder();
+    public static void sendDetails(Replyable event, Meal meal) {
+        EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(MensaUtil.getTitleString(meal));
         String url = FoodRatingManager.getInstance().getImage(meal.getName());
         if (url != null && url.length() > 0)
@@ -106,6 +108,6 @@ public class DetailCommand extends Command {
             MealEmoji emoji = MensaUtil.getEmojiForWord(note);
             builder.addField((emoji == null ? "" : emoji.getEmoji()) + " " + note, "", true);
         }
-        event.reply(builder);
+        event.reply(builder.build());
     }
 }

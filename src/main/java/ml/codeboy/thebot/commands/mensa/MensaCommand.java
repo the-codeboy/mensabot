@@ -1,22 +1,37 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.OpenMensa;
+import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.apis.RWTHMensa;
-import ml.codeboy.thebot.data.GuildManager;
+import ml.codeboy.thebot.commands.Command;
+import ml.codeboy.thebot.data.*;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.Replyable;
+import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class MensaCommand extends Command {
+    private CommandHandler handler;
+
     public MensaCommand() {
         super("mensa", "Sends the current food in mensa Academica", "food");
         OpenMensa.getInstance().reloadCanteens();//doesn't work without this
@@ -155,6 +170,124 @@ public class MensaCommand extends Command {
             event.replyError("The mensa " + mensa.getName() + " is not open " + MensaUtil.dateToWord(date));
             return;
         }
-        event.reply(MensaUtil.MealsToEmbed(mensa, date));
+        EmbedBuilder builder = MensaUtil.MealsToEmbed(mensa, date);
+        if (event.isSlashCommandEvent()) {
+            event.getSlashCommandEvent().getInteraction().getHook().sendMessageEmbeds(builder.build()).addActionRows(MensaUtil.mealButtons).queue();
+        } else if (event.isMessageEvent())
+            event.getMessageReceivedEvent().getChannel().sendMessageEmbeds(builder.build()).setActionRows(MensaUtil.mealButtons).queue();
     }
+
+    @Override
+    public void register(CommandHandler handler) {
+        this.handler = handler;
+        handler.registerButtonListener("rate", this::rate);
+        handler.registerSelectMenuListener("rate", this::rate);
+        handler.registerButtonListener("detail", this::detail);
+        handler.registerSelectMenuListener("detail", this::detail);
+        handler.registerModalListener("comment", this::comment);
+    }
+
+    private boolean rate(ButtonInteractionEvent event) {
+        Mensa mensa = OpenMensa.getInstance().getMensa(187);
+        Guild guild = event.getGuild();
+        if (guild != null) {
+            GuildData data = GuildManager.getInstance().getData(guild);
+            if (data != null)
+                mensa = data.getDefaultMensa();
+        }
+
+        SelectMenu.Builder builder = SelectMenu.create("rate").setRequiredRange(1, 1);
+
+        for (Meal meal : mensa.getMeals()) {
+            try {
+                builder.addOption(meal.getName(), meal.getName());
+            } catch (Exception ignored) {
+            }
+        }
+
+        event.getInteraction().getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Which meal do you want to rate?").build())
+                .setEphemeral(true)
+                .addActionRow(builder.build()).queue();
+        return false;
+    }
+
+    private boolean rate(SelectMenuInteractionEvent event) {
+        String meal = event.getSelectedOptions().get(0).getValue();
+        String id = UUID.randomUUID().toString();
+        SelectMenu.Builder builder = SelectMenu.create(id).setRequiredRange(1, 1);
+
+        for (int i = 1; i < 6; i++) {
+            builder.addOption(Util.repeat("⭐", i), i + "");
+        }
+        handler.registerSelectMenuListener(id, e -> {
+            User user = event.getUser();
+            UserData data = UserDataManager.getInstance().getData(user);
+            int rating = Integer.parseInt(e.getSelectedOptions().get(0).getValue());
+            data.addRating(meal, rating);
+
+            e.getInteraction().getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Rating added: " + meal)
+                    .addField(MensaUtil.getRatingString(rating) + " added",
+                            MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ") total",
+                            true)
+                    .setColor(Color.YELLOW)
+                    .setFooter(e.getMember().getEffectiveName(), e.getMember().getUser().getEffectiveAvatarUrl())
+                    .build()).queue();
+
+            return true;
+        });
+
+        event.getInteraction().getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("How many stars do you give " + meal + "?").build())
+                .addActionRow(builder.build()).setEphemeral(true).queue();
+        return false;
+    }
+
+    private boolean detail(ButtonInteractionEvent event) {
+        Mensa mensa = OpenMensa.getInstance().getMensa(187);
+        Guild guild = event.getGuild();
+        if (guild != null) {
+            GuildData data = GuildManager.getInstance().getData(guild);
+            if (data != null)
+                mensa = data.getDefaultMensa();
+        }
+
+        SelectMenu.Builder builder = SelectMenu.create("detail").setRequiredRange(1, 1);
+
+        for (Meal meal : mensa.getMeals()) {
+            try {
+                builder.addOption(meal.getName(), meal.getName());
+            } catch (Exception ignored) {
+            }
+        }
+
+        event.getInteraction().getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Which meal do you want details for?").build())
+                .setEphemeral(true)
+                .addActionRow(builder.build()).queue();
+        return false;
+    }
+
+    private boolean detail(SelectMenuInteractionEvent event) {
+        Mensa mensa = OpenMensa.getInstance().getMensa(187);
+        Guild guild = event.getGuild();
+        if (guild != null) {
+            GuildData data = GuildManager.getInstance().getData(guild);
+            if (data != null)
+                mensa = data.getDefaultMensa();
+        }
+
+        String name = event.getSelectedOptions().get(0).getValue();
+
+        for (Meal meal : mensa.getMeals()) {
+            if (meal.getName().equals(name)) {
+                DetailCommand.sendDetails(Replyable.from(event), meal);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean comment(ModalInteractionEvent event) {
+        return false;//todo add comment feature
+    }
+
+
 }

@@ -1,7 +1,8 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

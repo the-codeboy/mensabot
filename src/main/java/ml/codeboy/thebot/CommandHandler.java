@@ -14,6 +14,7 @@ import ml.codeboy.thebot.commands.debug.ListQuotes;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
 import ml.codeboy.thebot.commands.image.meme.*;
+import ml.codeboy.thebot.commands.mensa.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -28,6 +29,9 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
+import ml.codeboy.thebot.util.ButtonListener;
+import ml.codeboy.thebot.util.ModalListener;
+import ml.codeboy.thebot.util.SelectMenuListener;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -127,7 +131,8 @@ public class CommandHandler extends ListenerAdapter {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 5)).build()).complete();
+                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 5)).build())
+                        .setActionRows(MensaUtil.mealButtons).complete();
                 data.setLatestAnnouncementId(message.getId());
                 data.save();
             }

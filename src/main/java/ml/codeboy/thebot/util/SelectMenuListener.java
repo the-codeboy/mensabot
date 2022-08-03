@@ -1,4 +1,4 @@
-package ml.codeboy.thebot;
+package ml.codeboy.thebot.util;
 
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 

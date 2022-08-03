@@ -1,8 +1,9 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
@@ -117,7 +118,7 @@ public class RateCommand extends Command {
 
     }
 
-    private void updateGuildAnnouncements(Guild guild, JDA jda) {
+    public static void updateGuildAnnouncements(Guild guild, JDA jda) {
         GuildData data = GuildManager.getInstance().getData(guild);
         try {
             Mensa mensa = data.getDefaultMensa();
@@ -125,7 +126,8 @@ public class RateCommand extends Command {
             if (channel != null) {
                 try {
                     Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
-                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build()).complete();
+                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build())
+                            .setActionRows(MensaUtil.mealButtons).complete();
                 } catch (Exception ignored) {
                 }
             }
