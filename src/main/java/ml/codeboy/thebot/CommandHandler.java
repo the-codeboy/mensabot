@@ -517,7 +517,6 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
-        event.deferEdit().queue();
         SelectMenuListener listener = selectMenuListeners.get(event.getComponentId());
         if (listener != null) {
             boolean remove = listener.onSelectMenuInteraction(event);
@@ -532,7 +531,6 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        event.deferEdit().queue();
         ButtonListener listener = buttonListeners.get(event.getComponentId());
         if (listener != null) {
             boolean remove = listener.onButtonInteraction(event);
@@ -547,7 +545,6 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
-        event.deferEdit().queue();
         ModalListener listener = modalListeners.get(event.getModalId());
         if (listener != null) {
             boolean remove = listener.onModalInteraction(event);

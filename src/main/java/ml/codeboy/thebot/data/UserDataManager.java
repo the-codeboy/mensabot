@@ -26,19 +26,7 @@ public class UserDataManager {
         return getData(user.getId());
     }
 
-    public UserData getData(String userId) {
-        UserData data = userData.get(userId);
-        if (data != null) {
-            return data;
-        }
-        try {
-            return loadData(userId);
-        } catch (FileNotFoundException ignored) {
-        }
-        data = new UserData(userId);
-        userData.put(userId, data);
-        return data;
-    }
+    private final Thread initThread;
 
 
     public UserData loadData(User user) throws FileNotFoundException {
@@ -51,8 +39,9 @@ public class UserDataManager {
         return data;
     }
 
-    public Collection<UserData> getAllUserData() {
-        return userData.values();
+    private UserDataManager() {
+        initThread = new Thread(this::loadUserData);
+        initThread.start();
     }
 
     public void save(UserData data) {
@@ -68,8 +57,34 @@ public class UserDataManager {
 
     private List<UserData> karmaSorted;
 
-    private UserDataManager() {
-        new Thread(this::loadUserData).start();
+    public UserData getData(String userId) {
+        waitTilInit();
+        UserData data = userData.get(userId);
+        if (data != null) {
+            return data;
+        }
+        try {
+            return loadData(userId);
+        } catch (FileNotFoundException ignored) {
+        }
+        data = new UserData(userId);
+        userData.put(userId, data);
+        return data;
+    }
+
+    public Collection<UserData> getAllUserData() {
+        waitTilInit();
+        return userData.values();
+    }
+
+    private void waitTilInit() {
+        if (initThread != null) {
+            try {
+                initThread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void loadUserData() {
@@ -83,8 +98,7 @@ public class UserDataManager {
                 }
             }
         }
-        updateKarmaTop();
-        logger.info("finished loading user data for " + getAllUserData().size() + " users");
+        logger.info("finished loading user data for users");
     }
 
 

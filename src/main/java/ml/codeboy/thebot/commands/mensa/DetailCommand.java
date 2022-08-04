@@ -4,6 +4,7 @@ import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.commands.Command;
+import ml.codeboy.thebot.data.CommentManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.MealEmoji;
@@ -108,6 +109,11 @@ public class DetailCommand extends Command {
             MealEmoji emoji = MensaUtil.getEmojiForWord(note);
             builder.addField((emoji == null ? "" : emoji.getEmoji()) + " " + note, "", true);
         }
+        builder.addBlankField(false);
+        for (String comment : CommentManager.getInstance().getComments(meal.getName())) {
+            builder.addField("", comment, false);
+        }
+
         event.reply(builder.build());
     }
 }

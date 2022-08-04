@@ -14,14 +14,16 @@ import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 import java.awt.*;
 import java.util.Collection;
@@ -184,10 +186,10 @@ public class MensaCommand extends Command {
         handler.registerSelectMenuListener("rate", this::rate);
         handler.registerButtonListener("detail", this::detail);
         handler.registerSelectMenuListener("detail", this::detail);
-        handler.registerModalListener("comment", this::comment);
     }
 
     private boolean rate(ButtonInteractionEvent event) {
+        event.deferEdit().queue();
         Mensa mensa = OpenMensa.getInstance().getMensa(187);
         Guild guild = event.getGuild();
         if (guild != null) {
@@ -212,6 +214,7 @@ public class MensaCommand extends Command {
     }
 
     private boolean rate(SelectMenuInteractionEvent event) {
+        event.deferEdit().queue();
         String meal = event.getSelectedOptions().get(0).getValue();
         String id = UUID.randomUUID().toString();
         SelectMenu.Builder builder = SelectMenu.create(id).setRequiredRange(1, 1);
@@ -220,6 +223,8 @@ public class MensaCommand extends Command {
             builder.addOption(Util.repeat("⭐", i), i + "");
         }
         handler.registerSelectMenuListener(id, e -> {
+            openRatingModal(e, meal);
+
             User user = event.getUser();
             UserData data = UserDataManager.getInstance().getData(user);
             int rating = Integer.parseInt(e.getSelectedOptions().get(0).getValue());
@@ -233,6 +238,16 @@ public class MensaCommand extends Command {
                     .setFooter(e.getMember().getEffectiveName(), e.getMember().getUser().getEffectiveAvatarUrl())
                     .build()).queue();
 
+            Mensa mensa = OpenMensa.getInstance().getMensa(187);
+            Guild guild = event.getGuild();
+            if (guild != null) {
+                GuildData d = GuildManager.getInstance().getData(guild);
+                if (d != null)
+                    mensa = d.getDefaultMensa();
+            }
+
+            RateCommand.updateAllGuildAnnouncements(mensa);
+
             return true;
         });
 
@@ -241,7 +256,26 @@ public class MensaCommand extends Command {
         return false;
     }
 
+    private void openRatingModal(SelectMenuInteractionEvent event, String meal) {
+        String id = UUID.randomUUID().toString();
+
+        handler.registerModalListener(id, e -> {
+            e.deferReply(true).queue();
+            String comment = e.getValue("comment").getAsString();
+            CommentManager.getInstance().addComment(meal, comment, e.getUser());
+            e.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Added comment").setDescription(comment).build()).queue();
+            return true;
+        });
+
+        event.replyModal(Modal.create(id, "Thanks for rating. You can put a comment here")//exactly the 45 chars limit XD
+                .addActionRow(TextInput.create("comment", "Comment", TextInputStyle.PARAGRAPH)
+                        .setPlaceholder("Put your comment here or click cancel if you don't want to comment")
+                        .setRequiredRange(1, 1024)
+                        .build()).build()).complete();
+    }
+
     private boolean detail(ButtonInteractionEvent event) {
+        event.deferEdit().queue();
         Mensa mensa = OpenMensa.getInstance().getMensa(187);
         Guild guild = event.getGuild();
         if (guild != null) {
@@ -266,6 +300,7 @@ public class MensaCommand extends Command {
     }
 
     private boolean detail(SelectMenuInteractionEvent event) {
+        event.deferEdit().queue();
         Mensa mensa = OpenMensa.getInstance().getMensa(187);
         Guild guild = event.getGuild();
         if (guild != null) {
@@ -283,10 +318,6 @@ public class MensaCommand extends Command {
             }
         }
         return false;
-    }
-
-    private boolean comment(ModalInteractionEvent event) {
-        return false;//todo add comment feature
     }
 
 

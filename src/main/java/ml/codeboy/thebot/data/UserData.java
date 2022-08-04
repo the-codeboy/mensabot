@@ -3,6 +3,7 @@ package ml.codeboy.thebot.data;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class UserData {
     private int karma = 0;
     private Map<String, Integer> ratings = new HashMap<>();
     private Map<String, Integer> restaurantRatings = new HashMap<>();
+    private ArrayList<Comment> comments = new ArrayList<>();
 
     public UserData(String userId) {
         this.userId = userId;
@@ -33,10 +35,10 @@ public class UserData {
         return jda.retrieveUserById(getId()).complete();
     }
 
-    public String getTag(JDA jda){
+    public String getTag(JDA jda) {
         try {
             return getUser(jda).getAsTag();
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return "unknown user";
     }
@@ -81,5 +83,11 @@ public class UserData {
             ratings = new HashMap<>();
             UserDataManager.getInstance().save(this);
         }
+    }
+
+    public ArrayList<Comment> getComments() {
+        if (comments == null)
+            comments = new ArrayList<>();
+        return comments;
     }
 }

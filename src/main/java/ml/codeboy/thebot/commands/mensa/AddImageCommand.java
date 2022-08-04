@@ -88,6 +88,7 @@ public class AddImageCommand extends Command {
             String acceptId = image.getId() + acceptImageId;
             String rejectId = image.getId() + rejectImageId;
             commandHandler.registerButtonListener(acceptId, e -> {
+                e.deferEdit().queue();
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     AcceptImage.accept(image, e.getChannel());
                     return true;
@@ -95,6 +96,7 @@ public class AddImageCommand extends Command {
                 return false;
             });
             commandHandler.registerButtonListener(rejectId, e -> {
+                e.deferEdit().queue();
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     String modalId = image.getId() + rejectImageModalId;
                     TextInput reason = TextInput.create("reason", "Reason", TextInputStyle.SHORT)
