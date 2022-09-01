@@ -51,14 +51,6 @@ public class DetailCommand extends Command {
                 }
                 break;
             }
-            case "rating": {
-                options.add("1");
-                options.add("2");
-                options.add("3");
-                options.add("4");
-                options.add("5");
-                break;
-            }
         }
 
         List<net.dv8tion.jda.api.interactions.commands.Command.Choice> choices = new ArrayList<>();

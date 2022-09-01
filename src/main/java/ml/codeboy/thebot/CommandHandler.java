@@ -17,7 +17,6 @@ import ml.codeboy.thebot.commands.image.meme.*;
 import ml.codeboy.thebot.commands.mensa.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
-import ml.codeboy.thebot.commands.quotes.QuoteCommand;
 import ml.codeboy.thebot.commands.secret.*;
 import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
@@ -198,7 +197,7 @@ public class CommandHandler extends ListenerAdapter {
         this.registerCommand(new Help(bot));
 
         registerCommand(new ChuckNorrisJokeCommand());
-        registerCommand(new JermaCommand());
+//        registerCommand(new JermaCommand());
         registerCommand(new TrumpQuoteCommand());
         registerCommand(new AdviceCommand());
         registerCommand(new NewsCommand());
@@ -229,7 +228,7 @@ public class CommandHandler extends ListenerAdapter {
 
         registerCommand(new AddQuote());
         registerCommand(new AddQuoteList());
-        registerCommand(new QuoteCommand());
+//        registerCommand(new QuoteCommand());
         registerCommand(new Karma());
         registerCommand(new KarmaTop());
         registerCommand(new KarmaBottom());
