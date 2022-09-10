@@ -113,7 +113,7 @@ public abstract class Command {
         for (String option : options) {
             if (choices.size() >= 25)//choices limited to 25
                 break;
-            if (option.toLowerCase().contains(value))
+            if (value.length() <= 100 && option.toLowerCase().contains(value))
                 choices.add(new net.dv8tion.jda.api.interactions.commands.Command.Choice(option, option));
         }
         event.replyChoices(choices).queue();
