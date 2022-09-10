@@ -2,6 +2,7 @@ package ml.codeboy.thebot;
 
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import ml.codeboy.thebot.data.CommentManager;
 import ml.codeboy.thebot.data.EmojiManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.MealEmoji;
@@ -57,7 +58,7 @@ public class MensaUtil {
     public static String getTitleString(Meal meal) {
         String title = getEmojiForMeal(meal);
         title += " " + meal.getName();
-        title += getVeggieString(meal);
+        title += getAdditionalEmojisString(meal);
         double rating = FoodRatingManager.getInstance().getRating(meal.getName());
         title += getRatingString(rating);
         if (rating != -1) {
@@ -66,43 +67,48 @@ public class MensaUtil {
         return title;
     }
 
-    public static String getVeggieString(Meal meal) {
+    public static String getAdditionalEmojisString(Meal meal) {
+        String string = " ";
         if (meal.getNotes().contains("vegan")) {
-            return "<:vegan:1003629202739822702>";
+            string += "<:vegan:1003629202739822702>";
         } else if (meal.getNotes().contains("vegetarisch") || meal.getCategory().toLowerCase().contains("vegetarisch")) {
-            return "<:vegetarian:1003629571104591923>";
+            string += "<:vegetarian:1003629571104591923>";
         }
-        return "";
+        if (FoodRatingManager.getInstance().getImage(meal.getName()).length() > 0)
+            string += "\uD83D\uDCF7";//camera emoji
+        if (!CommentManager.getInstance().getComments(meal.getName()).isEmpty())
+            string += "\uD83D\uDCAC";//emoji :speech_baloon:
+        return string;
     }
 
     public static String getRatingString(double rating) {
-        String title = "";
+        StringBuilder title = new StringBuilder();
         if (rating != -1) {
-            title += "\n";
+            title.append("\n");
             while (rating >= 1) {
-                title += "<:star:992412997886693476>";
+                title.append("<:star:992412997886693476>");
                 rating--;
             }
             if (rating > 0.9)
-                title += "<:09:982648330666528769>";
+                title.append("<:09:982648330666528769>");
             else if (rating > 0.8)
-                title += "<:08:982648332801441852>";
+                title.append("<:08:982648332801441852>");
             else if (rating > 0.7)
-                title += "<:07:982648330666528769>";
+                title.append("<:07:982648330666528769>");
             else if (rating > 0.6)
-                title += "<:06:982648332801441852>";
+                title.append("<:06:982648332801441852>");
             else if (rating > 0.5)
-                title += "<:05:982648334621736960>";
+                title.append("<:05:982648334621736960>");
             else if (rating > 0.4)
-                title += "<:04:982648321132855315>";
+                title.append("<:04:982648321132855315>");
             else if (rating > 0.3)
-                title += "<:03:982648322944819280>";
+                title.append("<:03:982648322944819280>");
             else if (rating > 0.2)
-                title += "<:02:982648324228268084>";
+                title.append("<:02:982648324228268084>");
             else if (rating > 0.1)
-                title += "<:01:982648326103134319>";
+                title.append("<:01:982648326103134319>");
         }
-        return title;
+        return title.toString();
     }
 
     private static String toPrice(String f) {
