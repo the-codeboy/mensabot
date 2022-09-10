@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,20 +21,47 @@ import java.util.List;
 public class BottomCommand extends Command {
     private final LeaderBoard leaderBoard;
     private MessageEmbed lastBottom;
+    private final MessageEmbed loading;
 
     public BottomCommand(LeaderBoard leaderBoard) {
         super(leaderBoard.getName() + "Bottom", leaderBoard.getCurrency() + " Schlechtestenliste");
         setGuildOnlyCommand(false);
         this.leaderBoard = leaderBoard;
-        lastBottom = new EmbedBuilder().setTitle("Loading " + leaderBoard.getName() + "Bottom")
+        loading = new EmbedBuilder().setTitle("Loading " + leaderBoard.getName() + "Bottom")
                 .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
+        lastBottom = loading;
     }
 
+    @Override
+    public SlashCommandData getCommandData() {
+        return super.getCommandData().addOption(OptionType.BOOLEAN, "local", "If the leaderboard should be only for this server", false, true);
+    }
+
+    @Override
+    public void autoComplete(String option, List<String> options) {
+        options.add("true");
+        options.add("false");
+    }
 
     @Override
     public void run(CommandEvent event) {
-        event.reply(lastBottom);
-        new Thread(() -> update(event, false)).start();
+        boolean local = false;
+        if (event.isSlashCommandEvent()) {
+            OptionMapping om = event.getSlashCommandEvent().getOption("local");
+            if (om != null && om.getAsBoolean())
+                local = true;
+        } else if (event.isMessageEvent()) {
+            String[] args = event.getArgs();
+            if (args.length > 0 && args[0].equalsIgnoreCase("true"))
+                local = true;
+        }
+        if (!local) {
+            event.reply(lastBottom);
+            new Thread(() -> update(event, false)).start();
+        } else {
+            event.reply(loading);
+            new Thread(() -> update(event, true)).start();
+        }
     }
 
     private void update(CommandEvent event, boolean filter) {
