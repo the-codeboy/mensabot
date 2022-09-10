@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.github.the-codeboy</groupId>
             <artifactId>Piston4J</artifactId>
-            <version>0.0.7</version>
+            <version>a7ce1325c3</version>
         </dependency>
 
         <dependency>
