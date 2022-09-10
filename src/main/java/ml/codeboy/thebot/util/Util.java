@@ -1,5 +1,7 @@
 package ml.codeboy.thebot.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.codeboy.thebot.data.UserData;
@@ -184,5 +186,22 @@ public class Util {
         UserData data = UserDataManager.getInstance().getData(user);
         data.setSusCount(data.getSusCount() + amount);
         UserDataManager.getInstance().save(data);
+    }
+
+    public static String getRandomGif() {
+        String url = "https://api.giphy.com/v1/gifs/random?api_key=0UTRbFtkMxAplrohufYco5IY74U8hOes";
+        try {
+            String response = com.github.codeboy.jokes4j.util.Util.get(new URL(url));
+            JsonElement json = JsonParser.parseString(response);
+            String string = json.getAsJsonObject().get("data").getAsJsonObject().get("url").getAsString();
+            return string;
+        } catch (Exception e) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            return getRandomGif();
+        }
     }
 }
