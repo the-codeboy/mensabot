@@ -34,13 +34,7 @@ public class BottomCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.BOOLEAN, "local", "If the leaderboard should be only for this server", false, true);
-    }
-
-    @Override
-    public void autoComplete(String option, List<String> options) {
-        options.add("true");
-        options.add("false");
+        return super.getCommandData().addOption(OptionType.BOOLEAN, "local", "If the leaderboard should be only for this server", false);
     }
 
     @Override
