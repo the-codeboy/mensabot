@@ -10,7 +10,7 @@ import java.util.Map;
 public class UserData {
     private final String userId;
     private int bedTime = -1;
-    private int karma = 0;
+    private int karma = 0, susCount = 0;
     private Map<String, Integer> ratings = new HashMap<>();
     private Map<String, Integer> restaurantRatings = new HashMap<>();
     private ArrayList<Comment> comments = new ArrayList<>();
@@ -49,6 +49,14 @@ public class UserData {
 
     public void setKarma(int karma) {
         this.karma = karma;
+    }
+
+    public int getSusCount() {
+        return susCount;
+    }
+
+    public void setSusCount(int susCount) {
+        this.susCount = susCount;
     }
 
     public void addRating(String meal, int rating) {

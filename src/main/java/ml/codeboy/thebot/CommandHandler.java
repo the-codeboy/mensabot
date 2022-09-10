@@ -14,6 +14,7 @@ import ml.codeboy.thebot.commands.debug.ListQuotes;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
 import ml.codeboy.thebot.commands.image.meme.*;
+import ml.codeboy.thebot.commands.leaderboard.LeaderBoard;
 import ml.codeboy.thebot.commands.mensa.*;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
@@ -229,9 +230,11 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new AddQuote());
         registerCommand(new AddQuoteList());
 //        registerCommand(new QuoteCommand());
-        registerCommand(new Karma());
-        registerCommand(new KarmaTop());
-        registerCommand(new KarmaBottom());
+//        registerCommand(new Karma());
+//        registerCommand(new KarmaTop());
+//        registerCommand(new KarmaBottom());
+
+        registerLeaderBoardCommands();
 
         registerImageCommands();
 
@@ -262,6 +265,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new React());
         registerCommand(new Msg());
         registerCommand(new LoadKarma());
+        registerCommand(new LoadSusCount());
         registerCommand(new Bee());
         registerCommand(new AcceptImage());
         registerCommand(new RejectImage());
@@ -319,7 +323,11 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new CurrentTrack());
     }
 
-    private void registerCommand(Command command) {
+    private void registerLeaderBoardCommands() {
+        LeaderBoard.registerAll(this);
+    }
+
+    public void registerCommand(Command command) {
         command.register(this);
         commands.put(command.getName().toLowerCase(), command);
         allCommands.add(command);
@@ -361,12 +369,15 @@ public class CommandHandler extends ListenerAdapter {
         String msg = event.getMessage().getContentRaw().toLowerCase();
         if (msg.contains("mogus") || msg.contains("imposter") || msg.contains("among us")) {
             logger.info("amogus");
-            event.getMessage().addReaction(amogus).queue();
+            if (amogus != null)
+                event.getMessage().addReaction(amogus).queue();
         }
         if (msg.contains("sus")) {
             logger.info("sus");
-            event.getMessage().addReaction(amogus).queue();
-            event.getMessage().addReaction(sus).queue();
+            if (amogus != null)
+                event.getMessage().addReaction(amogus).queue();
+            if (sus != null)
+                event.getMessage().addReaction(sus).queue();
         }
 
         if (event.getAuthor().getId().equals("290368310711681024") && !event.getChannel().getId().equals("917201826271604736")) {
@@ -489,10 +500,16 @@ public class CommandHandler extends ListenerAdapter {
 
         boolean upvote = Config.getInstance().isUpvote(emote);
         boolean downVote = Config.getInstance().isDownvote(emote);
+        boolean sus = Config.getInstance().isSus(emote);
 
         if (upvote || downVote) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
             Util.addKarma(message.getAuthor(), upvote ? 1 : -1);
+        }
+
+        if (sus) {
+            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+            Util.addSusCount(message.getAuthor(), 1);
         }
 
     }
@@ -503,10 +520,16 @@ public class CommandHandler extends ListenerAdapter {
 
         boolean upvote = Config.getInstance().isUpvote(emote);
         boolean downVote = Config.getInstance().isDownvote(emote);
+        boolean sus = Config.getInstance().isSus(emote);
 
         if (upvote || downVote) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
             Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma
+        }
+
+        if (sus) {
+            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
+            Util.addSusCount(message.getAuthor(), -1);
         }
     }
 

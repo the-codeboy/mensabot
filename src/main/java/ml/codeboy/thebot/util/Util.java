@@ -180,4 +180,9 @@ public class Util {
     }
 
 
+    public static void addSusCount(User user, int amount) {
+        UserData data = UserDataManager.getInstance().getData(user);
+        data.setSusCount(data.getSusCount() + amount);
+        UserDataManager.getInstance().save(data);
+    }
 }

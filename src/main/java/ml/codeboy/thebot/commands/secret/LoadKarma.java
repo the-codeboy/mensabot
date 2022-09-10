@@ -40,9 +40,9 @@ public class LoadKarma extends SecretCommand {
                         for (MessageReaction r : message.getReactions()) {
                             if (r.getEmoji().getType() == Emoji.Type.CUSTOM) {
                                 int multiplier = 0;
-                                if (Config.getInstance().isDownvote(r.getEmoji().asCustom().getId()))
+                                if (Config.getInstance().isDownvote(r.getEmoji().getAsReactionCode()))
                                     multiplier = 1;
-                                if (Config.getInstance().isUpvote(r.getEmoji().asCustom().getId()))
+                                if (Config.getInstance().isUpvote(r.getEmoji().getAsReactionCode()))
                                     multiplier = -1;
                                 karma += r.getCount() * multiplier;
                             }
