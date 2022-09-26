@@ -429,7 +429,7 @@ public class CommandHandler extends ListenerAdapter {
                 logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
             }
 
-            command.execute(new MessageCommandEvent(event));
+            command.execute(new MessageCommandEvent(event, command));
         }
     }
 
@@ -469,7 +469,7 @@ public class CommandHandler extends ListenerAdapter {
             logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getChannel().getName())
                     + ": " + event.getUser().getAsTag()
                     + ": " + event.getCommandString());
-            command.execute(new SlashCommandCommandEvent(event));
+            command.execute(new SlashCommandCommandEvent(event, command));
         }
     }
 

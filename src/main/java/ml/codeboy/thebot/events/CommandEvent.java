@@ -3,6 +3,7 @@ package ml.codeboy.thebot.events;
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.Config;
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.commands.sound.GuildMusicManager;
 import ml.codeboy.thebot.commands.sound.PlayerManager;
 import ml.codeboy.thebot.data.GuildData;
@@ -27,9 +28,15 @@ public abstract class CommandEvent implements Replyable {
     private static final Random random = new Random();
     private final Event jdaEvent;
     private boolean ephermal = false;
+    private final Command command;
 
-    public CommandEvent(Event jdaEvent) {
+    public CommandEvent(Event jdaEvent, Command command) {
         this.jdaEvent = jdaEvent;
+        this.command = command;
+    }
+
+    public Command getCommand() {
+        return command;
     }
 
     public abstract void reply(String message);

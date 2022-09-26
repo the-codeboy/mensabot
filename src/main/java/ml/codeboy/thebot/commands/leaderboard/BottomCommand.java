@@ -6,6 +6,7 @@ import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -30,6 +31,7 @@ public class BottomCommand extends Command {
         loading = new EmbedBuilder().setTitle("Loading " + leaderBoard.getName() + "Bottom")
                 .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
         lastBottom = loading;
+        setRequiredBotPermisions(Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION);
     }
 
     @Override

@@ -4,6 +4,7 @@ import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -19,6 +20,7 @@ public abstract class Command {
     private final String name, description;
     private final String[] aliases;
     private Permission[] requiredPermisions = new Permission[0];
+    private Permission[] requiredBotPermisions = new Permission[0];
     private boolean hidden = false, guildOnlyCommand = true;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -36,6 +38,15 @@ public abstract class Command {
 
     protected void setRequiredPermissions(Permission... requiredPermisions) {
         this.requiredPermisions = requiredPermisions;
+    }
+
+    public Permission[] getRequiredBotPermisions() {
+        return requiredBotPermisions;
+    }
+
+    public Command setRequiredBotPermisions(Permission... requiredBotPermisions) {
+        this.requiredBotPermisions = requiredBotPermisions;
+        return this;
     }
 
     public void execute(CommandEvent event) {
@@ -129,5 +140,15 @@ public abstract class Command {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public List<Permission> getSuggestedPermissions(CommandEvent event) {
+        Guild guild = event.getGuild();
+        List<Permission> permissions = new ArrayList<>();
+        for (Permission permission : getRequiredBotPermisions()) {
+            if (!guild.getSelfMember().hasPermission(permission))
+                permissions.add(permission);
+        }
+        return permissions;
     }
 }

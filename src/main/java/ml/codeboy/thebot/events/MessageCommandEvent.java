@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.events;
 
+import ml.codeboy.thebot.commands.Command;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -10,8 +11,8 @@ public class MessageCommandEvent extends CommandEvent {
 
     private Message reply = null;
 
-    public MessageCommandEvent(MessageReceivedEvent jdaEvent) {
-        super(jdaEvent);
+    public MessageCommandEvent(MessageReceivedEvent jdaEvent, Command command) {
+        super(jdaEvent, command);
     }
 
     @Override
