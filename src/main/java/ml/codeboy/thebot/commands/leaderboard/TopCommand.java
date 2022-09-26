@@ -74,11 +74,8 @@ public class TopCommand extends Command {
                 break;
             UserData data = sorted.get(i + offset);
             try {
-                User user = data.getUser(jda);
-                if (filter && user.getMutualGuilds().isEmpty()) {
-                    offset++;
-                    i--;
-                    continue;
+                if (filter) {
+                    event.getGuild().retrieveMemberById(data.getId()).complete();//makes sure the user is a member on this server
                 }
                 builder.addField(i + 1 + ".", data.getTag(jda) + " " + leaderBoard.getValue(data), false);
             } catch (Exception e) {
