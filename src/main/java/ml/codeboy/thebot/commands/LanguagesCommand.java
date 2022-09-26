@@ -4,6 +4,9 @@ import com.github.codeboy.piston4j.api.Piston;
 import com.github.codeboy.piston4j.api.Runtime;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+
+import java.util.LinkedList;
 
 public class LanguagesCommand extends Command {
     public LanguagesCommand() {
@@ -13,10 +16,24 @@ public class LanguagesCommand extends Command {
 
     @Override
     public void run(CommandEvent event) {
+        LinkedList<MessageEmbed> embeds = new LinkedList<>();
         EmbedBuilder builder = new EmbedBuilder();
         for (Runtime r : Piston.getDefaultApi().getRuntimes()) {
-            builder.addField(r.getLanguage(), r.getVersion(), true);
+            if (builder.getFields().size() >= 25) {
+                embeds.add(builder.build());
+                builder = new EmbedBuilder();
+            }
+            StringBuilder s = new StringBuilder();
+            String[] aliases = r.getAliases();
+            for (int i = 0; i < aliases.length; i++) {
+                String alias = aliases[i];
+                s.append(alias);
+                if (i < aliases.length - 1)
+                    s.append(", ");
+            }
+            builder.addField(r.getLanguage(), s.toString(), true);
         }
-        event.reply(builder);
+        embeds.add(builder.build());
+        event.reply(embeds.toArray(new MessageEmbed[0]));
     }
 }

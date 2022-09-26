@@ -2,9 +2,9 @@ package ml.codeboy.thebot.commands;
 
 import com.github.codeboy.piston4j.api.Runtime;
 import com.github.codeboy.piston4j.api.*;
-import ml.codeboy.Util;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -13,16 +13,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ExecuteCommand extends Command {
-    public ExecuteCommand() {
-        super("run", "runs code in the specified language");
-        setGuildOnlyCommand(false);
-    }
+    private final List<String> languages = new ArrayList<>();
 
     @Override
     public SlashCommandData getCommandData() {
@@ -30,16 +24,23 @@ public class ExecuteCommand extends Command {
                 .addOption(OptionType.STRING, "code", "the code to run", true);
     }
 
+    public ExecuteCommand() {
+        super("run", "runs code in the specified language");
+        setGuildOnlyCommand(false);
+
+        for (Runtime runtime : Piston.getDefaultApi().getRuntimes()) {
+            languages.add(runtime.getLanguage());
+        }
+        languages.sort(Comparator.comparingInt(String::length));
+        for (Runtime runtime : Piston.getDefaultApi().getRuntimes()) {//add aliases only after full names
+            languages.addAll(Arrays.asList(runtime.getAliases()));
+        }
+    }
 
     @Override
     public void autoComplete(String option, List<String> options) {
-        switch (option) {
-            case "language": {
-                for (Runtime runtime : Piston.getDefaultApi().getRuntimes()) {
-                    options.add(runtime.getLanguage());
-                }
-                break;
-            }
+        if ("language".equals(option)) {
+            options.addAll(languages);
         }
     }
 
@@ -85,13 +86,15 @@ public class ExecuteCommand extends Command {
             //ExecutionResults
             ExecutionRequest request = new ExecutionRequest(r.getLanguage(), r.getVersion(), codeFiles.toArray(new CodeFile[0]));
             ExecutionResult result = Piston.getDefaultApi().execute(request);
-            if (code.length() == 0 && !codeFiles.isEmpty())
-                code = codeFiles.get(0).getContent();
-            sendResult(event, result, code);
+            if (code.length() == 0 && !codeFiles.isEmpty()) {
+                CodeFile codeFile = codeFiles.get(0);
+                sendResult(event, result, codeFile.getContent(), codeFile.getName());
+            }
+            sendResult(event, result, code, "code." + language.toLowerCase());
         }
     }
 
-    private void sendResult(CommandEvent event, ExecutionResult result, String code) {
+    private void sendResult(CommandEvent event, ExecutionResult result, String code, String codeName) {
         ExecutionOutput output = result.getOutput();
         ExecutionOutput error = result.getCompileOutput();
         //Message builder
@@ -123,7 +126,7 @@ public class ExecuteCommand extends Command {
             ret = new MessageEmbed[]{input.build(), out.build()};
         }
         if (event.isMessageEvent() && !codeFits) {
-            event.getChannel().sendMessageEmbeds(Arrays.asList(ret)).addFile(code.getBytes(), "code.txt").queue();
+            event.getChannel().sendMessageEmbeds(Arrays.asList(ret)).addFile(code.getBytes(), codeName).queue();
         } else
             event.reply(ret);
     }

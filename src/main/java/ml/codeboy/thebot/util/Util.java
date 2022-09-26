@@ -15,9 +15,13 @@ import net.dv8tion.jda.api.entities.User;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -202,6 +206,25 @@ public class Util {
                 throw new RuntimeException(ex);
             }
             return getRandomGif();
+        }
+    }
+
+
+    public static String readUrl(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("User-Agent", "Weather4J");
+        con.setRequestProperty("Content-Type", "application/json; utf-8");
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+            String inputLine;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(inputLine).append("\n");
+            }
+
+            String result = stringBuilder.toString();
+            return result;
         }
     }
 }
