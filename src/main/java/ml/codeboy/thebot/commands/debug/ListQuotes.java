@@ -20,24 +20,30 @@ public class ListQuotes extends DebugCommand {
         ArrayList<MessageEmbed> rep = new ArrayList<>();
         EmbedBuilder m = null;
         int s = 0;
-        for(Person p : persons)
-        {
+        for (Person p : persons) {
             m = new EmbedBuilder();
             m.setTitle(p.getName());
-            for(Quote q : p.getQuotes())
-            {
-                if(s+q.getContent().length()>1024)
-                {
-                    s=0;
+            for (Quote q : p.getQuotes()) {
+                if (s + q.getContent().length() > 1024) {
+                    s = 0;
                     rep.add(m.build());
+                    if (rep.size() >= 10) {
+                        event.reply(rep.toArray(new MessageEmbed[0]));
+                        rep.clear();
+                    }
                     m = new EmbedBuilder();
                     m.setTitle(p.getName());
                 }
-                m.addField("",q.getContent(), false);
-                s+=q.getContent().length();
+                m.addField("", q.getContent(), false);
+                s += q.getContent().length();
             }
-           rep.add(m.build());
+            rep.add(m.build());
+            if (rep.size() >= 10) {
+                event.reply(rep.toArray(new MessageEmbed[0]));
+                rep.clear();
+            }
         }
-        event.reply(rep.toArray(new MessageEmbed[0]));
+        if (rep.size() > 0)
+            event.reply(rep.toArray(new MessageEmbed[0]));
     }
 }
