@@ -48,6 +48,16 @@ public class Quote {
     }
 
     public EmbedBuilder builder() {
-        return new EmbedBuilder().setTitle(getContent()).setDescription("||" + getPerson() + "||");
+        if (getContent().length() <= 256)
+            return new EmbedBuilder().setTitle(getContent()).setDescription("||" + getPerson() + "||");
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.addField("||" + getPerson() + "||", "", true);
+        String content = getContent();
+        while (content.length() > 1024) {
+            builder.addField("", content.substring(0, 1024), false);
+            content = content.substring(1024);
+        }
+        builder.addField("", content, false);
+        return builder;
     }
 }
