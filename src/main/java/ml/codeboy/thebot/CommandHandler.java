@@ -4,7 +4,6 @@ import com.github.codeboy.api.Mensa;
 import com.github.codeboy.jokes4j.Jokes4J;
 import com.github.codeboy.jokes4j.api.Flag;
 import com.github.codeboy.jokes4j.api.JokeRequest;
-import com.github.codeboy.piston4j.api.Piston;
 import ml.codeboy.met.Weather4J;
 import ml.codeboy.met.data.Forecast;
 import ml.codeboy.thebot.apis.AdviceApi;
@@ -52,15 +51,20 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
+import org.mariuszgromada.math.mxparser.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.time.Instant;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -68,6 +72,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
+import static ml.codeboy.thebot.util.Util.getKANValue;
+import static ml.codeboy.thebot.util.Util.isKAN;
 
 public class CommandHandler extends ListenerAdapter {
     private final Logger logger
@@ -389,8 +395,12 @@ public class CommandHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        amogus(event);
-        counter(event);
+        Thread t = new Thread(() -> {
+            amogus(event);
+            counter(event);
+            evaluateMessage(event);
+        });
+        t.start();
         String content = event.getMessage().getContentRaw();
         if (!event.isFromGuild() && !event.getAuthor().isBot()) {
             TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById(Config.getInstance().dmDebugChannel);
@@ -437,29 +447,54 @@ public class CommandHandler extends ListenerAdapter {
     private void counter(MessageReceivedEvent event) {
         if (event.getChannel().getId().equals("898271566880727130") && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
             try {
-                float i = evaluate(event.getMessage().getContentRaw());
+                double i = evaluate(event.getMessage().getContentRaw());
+                if (Double.isNaN(i))
+                    return;
                 event.getChannel().sendMessage(i + 1 + "").queue();
             } catch (Exception ignored) {
             }
         }
     }
 
-    private float evaluate(String text) {
-        try {
-            float value = Float.parseFloat(text);
-            return value;
-        } catch (NumberFormatException ignored) {//assume this is an expression that needs to be evaluated first
+    private void evaluateMessage(MessageReceivedEvent event) {
+        String content = event.getMessage().getContentRaw();
+        if (!event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) && content.endsWith("=?")) {
+            try {
+                String text = content.substring(0, content.length() - 2);
+                if (isKAN(text)) {
+                    BigInteger i = null;
+                    try {
+                        i = getKANValue(text);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        event.getMessage().replyEmbeds(new EmbedBuilder().setColor(Color.RED).setTitle("I am unable to calculate this number :(").build()).queue();
+                        return;
+                    }
+                    String prefix = text + " = ";
+                    int charsLeft = 2000 - prefix.length();
+                    String result = i.toString();
+                    result = Util.toDigits(charsLeft, result);
+                    MessageAction action = event.getMessage().reply(prefix + result);
+                    if (!result.equals(i.toString()))
+                        action = action.addFile(Util.toDigits(1048576, i.toString()).getBytes(), "number.txt");
+                    action.queue();
+                    return;
+                }
+                double i = evaluate(text);
+                event.getChannel().sendMessage(text + " = " + i).queue();
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
         }
-        text = text.replace("pi", "math.pi");
-        text = text.replace("e", "math.e");
-        text = text.replace("sqrt", "math.sqrt");
-        text = text.replace("abs", "math.abs");
-        text = text.replace("g", "9.81");
-        text = text.replace("R", "8.314");
-        logger.info(text);
-        String result = Piston.getDefaultApi().execute("python", "import math\nprint(" + text + ",end=\"\")").getOutput().getOutput();
-        logger.info("\"" + result + "\"");
-        return Float.parseFloat(result);
+    }
+
+    private double evaluate(String text) {
+        try {
+            Expression e = new Expression(text);
+            return e.calculate();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
 

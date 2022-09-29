@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -226,5 +227,38 @@ public class Util {
             String result = stringBuilder.toString();
             return result;
         }
+    }
+
+
+    private static final String arrow = "↑";
+
+    /**
+     * @return true if the text contains ↑ meaning it is probably in knuths arrow notation
+     */
+    public static boolean isKAN(String text) {
+        return text.contains(arrow);
+    }
+
+    public static BigInteger getKANValue(String text) {
+        int i = text.indexOf(arrow), j = text.lastIndexOf(arrow);
+        int a = Integer.parseInt(text.substring(0, i)), b = Integer.parseInt(text.substring(j + 1));
+        int arrows = j - i + 1;
+        return kanValueInternal(BigInteger.valueOf(a), arrows, b);
+    }
+
+    private static BigInteger kanValueInternal(BigInteger a, int b, int c) {
+        System.out.println(a + " " + b + " " + c);
+        if (c > 1 && b > 1)
+            return kanValueInternal(a, b - 1, kanValueInternal(a, b, c - 1).intValueExact());
+        return a.pow(c);
+    }
+
+    public static String toDigits(int maxDigits, String text) {
+        if (text.length() > maxDigits) {
+            int originalLength = text.length();
+            text = text.substring(0, maxDigits - 10);
+            text += "E" + (originalLength - text.length());
+        }
+        return text;
     }
 }
