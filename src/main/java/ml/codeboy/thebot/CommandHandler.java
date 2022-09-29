@@ -466,6 +466,8 @@ public class CommandHandler extends ListenerAdapter {
                     try {
                         i = getKANValue(text);
                     } catch (Throwable e) {
+                        // Catches all throwables instead of only exceptions to include stackoverflow and other errors.
+                        // They would not crash the bot if not caught, but this makes sure the user is notified that their number will no longer be calculated
                         e.printStackTrace();
                         event.getMessage().replyEmbeds(new EmbedBuilder().setColor(Color.RED).setTitle("I am unable to calculate this number :(").build()).queue();
                         return;
