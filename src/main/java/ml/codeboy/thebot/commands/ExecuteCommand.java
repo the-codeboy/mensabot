@@ -73,7 +73,8 @@ public class ExecuteCommand extends Command {
             run(event, language, code, codeFiles);
         } else {
             SlashCommandInteractionEvent e = event.getSlashCommandEvent();
-            run(event, e.getOption("language").getAsString(), e.getOption("code").getAsString(), Collections.emptyList());
+            String code = e.getOption("code").getAsString();
+            run(event, e.getOption("language").getAsString(), code, Collections.singletonList(new CodeFile(code)));
         }
     }
 
