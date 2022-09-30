@@ -61,7 +61,7 @@ public class BottomCommand extends Command {
 
     private void update(CommandEvent event, boolean filter) {
         Guild guild = event.getGuild();
-        JDA jda = guild.getJDA();
+        JDA jda = event.getJDA();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(leaderBoard.getName() + "Bottom");
         List<UserData> sorted = new ArrayList<>(UserDataManager.getInstance().getAllUserData());

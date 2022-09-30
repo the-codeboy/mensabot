@@ -10,6 +10,7 @@ import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.util.Replyable;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -179,6 +180,10 @@ public abstract class CommandEvent implements Replyable {
         if (getGuild() == null)
             return OpenMensa.getInstance().getMensa(187);
         return getGuildData().getDefaultMensa();
+    }
+
+    public JDA getJDA() {
+        return getJdaEvent().getJDA();
     }
 
     //endregion
