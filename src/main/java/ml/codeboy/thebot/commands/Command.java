@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Command {
@@ -144,6 +145,8 @@ public abstract class Command {
 
     public List<Permission> getSuggestedPermissions(CommandEvent event) {
         Guild guild = event.getGuild();
+        if (guild == null)
+            return Collections.emptyList();
         List<Permission> permissions = new ArrayList<>();
         for (Permission permission : getRequiredBotPermisions()) {
             if (!guild.getSelfMember().hasPermission(permission))
