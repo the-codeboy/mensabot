@@ -143,8 +143,9 @@ public class MensaUtil {
                 return ":potato:";
             case "Nebenbeilage":
                 return ":salad:";
+            default: 
+                return ":fork_knife_plate:";
         }
-        return ":fork_knife_plate:";
     }
 
     public static MealEmoji getEmojiForWord(String word) {
@@ -155,31 +156,33 @@ public class MensaUtil {
 
     public static String dateToWord(Date date) {
         long seconds = (date.getTime() - System.currentTimeMillis()) / 1000;
-        if (Math.abs(seconds) < (60 * 60 * 12)) {
+        long twelvehours = 60 * 60 * 12;
+        if (Math.abs(seconds) < twelvehours) {
             return "today";
         }
         if (seconds > 0) {
-            if (seconds < 3 * 60 * 60 * 12) {
+            if (seconds < 3 * twelvehours) {
                 return "tomorrow";
             }
-            int days = (int) (1 + (seconds - 60 * 60 * 12) / (60 * 60 * 24));
+            int days = (int) (1 + (seconds - twelvehours) / twelvehours);
             return "in " + days + " days";
         }
-        if (seconds > -3 * 60 * 60 * 12) {
+        if (seconds > -3 * twelvehours) {
             return "yesterday";
         }
-        int days = (int) (1 - (seconds + 60 * 60 * 12) / (60 * 60 * 24));
+        int days = (int) (1 - (seconds + twelvehours) / twelvehours);
         return days + " days ago";
     }
 
     public static Date wordToDate(String word) {
         word = word.toLowerCase();
+        long dayinmili = 1000 * 60 * 60 * 24;
         if (word.equals("today") || word.equals("heute"))
             return new Date();
         if (word.equals("yesterday") || word.equals("gestern"))
-            return new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
+            return new Date(System.currentTimeMillis() - dayinmili);
         if (word.equals("tomorrow") || word.equals("morgen"))
-            return new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+            return new Date(System.currentTimeMillis() + dayinmili);
         if (word.endsWith("morgen")) {
             int i = 1;
             while (word.startsWith("über")) {
