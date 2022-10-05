@@ -1,8 +1,9 @@
 package ml.codeboy.thebot.apis.mongoDB;
 
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoIterable;
-import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import org.bson.Document;
@@ -18,15 +19,18 @@ public class DatabaseQuoteAPI {
         quote.append("time", q.getTime());
         quote.append("authorId", q.getAuthorId());
         quote.append("name",q.getPerson());
-        DatabaseManager.getInstance().getQuotesDatabase().getCollection(q.getPerson().toLowerCase()).insertOne(quote);
+        MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+        client.getDatabase("quotes").getCollection(q.getPerson().toLowerCase()).insertOne(quote);
+        client.close();
     }
 
     /**
      * Returns all saved persons
      * @return
      */
-    public static MongoIterable<String> getPersons(){
-         return DatabaseManager.getInstance().getQuotesDatabase().listCollectionNames();
+    public static MongoIterable<String> getPersons(MongoClient client){
+        MongoIterable<String> ret = client.getDatabase("quotes").listCollectionNames();
+        return ret;
     }
 
     /**
@@ -34,8 +38,9 @@ public class DatabaseQuoteAPI {
      * @param name
      * @return
      */
-    public static FindIterable<Document> getQuotes(String name)
+    public static FindIterable<Document> getQuotes(String name, MongoClient client)
     {
-        return DatabaseManager.getInstance().getQuotesDatabase().getCollection(name.toLowerCase()).find();
+        FindIterable<Document> ret = client.getDatabase("quotes").getCollection(name.toLowerCase()).find();
+        return ret;
     }
 }

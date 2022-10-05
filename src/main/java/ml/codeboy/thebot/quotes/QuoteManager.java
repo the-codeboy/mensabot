@@ -1,5 +1,9 @@
 package ml.codeboy.thebot.quotes;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoIterable;
+import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -27,9 +31,11 @@ public class QuoteManager {
     }
 
     private void loadPersons() {
-        for (String p : DatabaseQuoteAPI.getPersons()) {
-            loadPerson(p);
+        MongoClient client= MongoClients.create(DatabaseManager.getInstance().getSettings());
+        for (String p : DatabaseQuoteAPI.getPersons(client)) {
+            loadPerson(p, client);
         }
+        client.close();
         logger.info("loaded " + persons.size() + " persons with a total of " + quotes.size() + " quotes");
     }
 
@@ -42,11 +48,11 @@ public class QuoteManager {
         logger.info("registered " + person.getName() + " with " + person.getQuotes().size() + " quotes");
     }
 
-    private void loadPerson(String p) {
+    private void loadPerson(String p, MongoClient client) {
         Person person = new Person(p);
         Quote q = null;
         ArrayList<Quote> list = new ArrayList<>();
-        for(Document d : DatabaseQuoteAPI.getQuotes(p)) {
+        for(Document d : DatabaseQuoteAPI.getQuotes(p, client)) {
             q = new Quote(
                     d.getString("content"),
                     d.getLong("time"),

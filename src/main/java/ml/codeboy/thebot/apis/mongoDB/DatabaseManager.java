@@ -20,38 +20,28 @@ public class DatabaseManager {
     static {
         database_instance = new DatabaseManager();
     }
-
-    private final MongoDatabase quotesDatabase;
-    private final MongoDatabase textDatabase;
-    private final MongoCollection karma;
-    private final MongoClient mongoClient;
     private final Logger logger
             = LoggerFactory.getLogger(getClass());
+    private final ConnectionString connectionString;
+
+    private final MongoClientSettings settings;
 
     public DatabaseManager() {
-        ConnectionString connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
-        MongoClientSettings settings = MongoClientSettings.builder()
+        connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
+        settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .serverApi(ServerApi.builder()
                         .version(ServerApiVersion.V1)
                         .build())
                 .build();
-        mongoClient = MongoClients.create(settings);
-        quotesDatabase = mongoClient.getDatabase("quotes");
-        textDatabase = mongoClient.getDatabase("text");
-        karma = mongoClient.getDatabase("karma").getCollection("karma");
-        try {
-            Bson command = new BsonDocument("ping", new BsonInt64(1));
-            Document commandResult = quotesDatabase.runCommand(command);
-            logger.info("Connected successfully to server.");
-        } catch (MongoException me) {
-            logger.error("An error occurred while attempting to run a command: " + me);
-        }
+        logger.debug("Database_instance build");
     }
 
-    public static DatabaseManager getInstance(){return database_instance;}
+    public static DatabaseManager getInstance() {
+        return database_instance;
+    }
 
-    public MongoDatabase getQuotesDatabase(){return quotesDatabase;}
-    public MongoCollection getKarma(){return karma;}
-    public MongoDatabase getTextDatabase(){return textDatabase;}
+    public MongoClientSettings getSettings() {
+        return settings;
+    }
 }
