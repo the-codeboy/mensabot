@@ -182,4 +182,4 @@ target/classes/logback.xml
 
 *.pem
 quotes/
-target/classes/emojis.csv
+target/
