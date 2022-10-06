@@ -34,7 +34,6 @@ public class DatabaseManager {
                         .version(ServerApiVersion.V1)
                         .build())
                 .build();
-        logger.debug("Database_instance build");
     }
 
     public static DatabaseManager getInstance() {
