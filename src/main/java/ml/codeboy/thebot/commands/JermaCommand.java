@@ -19,22 +19,47 @@ public class JermaCommand extends Command {
 
     private MongoClient client;
 
+    private boolean dbConnected = false;
+
     public JermaCommand() {
         super("jerma", "Sends a Jerma");
         updateDocs();
         setGuildOnlyCommand(false);
     }
 
+    /**
+     * Open the connection to the Database and set the appropriate flag
+     */
     private void dbConnect()
     {
-        client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+        if(!dbConnected) {
+            client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+            dbConnected=true;
+        }
+        else
+        {
+            getLogger().error("Not able to open the connection because it is already open");
+        }
     }
 
+    /**
+     * Close the connection and set the flag
+     */
     private void dbClose()
     {
-        client.close();
+        if(dbConnected) {
+            client.close();
+            dbConnected = false;
+        }
+        else
+        {
+            getLogger().error("Not able to close the client because it has already been closed");
+        }
     }
 
+    /**
+     * Load the 'jermas' and shuffle them
+     */
     private void updateDocs()
     {
         dbConnect();
@@ -50,6 +75,10 @@ public class JermaCommand extends Command {
         dbClose();
     }
 
+    /**
+     * Get the amount of 'jermas' in the db
+     * @return the amount of 'jermas'
+     */
     private long getCollectionSize()
     {
         dbConnect();
@@ -61,7 +90,6 @@ public class JermaCommand extends Command {
     @Override
     public void run(CommandEvent event) {
         dbConnect();
-        System.out.println("HALLO?");
         MongoCollection collection = client.getDatabase("text").getCollection("jerma");
         long collSize = collection.countDocuments();
         if(databaseSize!=collSize)

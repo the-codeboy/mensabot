@@ -27,6 +27,7 @@ public class DatabaseManager {
     private final MongoClientSettings settings;
 
     public DatabaseManager() {
+        //Create the connection string and settings
         connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
         settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
