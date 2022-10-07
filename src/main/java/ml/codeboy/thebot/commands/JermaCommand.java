@@ -1,5 +1,7 @@
 package ml.codeboy.thebot.commands;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.events.CommandEvent;
@@ -11,15 +13,57 @@ public class JermaCommand extends Command {
 
     private int p = 0;
 
-    private final MongoCollection collection;
-
     private Document[] docs;
 
     private long databaseSize = -1;
 
+    private MongoClient client;
+
+    private boolean dbConnected = false;
+
     public JermaCommand() {
         super("jerma", "Sends a Jerma");
-        collection = DatabaseManager.getInstance().getTextDatabase().getCollection("jerma");
+        updateDocs();
+        setGuildOnlyCommand(false);
+    }
+
+    /**
+     * Open the connection to the Database and set the appropriate flag
+     */
+    private void dbConnect()
+    {
+        if(!dbConnected) {
+            client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+            dbConnected=true;
+        }
+        else
+        {
+            getLogger().error("Not able to open the connection because it is already open");
+        }
+    }
+
+    /**
+     * Close the connection and set the flag
+     */
+    private void dbClose()
+    {
+        if(dbConnected) {
+            client.close();
+            dbConnected = false;
+        }
+        else
+        {
+            getLogger().error("Not able to close the client because it has already been closed");
+        }
+    }
+
+    /**
+     * Load the 'jermas' and shuffle them
+     */
+    private void updateDocs()
+    {
+        dbConnect();
+        MongoCollection collection = client.getDatabase("text").getCollection("jerma");
         databaseSize = collection.countDocuments();
         docs = new Document[(int)databaseSize];
         {
@@ -28,14 +72,29 @@ public class JermaCommand extends Command {
                 docs[i++] = (Document) d;
         }
         shuffle(docs);
-        setGuildOnlyCommand(false);
+        dbClose();
+    }
+
+    /**
+     * Get the amount of 'jermas' in the db
+     * @return the amount of 'jermas'
+     */
+    private long getCollectionSize()
+    {
+        dbConnect();
+        long ret = client.getDatabase("text").getCollection("jerma").countDocuments();
+        dbClose();
+        return ret;
     }
 
     @Override
     public void run(CommandEvent event) {
-        if(databaseSize!=collection.countDocuments())
+        dbConnect();
+        MongoCollection collection = client.getDatabase("text").getCollection("jerma");
+        long collSize = collection.countDocuments();
+        if(databaseSize!=collSize)
         {
-            databaseSize = collection.countDocuments();
+            databaseSize = collSize;
             int i = 0;
             docs = new Document[(int)databaseSize];
             for(Object d : collection.find())
@@ -44,6 +103,7 @@ public class JermaCommand extends Command {
             p = 0;
             getLogger().info("Reloaded Jerma urls");
         }
+        dbClose();
         if(p==databaseSize)
         {
             shuffle(docs);
