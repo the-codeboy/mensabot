@@ -32,6 +32,11 @@ public abstract class AudioCommand extends Command {
 //        event.getManager().scheduler.setLatestEvent(event);//song info will now only be send if current is run
     }
 
+    /**
+     * Ensures that the user is in a voice channel
+     * @param event
+     * @return true if the bot is connected, false if the bot could not join
+     */
     protected boolean ensureConnected(CommandEvent event) {
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
