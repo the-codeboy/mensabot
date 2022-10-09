@@ -64,6 +64,19 @@ public abstract class AudioCommand extends Command {
         //already connected
         return true;
     }
+    
+    protected boolean ensureSameChannel(CommandEvent event)
+    {
+        final Member self = event.getGuild().getSelfMember();
+        final GuildVoiceState selfVoiceState = self.getVoiceState();
+        final Member member = event.getMember();
+        final GuildVoiceState memberVoiceState = member.getVoiceState();
+        if (memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
+            return true;
+        }
+        event.reply("You need to be in the same voice channel as me for this to work");
+        return false;
+    }
 
     protected void queue(CommandEvent event, String link) {
         queue(event, link, false);
