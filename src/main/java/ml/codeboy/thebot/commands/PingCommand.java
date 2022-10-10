@@ -20,7 +20,7 @@ public class PingCommand extends Command {
             event.reply("loading");
         }
         long ping = System.nanoTime() - startTime;
-        ping = ping / 2000000;
+        ping = ping / 2000000; //2000000: 1000000 for converting to ms and 2 for getting the time to the server and not the time to the server and back. 
         event.edit("Der Ping beträgt " + ping + " Millisekunden");
     }
 }
