@@ -14,7 +14,7 @@ public class Leave extends AudioCommand {
         PlayerManager.getInstance().getMusicManager(event.getGuild()).audioPlayer.stopTrack();
         if(ensureSameChannel(event))
         {
-            event.reply(Util.sign(event.getBuilder().setTitle("Bye"), event));
+            event.reply(Util.sign(event.getBuilder().setTitle("Left voicechannel successfully"), event));
             event.getGuild().getAudioManager().closeAudioConnection();
         }
     }
