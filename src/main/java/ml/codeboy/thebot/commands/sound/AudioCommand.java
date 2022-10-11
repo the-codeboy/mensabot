@@ -33,7 +33,7 @@ public abstract class AudioCommand extends Command {
     }
 
     /**
-     * Ensures that the user is in a voice channel
+     * Ensures that the user is in a voice channel and tries to move to the channel they`re in if nessecary and possible
      * @param event
      * @return true if the bot is connected, false if the bot could not join
      */
