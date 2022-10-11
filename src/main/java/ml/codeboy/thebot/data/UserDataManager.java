@@ -22,6 +22,14 @@ public class UserDataManager {
         return instance;
     }
 
+    public void moveDataToCloud()
+    {
+        for(String key : userData.keySet())
+        {
+
+        }
+    }
+
     public UserData getData(User user) {
         return getData(user.getId());
     }
