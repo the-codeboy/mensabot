@@ -329,6 +329,8 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new Stop());
         registerCommand(new Volume());
         registerCommand(new CurrentTrack());
+        registerCommand(new Leave());
+        registerCommand(new Join());
     }
 
     private void registerLeaderBoardCommands() {
