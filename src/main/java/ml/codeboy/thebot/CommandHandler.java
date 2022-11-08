@@ -219,6 +219,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new ShittyTranslateCommand());
         registerCommand(new ASCIICommand());
         registerCommand(new GifCommand());
+        registerCommand(new ElMomentoCommand());
 
         registerCommand(new MensaCommand());
         registerCommand(new RateCommand());
