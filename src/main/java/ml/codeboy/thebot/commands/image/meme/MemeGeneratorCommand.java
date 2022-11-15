@@ -20,7 +20,7 @@ public class MemeGeneratorCommand extends ImageCommand {
         try {
             this.image = Util.getImageFromUrl(image);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            getLogger().error("Failed to load image: ", e);
         }
     }
 
