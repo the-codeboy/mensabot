@@ -1,10 +1,11 @@
-package ml.codeboy.thebot.commands;
+package ml.codeboy.thebot.commands.nils;
 
+import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class ElMomentoCommand extends Command {
+public class ElMomentoCommand extends NilsCommand {
 
     public ElMomentoCommand() {
         super("ElMomentoDelMogus", "El Momento del mogus", "elmomento", "mogus");
