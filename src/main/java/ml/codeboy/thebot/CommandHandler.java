@@ -15,6 +15,7 @@ import ml.codeboy.thebot.commands.image.ShitCommand;
 import ml.codeboy.thebot.commands.image.meme.*;
 import ml.codeboy.thebot.commands.leaderboard.LeaderBoard;
 import ml.codeboy.thebot.commands.mensa.*;
+import ml.codeboy.thebot.commands.nils.ElMomentoCommand;
 import ml.codeboy.thebot.commands.quotes.AddQuote;
 import ml.codeboy.thebot.commands.quotes.AddQuoteList;
 import ml.codeboy.thebot.commands.quotes.QuoteCommand;
@@ -248,6 +249,8 @@ public class CommandHandler extends ListenerAdapter {
 
         registerSecretCommands();
 
+        registerNilsCommands();
+
         registerDebugCommands();
 
         registerAllSlashCommands();
@@ -277,6 +280,11 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new Bee());
         registerCommand(new AcceptImage());
         registerCommand(new RejectImage());
+    }
+
+    private void registerNilsCommands()
+    {
+        registerCommand(new ElMomentoCommand());
     }
 
     private void registerDebugCommands() {
