@@ -2,6 +2,7 @@ package ml.codeboy.thebot.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import ml.codeboy.thebot.commands.secret.MealImageWrapper;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
@@ -13,6 +14,8 @@ public class FoodRatingManager {
     private static final String filePath = "ratings" + File.separator + "ratings.json";
     private static final String imagesPath = "ratings" + File.separator + "images.json";
     private static final FoodRatingManager instance = new FoodRatingManager();
+    private Map<String, Rating> ratings = new HashMap<>();
+    private Map<String, Collection<MealImage>> images = new HashMap<>();
 
     private FoodRatingManager() {
         try {
@@ -22,13 +25,9 @@ public class FoodRatingManager {
         }
     }
 
-
     public static FoodRatingManager getInstance() {
         return instance;
     }
-
-    private Map<String, Rating> ratings = new HashMap<>();
-    private Map<String, Collection<MealImage>> images = new HashMap<>();
 
     public double getRating(String meal) {
         Rating rating = ratings.getOrDefault(meal, null);
@@ -134,5 +133,15 @@ public class FoodRatingManager {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public Collection<MealImageWrapper> getImages() {
+        HashSet<MealImageWrapper> images = new HashSet<>();
+        this.images.forEach((meal, im) -> {
+            for (MealImage i : im) {
+                images.add(MealImageWrapper.fromImage(i, meal));
+            }
+        });
+        return images;
     }
 }

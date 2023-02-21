@@ -282,6 +282,7 @@ public class CommandHandler extends ListenerAdapter {
         registerCommand(new Bee());
         registerCommand(new AcceptImage());
         registerCommand(new RejectImage());
+        registerCommand(new SendImageInfo());
     }
 
     private void registerNilsCommands()
