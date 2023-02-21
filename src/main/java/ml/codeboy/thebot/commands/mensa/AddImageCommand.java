@@ -49,8 +49,9 @@ public class AddImageCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
-                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
+        return null;
+//        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
+//                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
     }
 
 
