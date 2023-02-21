@@ -67,10 +67,7 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
 import static ml.codeboy.thebot.util.Util.getKANValue;
@@ -90,6 +87,8 @@ public class CommandHandler extends ListenerAdapter {
 
     private final Emoji amogus, sus, downvote;
     private final Emoji giesl;
+
+    private ExecutorService executor=Executors.newFixedThreadPool(10);
 
     private void registerBedTimeTracker() {
         BedTimeTracker tracker = new BedTimeTracker(getBot());
@@ -203,44 +202,54 @@ public class CommandHandler extends ListenerAdapter {
         checkActivity(event.getMember());
     }
 
+    private void createCommand(Class<? extends Command>command){
+        executor.execute(()-> {
+            try {
+                registerCommand(command.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("failed to create Command "+command.getName(),e);
+            }
+        });
+    }
+
 
     public void registerKnowCommands() {
         this.registerCommand(new Help(bot));
 
-        registerCommand(new ChuckNorrisJokeCommand());
-        registerCommand(new JermaCommand());
-        registerCommand(new TrumpQuoteCommand());
-        registerCommand(new AdviceCommand());
-        registerCommand(new NewsCommand());
-        registerCommand(new InsultCommand());
-        registerCommand(new RhymeCommand());
-        registerCommand(new MemeCommand());
-        registerCommand(new JokeCommand());
-        registerCommand(new ShortsCommand());
-        registerCommand(new WeatherCommand());
-        registerCommand(new PingCommand());
-        registerCommand(new ShittyTranslateCommand());
-        registerCommand(new ASCIICommand());
-        registerCommand(new GifCommand());
+        createCommand(ChuckNorrisJokeCommand.class);
+        createCommand(JermaCommand.class);
+        createCommand(TrumpQuoteCommand.class);
+        createCommand(AdviceCommand.class);
+        createCommand(NewsCommand.class);
+        createCommand(InsultCommand.class);
+        createCommand(RhymeCommand.class);
+        createCommand(MemeCommand.class);
+        createCommand(JokeCommand.class);
+        createCommand(ShortsCommand.class);
+        createCommand(WeatherCommand.class);
+        createCommand(PingCommand.class);
+        createCommand(ShittyTranslateCommand.class);
+        createCommand(ASCIICommand.class);
+        createCommand(GifCommand.class);
 
-        registerCommand(new MensaCommand());
-        registerCommand(new RateCommand());
-        registerCommand(new DefaultMensaCommand());
-        registerCommand(new MensaAnnounceChannelCommand());
-        registerCommand(new DetailCommand());
-        registerCommand(new AddImageCommand());
+        createCommand(MensaCommand.class);
+        createCommand(RateCommand.class);
+        createCommand(DefaultMensaCommand.class);
+        createCommand(MensaAnnounceChannelCommand.class);
+        createCommand(DetailCommand.class);
+        createCommand(AddImageCommand.class);
 
-        registerCommand(new DönerrateCommand());
-        registerCommand(new Dönertop());
+        createCommand(DönerrateCommand.class);
+        createCommand(Dönertop.class);
 
-        registerCommand(new ExecuteCommand());
-        registerCommand(new LanguagesCommand());
+        createCommand(ExecuteCommand.class);
+        createCommand(LanguagesCommand.class);
 
         registerAudioCommands();
 
-        registerCommand(new AddQuote());
-        registerCommand(new AddQuoteList());
-        registerCommand(new QuoteCommand());
+        createCommand(AddQuote.class);
+        createCommand(AddQuoteList.class);
+        createCommand(QuoteCommand.class);
 //        registerCommand(new Karma());
 //        registerCommand(new KarmaTop());
 //        registerCommand(new KarmaBottom());
@@ -260,39 +269,45 @@ public class CommandHandler extends ListenerAdapter {
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
+        try {
+            executor.shutdown();
+            executor.awaitTermination(1,TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error("bot did not start in time",e);
+        }
     }
 
     private void registerImageCommands() {
-        registerCommand(new MorbCommand());
-        registerCommand(new ShitCommand());
-        registerCommand(new ChangeMyMindCommand());
-        registerCommand(new HotlineBlingCommand());
-        registerCommand(new TwoButtonsCommand());
-        registerCommand(new Draw25Command());
-        registerCommand(new DisasterGirlCommand());
-        registerCommand(new SupermanCommand());
+        createCommand(MorbCommand.class);
+        createCommand(ShitCommand.class);
+        createCommand(ChangeMyMindCommand.class);
+        createCommand(HotlineBlingCommand.class);
+        createCommand(TwoButtonsCommand.class);
+        createCommand(Draw25Command.class);
+        createCommand(DisasterGirlCommand.class);
+        createCommand(SupermanCommand.class);
     }
 
     private void registerSecretCommands() {
-        registerCommand(new RickRoll());
-        registerCommand(new React());
-        registerCommand(new Msg());
-        registerCommand(new LoadKarma());
-        registerCommand(new LoadSusCount());
-        registerCommand(new Bee());
-        registerCommand(new AcceptImage());
-        registerCommand(new RejectImage());
-        registerCommand(new SendImageInfo());
+        createCommand(RickRoll.class);
+        createCommand(React.class);
+        createCommand(Msg.class);
+        createCommand(LoadKarma.class);
+        createCommand(LoadSusCount.class);
+        createCommand(Bee.class);
+        createCommand(AcceptImage.class);
+        createCommand(RejectImage.class);
+        createCommand(SendImageInfo.class);
     }
 
     private void registerNilsCommands()
     {
-        registerCommand(new ElMomentoCommand());
+        createCommand(ElMomentoCommand.class);
     }
 
     private void registerDebugCommands() {
-        registerCommand(new ListQuotes());
-        registerCommand(new GetQuotes());
+        createCommand(ListQuotes.class);
+        createCommand(GetQuotes.class);
     }
 
     private void changeStatus() {
@@ -327,21 +342,21 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerAudioCommands() {
-        registerCommand(new fPlay());
-        registerCommand(new Pause());
-        registerCommand(new Resume());
-//        registerCommand(new Echo());
-        registerCommand(new Loop());
-        registerCommand(new PlayNext());
-        registerCommand(new Queue());
-        registerCommand(new RemoveTrack());
-        registerCommand(new Shuffle());
-        registerCommand(new Skip());
-        registerCommand(new Stop());
-        registerCommand(new Volume());
-        registerCommand(new CurrentTrack());
-        registerCommand(new Leave());
-        registerCommand(new Join());
+        createCommand(fPlay.class);
+        createCommand(Pause.class);
+        createCommand(Resume.class);
+//        createCommand(Echo.class);
+        createCommand(Loop.class);
+        createCommand(PlayNext.class);
+        createCommand(Queue.class);
+        createCommand(RemoveTrack.class);
+        createCommand(Shuffle.class);
+        createCommand(Skip.class);
+        createCommand(Stop.class);
+        createCommand(Volume.class);
+        createCommand(CurrentTrack.class);
+        createCommand(Leave.class);
+        createCommand(Join.class);
     }
 
     private void registerLeaderBoardCommands() {
