@@ -31,7 +31,10 @@ public class QuoteManager {
     }
 
     private void loadPersons() {
-        MongoClient client= MongoClients.create(DatabaseManager.getInstance().getSettings());
+        DatabaseManager manager=DatabaseManager.getInstance();
+        if(manager==null)
+            return;
+        MongoClient client= MongoClients.create(manager.getSettings());
         for (String p : DatabaseQuoteAPI.getPersons(client)) {
             loadPerson(p, client);
         }

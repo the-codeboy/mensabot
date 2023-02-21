@@ -33,8 +33,12 @@ public class JermaCommand extends Command {
     private void dbConnect()
     {
         if(!dbConnected) {
-            client = MongoClients.create(DatabaseManager.getInstance().getSettings());
-            dbConnected=true;
+            try {
+                client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+                dbConnected=true;
+            } catch (Exception e) {
+                getLogger().error("failed to connect to DB",e);
+            }
         }
         else
         {
@@ -63,6 +67,8 @@ public class JermaCommand extends Command {
     private void updateDocs()
     {
         dbConnect();
+        if(!dbConnected)
+            return;
         MongoCollection collection = client.getDatabase("text").getCollection("jerma");
         databaseSize = collection.countDocuments();
         docs = new Document[(int)databaseSize];
