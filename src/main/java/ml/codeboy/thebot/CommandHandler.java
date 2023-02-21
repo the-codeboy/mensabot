@@ -264,8 +264,6 @@ public class CommandHandler extends ListenerAdapter {
 
         registerDebugCommands();
 
-        registerAllSlashCommands();
-
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
@@ -275,6 +273,8 @@ public class CommandHandler extends ListenerAdapter {
         } catch (InterruptedException e) {
             logger.error("bot did not start in time",e);
         }
+
+        registerAllSlashCommands();
     }
 
     private void registerImageCommands() {
