@@ -642,6 +642,9 @@ public class CommandHandler extends ListenerAdapter {
         action.queue();
     }
 
+    /**
+     * this is used to automatically register slash commands to a test server (faster than global registration)
+     */
     private void registerSlashCommand(CommandData data) {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();
