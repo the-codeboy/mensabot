@@ -89,6 +89,7 @@ public class CommandHandler extends ListenerAdapter {
     private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
 
     private final Emoji amogus, sus, downvote;
+    private final Emoji giesl;
 
     private void registerBedTimeTracker() {
         BedTimeTracker tracker = new BedTimeTracker(getBot());
@@ -125,6 +126,7 @@ public class CommandHandler extends ListenerAdapter {
         amogus = getBot().getJda().getEmojiById("909891436625944646");
         sus = getBot().getJda().getEmojiById("930765635913408532");
         downvote = getBot().getJda().getEmojiById("903336514644222033");
+        giesl = getBot().getJda().getEmojiById("923655475675947028");
 
         this.registerKnowCommands();
 
@@ -396,6 +398,11 @@ public class CommandHandler extends ListenerAdapter {
                 event.getMessage().addReaction(amogus).queue();
             if (sus != null)
                 event.getMessage().addReaction(sus).queue();
+        }
+        if (msg.contains("giesl")||msg.contains("weihnacht")) {
+            logger.info("weihnachtsgiesl");
+            if (giesl != null)
+                event.getMessage().addReaction(giesl).queue();
         }
 
         if (event.getAuthor().getId().equals("290368310711681024") && !event.getChannel().getId().equals("917201826271604736")) {
