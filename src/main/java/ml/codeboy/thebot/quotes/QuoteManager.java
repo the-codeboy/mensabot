@@ -115,4 +115,8 @@ public class QuoteManager {
     {
         return persons.get(person).getQuotes();
     }
+
+    public void removeQuote(Quote quote) {
+        getQuotes(quote.getPerson()).remove(quote);
+    }
 }

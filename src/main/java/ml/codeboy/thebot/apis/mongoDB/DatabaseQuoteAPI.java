@@ -23,6 +23,20 @@ public class DatabaseQuoteAPI {
         client.getDatabase("quotes").getCollection(q.getPerson().toLowerCase()).insertOne(quote);
         client.close();
     }
+    /**
+     * Removes the given quote from the database and removes it from the quote manager
+     * @param q
+     */
+    public static void removeQuote(Quote q) {
+        QuoteManager.getInstance().removeQuote(q);
+        Document quote = new Document("content", q.getContent());
+        quote.append("time", q.getTime());
+        quote.append("authorId", q.getAuthorId());
+        quote.append("name",q.getPerson());
+        MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+        client.getDatabase("quotes").getCollection(q.getPerson().toLowerCase()).deleteOne(quote);
+        client.close();
+    }
 
     /**
      * Returns all saved persons
