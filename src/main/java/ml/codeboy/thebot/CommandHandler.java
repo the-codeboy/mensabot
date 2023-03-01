@@ -629,7 +629,7 @@ public class CommandHandler extends ListenerAdapter {
         if (listener != null) {
             boolean remove = listener.onButtonInteraction(event);
             if (remove)
-                selectMenuListeners.remove(event.getComponentId());
+                buttonListeners.remove(event.getComponentId());
         }
     }
 
