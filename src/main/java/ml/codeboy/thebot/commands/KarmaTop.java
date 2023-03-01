@@ -25,6 +25,7 @@ public class KarmaTop extends Command {
 
     @Override
     public void register(CommandHandler handler) {
+        super.register(handler);
 //        updateKarmaTop(handler.getServer().getJDA());//initialisation is done when the command is first run
     }
 

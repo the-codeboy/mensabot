@@ -25,6 +25,8 @@ public abstract class Command {
     private boolean hidden = false, guildOnlyCommand = true;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private CommandHandler handler;
+
     public Command(String name, String description, String... aliases) {
         this.name = name;
         if (description == null || description.isEmpty())
@@ -132,7 +134,11 @@ public abstract class Command {
     }
 
     public void register(CommandHandler handler) {
-        //do nothing
+        this.handler=handler;
+    }
+
+    protected CommandHandler getCommandHandler() {
+        return handler;
     }
 
     public void autoComplete(String option, List<String> options) {
