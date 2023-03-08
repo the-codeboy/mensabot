@@ -104,7 +104,7 @@ public abstract class CommandEvent implements Replyable {
     }
 
     public String[] getArgs() {// TODO: Add better way to use arguments. Maybe something similar to JDAs slash commands
-        if (isMessageEvent()) {
+        if (isMessageEvent()) {// this will never happen since MessageCommandEvent overrides this method
             String content = getMessageReceivedEvent().getMessage().getContentRaw();
             content = content.replaceFirst(Config.getInstance().prefix, "");
 

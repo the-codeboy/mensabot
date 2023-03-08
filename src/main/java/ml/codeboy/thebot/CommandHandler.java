@@ -30,10 +30,7 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
-import ml.codeboy.thebot.util.ButtonListener;
-import ml.codeboy.thebot.util.ModalListener;
-import ml.codeboy.thebot.util.SelectMenuListener;
-import ml.codeboy.thebot.util.Util;
+import ml.codeboy.thebot.util.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -286,6 +283,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(Draw25Command.class);
         createCommand(DisasterGirlCommand.class);
         createCommand(SupermanCommand.class);
+        createCommand(LatexCommand.class);
     }
 
     private void registerSecretCommands() {
@@ -432,6 +430,7 @@ public class CommandHandler extends ListenerAdapter {
             amogus(event);
             counter(event);
             evaluateMessage(event);
+            detectLatex(event);
         });
         t.start();
         String content = event.getMessage().getContentRaw();
@@ -524,6 +523,17 @@ public class CommandHandler extends ListenerAdapter {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private void detectLatex(MessageReceivedEvent event){
+        String content=event.getMessage().getContentRaw();
+        if(content.startsWith("```tex\n")&&content.endsWith("```")){
+            content=content.substring(7,content.length()-3);
+        }
+        else if(content.startsWith("```latex\n")&&content.endsWith("```")){
+            content=content.substring(9,content.length()-3);
+        }else return;
+        LatexCommand.respondLatex(content, Replyable.from(event.getChannel()));
     }
 
 
