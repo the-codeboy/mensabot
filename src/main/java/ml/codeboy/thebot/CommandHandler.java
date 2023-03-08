@@ -444,7 +444,8 @@ public class CommandHandler extends ListenerAdapter {
                     for (Message.Attachment attachment : event.getMessage().getAttachments()) {
                         try {
                             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
-                                    .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
+                                    .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated())
+                                    .setDescription(attachment.getDescription() + "").build()).queue();
                             channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName()).complete();
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
