@@ -6,7 +6,7 @@ import java.util.Locale;
 public class Restaurant {
     public String name;
     private Rating rating = new Rating();
-    private double price=-1;// price in euro for standard meal
+    private double price = -1;// price in euro for standard meal
 
     public String getName() {
         return name;
@@ -29,6 +29,6 @@ public class Restaurant {
     }
 
     public String getPriceString() {
-        return (price==-1?"?": NumberFormat.getCurrencyInstance(Locale.GERMANY).format(price));
+        return (price == -1 ? "?" : NumberFormat.getCurrencyInstance(Locale.GERMANY).format(price));
     }
 }

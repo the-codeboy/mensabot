@@ -12,12 +12,6 @@ public abstract class ImageCommand extends Command {
         setHidden(true);
     }
 
-    @Override
-    public void run(CommandEvent event) {
-        generateImage(event);
-    }
-
-
     public static boolean drawString(Graphics g, String s, Rectangle position) {
         return drawString(g, s, position, Color.BLACK);
     }
@@ -48,6 +42,11 @@ public abstract class ImageCommand extends Command {
 
     public static void changeSize(Graphics g, int amount) {
         g.setFont(g.getFont().deriveFont((float) g.getFont().getSize() + amount));
+    }
+
+    @Override
+    public void run(CommandEvent event) {
+        generateImage(event);
     }
 
     protected abstract void generateImage(CommandEvent event);

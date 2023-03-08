@@ -25,7 +25,7 @@ public class fPlay extends AudioCommand {
         }
 
         if (event.getManager().audioPlayer.getPlayingTrack() != null) {
-            String n = event.getManager().audioPlayer.getPlayingTrack().getInfo().uri+"&t="+(int)(event.getManager().audioPlayer.getPlayingTrack().getPosition()/1000);
+            String n = event.getManager().audioPlayer.getPlayingTrack().getInfo().uri + "&t=" + (int) (event.getManager().audioPlayer.getPlayingTrack().getPosition() / 1000);
             queue(event, n, true);
         }
 

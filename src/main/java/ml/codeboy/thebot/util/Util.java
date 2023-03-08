@@ -29,6 +29,10 @@ import java.util.TimerTask;
 
 public class Util {
 
+    private static final Random rand = new Random();
+    private static final Color[] colors = new Color[]{Color.blue, Color.cyan, Color.magenta, Color.orange, Color.pink, Color.yellow, Color.white};
+    private static final String arrow = "↑";
+
     public static String toReadable(long millis) {
         int seconds = (int) (millis / 1000);
         int years = seconds / secondsPerYear;
@@ -74,9 +78,7 @@ public class Util {
         if (repeatSecond == 0)
             output += ":white_check_mark:";
         return output;
-    }
-
-    private static final int secondsPerDay = 3600 * 24,
+    }    private static final int secondsPerDay = 3600 * 24,
             secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static EmbedBuilder getSongInfo(AudioTrack track, EmbedBuilder builder) {
@@ -135,9 +137,6 @@ public class Util {
         return user.getMutualGuilds().get(0).getMember(user);
     }
 
-    private static final Random rand = new Random();
-    private static final Color[] colors = new Color[]{Color.blue, Color.cyan, Color.magenta, Color.orange, Color.pink, Color.yellow, Color.white};
-
     public static Color getRandomColor() {
 //        float r = rand.nextFloat();
 //        float g = rand.nextFloat();
@@ -186,7 +185,6 @@ public class Util {
         }
     }
 
-
     public static void addSusCount(User user, int amount) {
         UserData data = UserDataManager.getInstance().getData(user);
         data.setSusCount(data.getSusCount() + amount);
@@ -210,7 +208,6 @@ public class Util {
         }
     }
 
-
     public static String readUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -228,9 +225,6 @@ public class Util {
             return result;
         }
     }
-
-
-    private static final String arrow = "↑";
 
     /**
      * @return true if the text contains ↑ meaning it is probably in knuths arrow notation
@@ -291,4 +285,8 @@ public class Util {
         }
         return dist[sourceLength][targetLength];
     }
+
+
+
+
 }

@@ -54,17 +54,14 @@ public class AddImageCommand extends Command {
         String selected = event.getFocusedOption().getName();
 
 
-        switch (selected) {
-            case "meal": {
-                Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
-                for (int i = 0; i <= maxDaysAgo; i++) {
-                    Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
-                    for (Meal meal : mensa.getMeals(date)) {
-                        if (meal.getName().length() <= 100)
-                            options.add(meal.getName());
-                    }
+        if (selected.equals("meal")) {
+            Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
+            for (int i = 0; i <= maxDaysAgo; i++) {
+                Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
+                for (Meal meal : mensa.getMeals(date)) {
+                    if (meal.getName().length() <= 100)
+                        options.add(meal.getName());
                 }
-                break;
             }
         }
 

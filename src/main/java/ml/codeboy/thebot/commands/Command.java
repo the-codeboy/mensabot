@@ -20,11 +20,10 @@ import java.util.List;
 public abstract class Command {
     private final String name, description;
     private final String[] aliases;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private Permission[] requiredPermisions = new Permission[0];
     private Permission[] requiredBotPermisions = new Permission[0];
     private boolean hidden = false, guildOnlyCommand = true;
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private CommandHandler handler;
 
     public Command(String name, String description, String... aliases) {
@@ -134,7 +133,7 @@ public abstract class Command {
     }
 
     public void register(CommandHandler handler) {
-        this.handler=handler;
+        this.handler = handler;
     }
 
     protected CommandHandler getCommandHandler() {

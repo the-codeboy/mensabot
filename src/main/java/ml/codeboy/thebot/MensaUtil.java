@@ -143,7 +143,7 @@ public class MensaUtil {
                 return ":potato:";
             case "Nebenbeilage":
                 return ":salad:";
-            default: 
+            default:
                 return ":fork_knife_plate:";
         }
     }

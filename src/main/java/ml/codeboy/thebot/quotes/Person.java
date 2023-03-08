@@ -6,9 +6,10 @@ public class Person {
     private String name;
     private ArrayList<Quote> quotes = new ArrayList<>();
 
-    public Person(){}
-    public Person(String name)
-    {
+    public Person() {
+    }
+
+    public Person(String name) {
         this.name = name;
     }
 

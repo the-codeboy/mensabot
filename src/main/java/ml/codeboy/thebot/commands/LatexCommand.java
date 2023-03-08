@@ -15,11 +15,6 @@ public class LatexCommand extends Command {
         super("latex", "turns latex into an image", "tex", "");
     }
 
-    @Override
-    public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.STRING,"latex","the latex you want to render",true);
-    }
-
     public static void respondLatex(String latex, Replyable replyable) {
         if (latex.length() > 200) {
             replyable.reply(new EmbedBuilder().setTitle("This is too much text").setDescription("the maximum is 200 characters :(").setColor(Color.RED).build());
@@ -28,12 +23,17 @@ public class LatexCommand extends Command {
     }
 
     @Override
+    public SlashCommandData getCommandData() {
+        return super.getCommandData().addOption(OptionType.STRING, "latex", "the latex you want to render", true);
+    }
+
+    @Override
     public void run(CommandEvent event) {
         String message;
         if (event.isMessageEvent()) {
             message = ((MessageCommandEvent) event).getContent();
         } else {
-            message=event.getSlashCommandEvent().getOption("latex").getAsString();
+            message = event.getSlashCommandEvent().getOption("latex").getAsString();
         }
         respondLatex(message, event);
     }

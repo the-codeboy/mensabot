@@ -29,12 +29,9 @@ public class AddQuoteList extends Command {
 
     @Override
     public void autoComplete(String option, List<String> options) {
-        switch (option) {
-            case "name": {
-                for (Person person : QuoteManager.getInstance().getPersons()) {
-                    options.add(person.getName());
-                }
-                break;
+        if (option.equals("name")) {
+            for (Person person : QuoteManager.getInstance().getPersons()) {
+                options.add(person.getName());
             }
         }
     }
@@ -62,12 +59,12 @@ public class AddQuoteList extends Command {
 
     private void addQuote(CommandEvent event, String name, String content) {
         EmbedBuilder reply = new EmbedBuilder().setTitle("Added quote").setColor(Color.GREEN);
-        int i=0;
-        for(String s : content.split("`")) {
-            DatabaseQuoteAPI.saveQuote(new Quote(s,System.currentTimeMillis(),name,event.getMember().getId()));
+        int i = 0;
+        for (String s : content.split("`")) {
+            DatabaseQuoteAPI.saveQuote(new Quote(s, System.currentTimeMillis(), name, event.getMember().getId()));
             i++;
         }
-        reply.addField("Counter","Added "+i+" quotes",false);
+        reply.addField("Counter", "Added " + i + " quotes", false);
         event.reply(reply.build());
     }
 }

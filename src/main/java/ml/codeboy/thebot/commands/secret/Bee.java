@@ -4,31 +4,9 @@ import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.entities.PrivateChannel;
 import net.dv8tion.jda.api.entities.User;
 
-public class Bee extends SecretCommand{
-    public Bee() {
-        super("bee", "");
-    }
-
-    @Override
-    public void run(CommandEvent event) {
-        User user = null;
-        if (event.getMessageReceivedEvent().getMessage().getMentions().getMembers().size() > 0) {
-            user = event.getMessageReceivedEvent().getMessage().getMentions().getMembers().get(0).getUser();
-        }
-        if (user == null)
-            user = event.getJdaEvent().getJDA().retrieveUserById(event.getArgs()[0]).complete();
-        String s = script;
-        PrivateChannel pc = user.openPrivateChannel().complete();
-        while (s.length() > 0) {
-            int chars = Math.min(2000, s.length());
-            String toSend = s.substring(0, chars - 1);
-            s = s.substring(chars);
-            pc.sendMessage(toSend).queue();
-        }
-    }
-
+public class Bee extends SecretCommand {
     //<editor-fold desc="script">
-    String script="According to all known laws of aviation, there is no way a bee should be able to fly.\n" +
+    String script = "According to all known laws of aviation, there is no way a bee should be able to fly.\n" +
             "Its wings are too small to get its fat little body off the ground.\n" +
             "The bee, of course, flies anyway because bees don't care what humans think is impossible.\n" +
             "Yellow, black. Yellow, black. Yellow, black. Yellow, black.\n" +
@@ -1391,5 +1369,27 @@ public class Bee extends SecretCommand{
             "I'm not making a major life decision during a production number!\n" +
             "All right. Take ten, everybody. Wrap it up, guys.\n" +
             "I had virtually no rehearsal for that.\n";
+
+    public Bee() {
+        super("bee", "");
+    }
+
+    @Override
+    public void run(CommandEvent event) {
+        User user = null;
+        if (event.getMessageReceivedEvent().getMessage().getMentions().getMembers().size() > 0) {
+            user = event.getMessageReceivedEvent().getMessage().getMentions().getMembers().get(0).getUser();
+        }
+        if (user == null)
+            user = event.getJdaEvent().getJDA().retrieveUserById(event.getArgs()[0]).complete();
+        String s = script;
+        PrivateChannel pc = user.openPrivateChannel().complete();
+        while (s.length() > 0) {
+            int chars = Math.min(2000, s.length());
+            String toSend = s.substring(0, chars - 1);
+            s = s.substring(chars);
+            pc.sendMessage(toSend).queue();
+        }
+    }
     //</editor-fold>
 }

@@ -15,21 +15,21 @@ import java.util.List;
 import java.util.Random;
 
 public class MorbCommand extends ImageCommand {
+    private final Random random = new Random();
+
     public MorbCommand() {
         super("morb", "I'm gonna morb");
     }
 
-    private final Random random=new Random();
-
     @Override
     protected void generateImage(CommandEvent event) {
 
-        BufferedImage img= null;
-        User user=event.getUser();
-        if (event.isMessageEvent()){
+        BufferedImage img = null;
+        User user = event.getUser();
+        if (event.isMessageEvent()) {
             List<Member> members = event.getMessageReceivedEvent().getMessage().getMentions().getMembers();
-            if(!members.isEmpty()){
-                user=members.get(0).getUser();
+            if (!members.isEmpty()) {
+                user = members.get(0).getUser();
             }
         }
         try {
@@ -39,7 +39,7 @@ public class MorbCommand extends ImageCommand {
         }
 
         GifImage image = new GifImage();
-        image.setOutputFile(new File("images/morb_"+random.nextInt()+".gif"));
+        image.setOutputFile(new File("images/morb_" + random.nextInt() + ".gif"));
         try {
             image.loadFrom(new File("images/morb.gif"));
         } catch (FileNotFoundException e) {
@@ -50,7 +50,7 @@ public class MorbCommand extends ImageCommand {
         for (int i = 0; i < image.getFrames().size(); i++) {
             BufferedImage frame = image.getFrame(i);
             Graphics graphics = frame.getGraphics();
-            graphics.drawImage(img,80,50,64,64,null);
+            graphics.drawImage(img, 80, 50, 64, 64, null);
             graphics.dispose();
             image.setFrame(i, frame);
         }

@@ -21,7 +21,7 @@ public class Dönertop extends Command {
         List<Restaurant> restaurants = RestaurantManager.getInstance().getRestaurants();
         restaurants.sort(Comparator.comparing(Restaurant::getRating).reversed());
         for (Restaurant restaurant : restaurants) {
-            builder.addField(restaurant.getName()+" ("+restaurant.getPriceString()+")",
+            builder.addField(restaurant.getName() + " (" + restaurant.getPriceString() + ")",
                     MensaUtil.getRatingString(restaurant.getRating().getAverage()) + " (" + restaurant.getRating().getRatings() + ")", false);
         }
         event.reply(builder);

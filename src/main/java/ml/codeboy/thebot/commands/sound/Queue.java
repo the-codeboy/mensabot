@@ -4,7 +4,7 @@ import ml.codeboy.thebot.events.CommandEvent;
 
 public class Queue extends AudioCommand {
     public Queue() {
-        super("queue", "","play");
+        super("queue", "", "play");
     }
 
     @Override

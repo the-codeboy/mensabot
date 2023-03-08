@@ -33,12 +33,9 @@ public class AddQuote extends Command {
 
     @Override
     public void autoComplete(String option, List<String> options) {
-        switch (option) {
-            case "name": {
-                for (Person person : QuoteManager.getInstance().getPersons()) {
-                    options.add(person.getName());
-                }
-                break;
+        if (option.equals("name")) {
+            for (Person person : QuoteManager.getInstance().getPersons()) {
+                options.add(person.getName());
             }
         }
     }
@@ -106,7 +103,7 @@ public class AddQuote extends Command {
                                     .setTitle("Quote removed")
                                     .build()).setEphemeral(true).queue();
                             DatabaseQuoteAPI.removeQuote(quote);
-                            getLogger().info("duplicate quote removed by "+e.getUser().getName());
+                            getLogger().info("duplicate quote removed by " + e.getUser().getName());
                             return true;
                         }
                 );

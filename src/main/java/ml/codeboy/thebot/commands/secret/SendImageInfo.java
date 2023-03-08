@@ -23,7 +23,7 @@ public class SendImageInfo extends SecretCommand {
         for (UserData user : UserDataManager.getInstance().getAllUserData()) {
             ArrayList<MealImageWrapper> imgs = new ArrayList<>();
             for (MealImageWrapper i : images) {
-                if (i.getAuthor().equals(user.getId())&&i.getUrl().contains("ephemeral"))
+                if (i.getAuthor().equals(user.getId()) && i.getUrl().contains("ephemeral"))
                     imgs.add(i);
             }
             if (!imgs.isEmpty()) {

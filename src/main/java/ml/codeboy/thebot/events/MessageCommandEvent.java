@@ -71,11 +71,11 @@ public class MessageCommandEvent extends CommandEvent {
         return getMessageReceivedEvent().getChannel();
     }
 
-    public String[]getArgs(){
+    public String[] getArgs() {
         return getContent().split(" ");
     }
 
-    public String getContent(){
+    public String getContent() {
         String content = getMessageReceivedEvent().getMessage().getContentRaw();
         content = content.replaceFirst(Config.getInstance().prefix, "");
 

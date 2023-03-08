@@ -1,6 +1,5 @@
 package ml.codeboy.thebot.commands.sound;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.util.Util;
 
@@ -12,8 +11,7 @@ public class Leave extends AudioCommand {
     @Override
     public void run(CommandEvent event) {
         PlayerManager.getInstance().getMusicManager(event.getGuild()).audioPlayer.stopTrack();
-        if(ensureSameChannel(event))
-        {
+        if (ensureSameChannel(event)) {
             event.reply(Util.sign(event.getBuilder().setTitle("Left voicechannel successfully"), event));
             event.getGuild().getAudioManager().closeAudioConnection();
         }

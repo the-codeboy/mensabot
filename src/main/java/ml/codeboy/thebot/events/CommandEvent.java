@@ -28,8 +28,8 @@ import java.util.Random;
 public abstract class CommandEvent implements Replyable {
     private static final Random random = new Random();
     private final Event jdaEvent;
-    private boolean ephermal = false;
     private final Command command;
+    private boolean ephermal = false;
 
     public CommandEvent(Event jdaEvent, Command command) {
         this.jdaEvent = jdaEvent;
@@ -186,10 +186,11 @@ public abstract class CommandEvent implements Replyable {
         return getJdaEvent().getJDA();
     }
 
-    public MessageCommandEvent getMessageCommandEvent(){
+    public MessageCommandEvent getMessageCommandEvent() {
         return (MessageCommandEvent) this;
     }
-    public SlashCommandCommandEvent getSlashCommandCommandEvent(){
+
+    public SlashCommandCommandEvent getSlashCommandCommandEvent() {
         return (SlashCommandCommandEvent) this;
     }
 

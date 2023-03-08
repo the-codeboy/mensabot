@@ -77,35 +77,13 @@ public class CommandHandler extends ListenerAdapter {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-    private Guild server;
     private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
     private final HashMap<String, ButtonListener> buttonListeners = new HashMap<>();
     private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
-
     private final Emoji amogus, sus, downvote;
     private final Emoji giesl;
-
-    private ExecutorService executor=Executors.newFixedThreadPool(10);
-
-    private void registerBedTimeTracker() {
-        BedTimeTracker tracker = new BedTimeTracker(getBot());
-    }
-
-    private void registerAnnouncements() {
-        Date date = new Date();
-        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), false);
-        announceIn(60 * 60 * 7 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
-    }
-
-    private void announceIn(int seconds, boolean includeWeather) {
-        if (seconds < 0)
-            seconds += 24 * 60 * 60;
-        executorService.scheduleAtFixedRate(() -> {
-            sendMealsToAllGuilds();
-            if (includeWeather)
-                sendWeatherToAllGuilds();
-        }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
-    }
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private Guild server;
 
     public CommandHandler(Bot bot) {
         UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
@@ -129,6 +107,26 @@ public class CommandHandler extends ListenerAdapter {
         registerAnnouncements();
 //        registerBedTimeTracker();
 
+    }
+
+    private void registerBedTimeTracker() {
+        BedTimeTracker tracker = new BedTimeTracker(getBot());
+    }
+
+    private void registerAnnouncements() {
+        Date date = new Date();
+        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), false);
+        announceIn(60 * 60 * 7 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
+    }
+
+    private void announceIn(int seconds, boolean includeWeather) {
+        if (seconds < 0)
+            seconds += 24 * 60 * 60;
+        executorService.scheduleAtFixedRate(() -> {
+            sendMealsToAllGuilds();
+            if (includeWeather)
+                sendWeatherToAllGuilds();
+        }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
     private void sendMealsToGuild(Guild guild) {
@@ -199,12 +197,12 @@ public class CommandHandler extends ListenerAdapter {
         checkActivity(event.getMember());
     }
 
-    private void createCommand(Class<? extends Command>command){
-        executor.execute(()-> {
+    private void createCommand(Class<? extends Command> command) {
+        executor.execute(() -> {
             try {
                 registerCommand(command.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {
-                logger.error("failed to create Command "+command.getName(),e);
+                logger.error("failed to create Command " + command.getName(), e);
             }
         });
     }
@@ -266,9 +264,9 @@ public class CommandHandler extends ListenerAdapter {
         }
         try {
             executor.shutdown();
-            executor.awaitTermination(1,TimeUnit.MINUTES);
+            executor.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-            logger.error("bot did not start in time",e);
+            logger.error("bot did not start in time", e);
         }
 
         registerAllSlashCommands();
@@ -298,8 +296,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(SendImageInfo.class);
     }
 
-    private void registerNilsCommands()
-    {
+    private void registerNilsCommands() {
         createCommand(ElMomentoCommand.class);
     }
 
@@ -413,7 +410,7 @@ public class CommandHandler extends ListenerAdapter {
             if (sus != null)
                 event.getMessage().addReaction(sus).queue();
         }
-        if (msg.contains("giesl")||msg.contains("weihnacht")) {
+        if (msg.contains("giesl") || msg.contains("weihnacht")) {
             logger.info("weihnachtsgiesl");
             if (giesl != null)
                 event.getMessage().addReaction(giesl).queue();
@@ -526,14 +523,13 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    private void detectLatex(MessageReceivedEvent event){
-        String content=event.getMessage().getContentRaw();
-        if(content.startsWith("```tex\n")&&content.endsWith("```")){
-            content=content.substring(7,content.length()-3);
-        }
-        else if(content.startsWith("```latex\n")&&content.endsWith("```")){
-            content=content.substring(9,content.length()-3);
-        }else return;
+    private void detectLatex(MessageReceivedEvent event) {
+        String content = event.getMessage().getContentRaw();
+        if (content.startsWith("```tex\n") && content.endsWith("```")) {
+            content = content.substring(7, content.length() - 3);
+        } else if (content.startsWith("```latex\n") && content.endsWith("```")) {
+            content = content.substring(9, content.length() - 3);
+        } else return;
         LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
     }
 

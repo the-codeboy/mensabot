@@ -2,7 +2,6 @@ package ml.codeboy.thebot.quotes;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoIterable;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
 import org.bson.Document;
@@ -31,10 +30,10 @@ public class QuoteManager {
     }
 
     private void loadPersons() {
-        DatabaseManager manager=DatabaseManager.getInstance();
-        if(manager==null)
+        DatabaseManager manager = DatabaseManager.getInstance();
+        if (manager == null)
             return;
-        MongoClient client= MongoClients.create(manager.getSettings());
+        MongoClient client = MongoClients.create(manager.getSettings());
         for (String p : DatabaseQuoteAPI.getPersons(client)) {
             loadPerson(p, client);
         }
@@ -55,7 +54,7 @@ public class QuoteManager {
         Person person = new Person(p);
         Quote q = null;
         ArrayList<Quote> list = new ArrayList<>();
-        for(Document d : DatabaseQuoteAPI.getQuotes(p, client)) {
+        for (Document d : DatabaseQuoteAPI.getQuotes(p, client)) {
             q = new Quote(
                     d.getString("content"),
                     d.getLong("time"),
@@ -68,7 +67,7 @@ public class QuoteManager {
             registerPerson(person);
     }
 
-    public Collection<Person>getPersons(){
+    public Collection<Person> getPersons() {
         return persons.values();
     }
 
@@ -78,7 +77,7 @@ public class QuoteManager {
 
     public Quote getRandomQuote(String person) {
         Person p = persons.get(person);
-        if(p==null){
+        if (p == null) {
             p = new Person();
             p.setName(person);
         }
@@ -98,9 +97,8 @@ public class QuoteManager {
     public void addQuote(Quote quote) {
         try {
             persons.get(quote.getPerson()).getQuotes().add(quote);
-        }catch (NullPointerException e)
-        {
-            persons.put(quote.getPerson(),new Person(quote.getPerson()));
+        } catch (NullPointerException e) {
+            persons.put(quote.getPerson(), new Person(quote.getPerson()));
             persons.get(quote.getPerson()).getQuotes().add(quote);
         }
         quotes.add(quote);
@@ -108,11 +106,11 @@ public class QuoteManager {
 
     /**
      * This method returns all quotes from the given person
+     *
      * @param person
      * @return A list of all the quotes
      */
-    public ArrayList<Quote>getQuotes(String person)
-    {
+    public ArrayList<Quote> getQuotes(String person) {
         return persons.get(person).getQuotes();
     }
 
