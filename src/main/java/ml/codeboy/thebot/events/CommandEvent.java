@@ -186,5 +186,12 @@ public abstract class CommandEvent implements Replyable {
         return getJdaEvent().getJDA();
     }
 
+    public MessageCommandEvent getMessageCommandEvent(){
+        return (MessageCommandEvent) this;
+    }
+    public SlashCommandCommandEvent getSlashCommandCommandEvent(){
+        return (SlashCommandCommandEvent) this;
+    }
+
     //endregion
 }
