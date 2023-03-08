@@ -443,16 +443,10 @@ public class CommandHandler extends ListenerAdapter {
                             .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
                 else {
                     for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-                        File file = new File("tmp" + File.separator + Math.random() + File.separator
-                                + attachment.getFileName());
-                        file.getParentFile().mkdirs();
                         try {
-                            file = attachment.downloadToFile(file).get();
                             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
                                     .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
-                            channel.sendFile(file).complete();
-                            file.delete();
-                            file.getParentFile().delete();
+                            channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName()).complete();
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
                         }
