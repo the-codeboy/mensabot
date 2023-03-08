@@ -533,7 +533,7 @@ public class CommandHandler extends ListenerAdapter {
         else if(content.startsWith("```latex\n")&&content.endsWith("```")){
             content=content.substring(9,content.length()-3);
         }else return;
-        LatexCommand.respondLatex(content, Replyable.from(event.getChannel()));
+        LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
     }
 
 

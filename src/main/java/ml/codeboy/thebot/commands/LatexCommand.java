@@ -24,6 +24,6 @@ public class LatexCommand extends Command{
     }
 
     public static void respondLatex(String latex, Replyable replyable){
-        replyable.reply("https://chart.apis.google.com/chart?cht=tx&chl="+ URLEncoder.encode(latex));
+        replyable.reply("https://chart.apis.google.com/chart?cht=tx&chl="+ URLEncoder.encode(latex),true);
     }
 }

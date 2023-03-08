@@ -87,5 +87,8 @@ public class MessageCommandEvent extends CommandEvent {
         return splitContent[1];
     }
 
-
+    @Override
+    public void reply(String message, boolean referenceMessage) {
+        getMessageReceivedEvent().getMessage().reply(message).queue();
+    }
 }
