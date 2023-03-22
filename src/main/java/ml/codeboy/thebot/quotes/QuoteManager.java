@@ -8,10 +8,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class QuoteManager {
     private static final QuoteManager instance = new QuoteManager();
@@ -110,7 +107,9 @@ public class QuoteManager {
      * @param person
      * @return A list of all the quotes
      */
-    public ArrayList<Quote> getQuotes(String person) {
+    public List<Quote> getQuotes(String person) {
+        if(!persons.containsKey(person))
+            return Collections.emptyList();
         return persons.get(person).getQuotes();
     }
 
