@@ -71,8 +71,14 @@ public class MessageCommandEvent extends CommandEvent {
         return getMessageReceivedEvent().getChannel();
     }
 
+    /**
+     *
+     * @return Arguments or empty array if arg[0].length() == 0
+     */
     public String[] getArgs() {
-        return getContent().split(" ");
+        String[] ret = getContent().split(" ");
+        ret = ret[0].length() == 0 ? new String[0] : ret;
+        return ret;
     }
 
     public String getContent() {
