@@ -10,9 +10,8 @@ public class Join extends AudioCommand {
 
     @Override
     public void run(CommandEvent event) {
-        if(ensureConnected(event)) {
+        if (ensureConnected(event)) {
             event.reply(Util.sign(event.getBuilder().setTitle("Joined voicechannel successfully"), event));
-            return;
         }
     }
 }

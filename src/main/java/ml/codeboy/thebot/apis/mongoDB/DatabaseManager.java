@@ -1,15 +1,10 @@
 package ml.codeboy.thebot.apis.mongoDB;
 
-import com.mongodb.*;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
 import ml.codeboy.thebot.Config;
-import org.bson.BsonDocument;
-import org.bson.BsonInt64;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +13,15 @@ public class DatabaseManager {
     private static final DatabaseManager database_instance;
 
     static {
-        database_instance = new DatabaseManager();
+        DatabaseManager manager = null;
+        try {
+            manager = new DatabaseManager();
+        } catch (Exception e) {
+            LoggerFactory.getLogger(DatabaseManager.class).error("failed to create DatabaseManager", e);
+        }
+        database_instance = manager;
     }
+
     private final Logger logger
             = LoggerFactory.getLogger(getClass());
     private final ConnectionString connectionString;

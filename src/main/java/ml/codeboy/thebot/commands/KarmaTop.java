@@ -13,22 +13,21 @@ import java.util.List;
 
 public class KarmaTop extends Command {
     public static final long updateInterval = 6000;
+    private CommandEvent latestEvent;
+    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaTop")
+            .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
+    private long lastUpdated = 0;
 
     public KarmaTop() {
         super("KarmaTop", "Karma Bestenliste", "kt");
         setGuildOnlyCommand(false);
     }
 
-    private CommandEvent latestEvent;
-    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaTop")
-            .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
-
     @Override
     public void register(CommandHandler handler) {
+        super.register(handler);
 //        updateKarmaTop(handler.getServer().getJDA());//initialisation is done when the command is first run
     }
-
-    private long lastUpdated = 0;
 
     @Override
     public void run(CommandEvent event) {

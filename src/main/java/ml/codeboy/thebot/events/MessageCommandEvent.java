@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.events;
 
+import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -70,5 +71,24 @@ public class MessageCommandEvent extends CommandEvent {
         return getMessageReceivedEvent().getChannel();
     }
 
+    public String[] getArgs() {
+        return getContent().split(" ");
+    }
 
+    public String getContent() {
+        String content = getMessageReceivedEvent().getMessage().getContentRaw();
+        content = content.replaceFirst(Config.getInstance().prefix, "");
+
+        String[] splitContent = content.split(" ", 2);
+
+        if (splitContent.length == 1)
+            return "";
+
+        return splitContent[1];
+    }
+
+    @Override
+    public void reply(String message, boolean referenceMessage) {
+        getMessageReceivedEvent().getMessage().reply(message).queue();
+    }
 }

@@ -10,7 +10,7 @@ public class MemeApi extends CachedAPI<Meme> {
     @Override
     protected Meme requestObject() {
         try {
-            String json = readUrl("https://meme-api.herokuapp.com/gimme");
+            String json = readUrl("https://meme-api.com/gimme");
             Meme meme = gson.fromJson(json, Meme.class);
             return meme;
         } catch (Exception e) {

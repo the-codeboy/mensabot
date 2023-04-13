@@ -27,8 +27,8 @@ public class JokeCommand extends Command {
 
     @Override
     public void autoComplete(String option, List<String> options) {
-        if("category".equals(option)) {
-            for(Category category : Category.values()) {
+        if ("category".equals(option)) {
+            for (Category category : Category.values()) {
                 options.add(category.toString());
             }
         }
@@ -40,7 +40,7 @@ public class JokeCommand extends Command {
 
         OptionMapping categoryMapping = event.isSlashCommandEvent() ? event.getSlashCommandEvent().getOption("category") : null;
         Category category = null;
-        if(categoryMapping != null) {
+        if (categoryMapping != null) {
             try {
                 category = Category.valueOf(categoryMapping.getAsString());
             } catch (IllegalArgumentException e) {

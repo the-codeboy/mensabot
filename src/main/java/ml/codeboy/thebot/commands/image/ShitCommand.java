@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-public class ShitCommand extends ImageCommand{
+public class ShitCommand extends ImageCommand {
     public ShitCommand() {
         super("shit", "");
     }
@@ -20,12 +20,12 @@ public class ShitCommand extends ImageCommand{
     @Override
     protected void generateImage(CommandEvent event) {
 
-        BufferedImage img= null;
-        User user=event.getUser();
-        if (event.isMessageEvent()){
+        BufferedImage img = null;
+        User user = event.getUser();
+        if (event.isMessageEvent()) {
             List<Member> members = event.getMessageReceivedEvent().getMessage().getMentions().getMembers();
-            if(!members.isEmpty()){
-                user=members.get(0).getUser();
+            if (!members.isEmpty()) {
+                user = members.get(0).getUser();
             }
         }
         try {
@@ -40,10 +40,10 @@ public class ShitCommand extends ImageCommand{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Graphics g=shit.createGraphics();
-        g.drawImage(img,300,800,128,128,null);
+        Graphics g = shit.createGraphics();
+        g.drawImage(img, 300, 800, 128, 128, null);
         g.dispose();
 
-        event.reply(shit,"jpg","shit");
+        event.reply(shit, "jpg", "shit");
     }
 }

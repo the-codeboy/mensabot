@@ -19,7 +19,7 @@ public class Help extends Command {
     public void run(CommandEvent event) {
         Collection<Command> commands = bot.getCmdHandler().getCommands();
         EmbedBuilder embedBuilder = newBuilder();
-        embedBuilder.setTitle("Help for commands", "https://cntr.click/g3PZ5hm");
+        embedBuilder.setTitle("Help for commands");
         for (Command command : commands) {
             if (!command.isHidden())
                 embedBuilder.addField(command.getName(), command.getDescription(), true);

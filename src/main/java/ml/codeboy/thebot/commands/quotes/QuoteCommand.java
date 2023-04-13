@@ -21,19 +21,15 @@ public class QuoteCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.STRING, "author", "the name of the person the quote is from",false,true);
+        return super.getCommandData().addOption(OptionType.STRING, "author", "the name of the person the quote is from", false, true);
     }
-
 
 
     @Override
     public void autoComplete(String option, List<String> options) {
-        switch (option) {
-            case "author": {
-                for (Person person : QuoteManager.getInstance().getPersons()) {
-                    options.add(person.getName());
-                }
-                break;
+        if (option.equals("author")) {
+            for (Person person : QuoteManager.getInstance().getPersons()) {
+                options.add(person.getName());
             }
         }
     }

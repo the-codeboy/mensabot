@@ -1,6 +1,5 @@
 package ml.codeboy.thebot.commands.nils;
 
-import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 

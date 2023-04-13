@@ -2,7 +2,6 @@ package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
-import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.commands.secret.AcceptImage;
@@ -16,7 +15,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -34,7 +32,6 @@ import java.util.UUID;
 public class AddImageCommand extends Command {
     private final String selectMenuId = "add-image", acceptImageId = "accept-image", rejectImageId = "reject-image",
             rejectImageModalId = "reject-image-modal";
-    private CommandHandler commandHandler;
     private final int maxDaysAgo = 2;
 
     public AddImageCommand() {
@@ -42,15 +39,12 @@ public class AddImageCommand extends Command {
         setGuildOnlyCommand(false);
     }
 
-    @Override
-    public void register(CommandHandler handler) {
-        this.commandHandler = handler;
-    }
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
-                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
+        return null;
+//        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
+//                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
     }
 
 
@@ -60,17 +54,14 @@ public class AddImageCommand extends Command {
         String selected = event.getFocusedOption().getName();
 
 
-        switch (selected) {
-            case "meal": {
-                Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
-                for (int i = 0; i <= maxDaysAgo; i++) {
-                    Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
-                    for (Meal meal : mensa.getMeals(date)) {
-                        if (meal.getName().length() <= 100)
-                            options.add(meal.getName());
-                    }
+        if (selected.equals("meal")) {
+            Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
+            for (int i = 0; i <= maxDaysAgo; i++) {
+                Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
+                for (Meal meal : mensa.getMeals(date)) {
+                    if (meal.getName().length() <= 100)
+                        options.add(meal.getName());
                 }
-                break;
             }
         }
 
@@ -118,7 +109,7 @@ public class AddImageCommand extends Command {
                 } catch (IllegalArgumentException ignored) {
                 }
             }
-            commandHandler.registerSelectMenuListener(id, ev -> {
+            getCommandHandler().registerSelectMenuListener(id, ev -> {
                 if (!ev.getComponentId().equals(id)) {
                     return false;//this is not the right menu
                 }
@@ -138,7 +129,7 @@ public class AddImageCommand extends Command {
         if (channel != null) {
             String acceptId = image.getId() + acceptImageId;
             String rejectId = image.getId() + rejectImageId;
-            commandHandler.registerButtonListener(acceptId, e -> {
+            getCommandHandler().registerButtonListener(acceptId, e -> {
                 e.deferEdit().queue();
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     AcceptImage.accept(image, e.getChannel());
@@ -146,7 +137,7 @@ public class AddImageCommand extends Command {
                 }
                 return false;
             });
-            commandHandler.registerButtonListener(rejectId, e -> {
+            getCommandHandler().registerButtonListener(rejectId, e -> {
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     String modalId = image.getId() + rejectImageModalId;
                     TextInput reason = TextInput.create("reason", "Reason", TextInputStyle.SHORT)
@@ -157,7 +148,7 @@ public class AddImageCommand extends Command {
                             .addActionRows(ActionRow.of(reason))
                             .build();
 
-                    commandHandler.registerModalListener(modalId, ev -> {
+                    getCommandHandler().registerModalListener(modalId, ev -> {
                         image.reject(ev.getValue("reason").getAsString());
                         ev.reply("Image rejected").setEphemeral(true).queue();
                         return true;

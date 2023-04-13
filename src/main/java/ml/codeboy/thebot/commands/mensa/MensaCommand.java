@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class MensaCommand extends Command {
-    private CommandHandler handler;
 
     public MensaCommand() {
         super("mensa", "Sends the current food in mensa Academica", "food");
@@ -181,7 +180,7 @@ public class MensaCommand extends Command {
 
     @Override
     public void register(CommandHandler handler) {
-        this.handler = handler;
+        super.register(handler);
         handler.registerButtonListener("rate", this::rate);
         handler.registerSelectMenuListener("rate", this::rate);
         handler.registerButtonListener("detail", this::detail);
@@ -222,7 +221,7 @@ public class MensaCommand extends Command {
         for (int i = 1; i < 6; i++) {
             builder.addOption(Util.repeat("⭐", i), i + "");
         }
-        handler.registerSelectMenuListener(id, e -> {
+        getCommandHandler().registerSelectMenuListener(id, e -> {
             openRatingModal(e, meal);
 
             User user = event.getUser();
@@ -259,7 +258,7 @@ public class MensaCommand extends Command {
     private void openRatingModal(SelectMenuInteractionEvent event, String meal) {
         String id = UUID.randomUUID().toString();
 
-        handler.registerModalListener(id, e -> {
+        getCommandHandler().registerModalListener(id, e -> {
             e.deferReply(true).queue();
             String comment = e.getValue("comment").getAsString();
             CommentManager.getInstance().addComment(meal, comment, e.getUser());

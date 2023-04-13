@@ -30,10 +30,7 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
-import ml.codeboy.thebot.util.ButtonListener;
-import ml.codeboy.thebot.util.ModalListener;
-import ml.codeboy.thebot.util.SelectMenuListener;
-import ml.codeboy.thebot.util.Util;
+import ml.codeboy.thebot.util.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -67,10 +64,7 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
 import static ml.codeboy.thebot.util.Util.getKANValue;
@@ -83,12 +77,37 @@ public class CommandHandler extends ListenerAdapter {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-    private Guild server;
     private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
     private final HashMap<String, ButtonListener> buttonListeners = new HashMap<>();
     private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
-
     private final Emoji amogus, sus, downvote;
+    private final Emoji giesl;
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private Guild server;
+
+    public CommandHandler(Bot bot) {
+        UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
+        this.bot = bot;
+        bot.getJda().addEventListener(this);
+        String serverID = Config.getInstance().serverId;
+        try {
+            bot.getJda().awaitReady();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (serverID != null)
+            server = bot.getJda().getGuildById(serverID);
+        amogus = getBot().getJda().getEmojiById("909891436625944646");
+        sus = getBot().getJda().getEmojiById("930765635913408532");
+        downvote = getBot().getJda().getEmojiById("903336514644222033");
+        giesl = getBot().getJda().getEmojiById("923655475675947028");
+
+        this.registerKnowCommands();
+
+        registerAnnouncements();
+//        registerBedTimeTracker();
+
+    }
 
     private void registerBedTimeTracker() {
         BedTimeTracker tracker = new BedTimeTracker(getBot());
@@ -108,29 +127,6 @@ public class CommandHandler extends ListenerAdapter {
             if (includeWeather)
                 sendWeatherToAllGuilds();
         }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
-    }
-
-    public CommandHandler(Bot bot) {
-        UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
-        this.bot = bot;
-        bot.getJda().addEventListener(this);
-        String serverID = Config.getInstance().serverId;
-        try {
-            bot.getJda().awaitReady();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (serverID != null)
-            server = bot.getJda().getGuildById(serverID);
-        amogus = getBot().getJda().getEmojiById("909891436625944646");
-        sus = getBot().getJda().getEmojiById("930765635913408532");
-        downvote = getBot().getJda().getEmojiById("903336514644222033");
-
-        this.registerKnowCommands();
-
-        registerAnnouncements();
-//        registerBedTimeTracker();
-
     }
 
     private void sendMealsToGuild(Guild guild) {
@@ -201,44 +197,54 @@ public class CommandHandler extends ListenerAdapter {
         checkActivity(event.getMember());
     }
 
+    private void createCommand(Class<? extends Command> command) {
+        executor.execute(() -> {
+            try {
+                registerCommand(command.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error("failed to create Command " + command.getName(), e);
+            }
+        });
+    }
+
 
     public void registerKnowCommands() {
         this.registerCommand(new Help(bot));
 
-        registerCommand(new ChuckNorrisJokeCommand());
-        registerCommand(new JermaCommand());
-        registerCommand(new TrumpQuoteCommand());
-        registerCommand(new AdviceCommand());
-        registerCommand(new NewsCommand());
-        registerCommand(new InsultCommand());
-        registerCommand(new RhymeCommand());
-        registerCommand(new MemeCommand());
-        registerCommand(new JokeCommand());
-        registerCommand(new ShortsCommand());
-        registerCommand(new WeatherCommand());
-        registerCommand(new PingCommand());
-        registerCommand(new ShittyTranslateCommand());
-        registerCommand(new ASCIICommand());
-        registerCommand(new GifCommand());
+        createCommand(ChuckNorrisJokeCommand.class);
+        createCommand(JermaCommand.class);
+        createCommand(TrumpQuoteCommand.class);
+        createCommand(AdviceCommand.class);
+        createCommand(NewsCommand.class);
+        createCommand(InsultCommand.class);
+        createCommand(RhymeCommand.class);
+        createCommand(MemeCommand.class);
+        createCommand(JokeCommand.class);
+        createCommand(ShortsCommand.class);
+        createCommand(WeatherCommand.class);
+        createCommand(PingCommand.class);
+        createCommand(ShittyTranslateCommand.class);
+        createCommand(ASCIICommand.class);
+        createCommand(GifCommand.class);
 
-        registerCommand(new MensaCommand());
-        registerCommand(new RateCommand());
-        registerCommand(new DefaultMensaCommand());
-        registerCommand(new MensaAnnounceChannelCommand());
-        registerCommand(new DetailCommand());
-        registerCommand(new AddImageCommand());
+        createCommand(MensaCommand.class);
+        createCommand(RateCommand.class);
+        createCommand(DefaultMensaCommand.class);
+        createCommand(MensaAnnounceChannelCommand.class);
+        createCommand(DetailCommand.class);
+        createCommand(AddImageCommand.class);
 
-        registerCommand(new DönerrateCommand());
-        registerCommand(new Dönertop());
+        createCommand(DönerrateCommand.class);
+        createCommand(Dönertop.class);
 
-        registerCommand(new ExecuteCommand());
-        registerCommand(new LanguagesCommand());
+        createCommand(ExecuteCommand.class);
+        createCommand(LanguagesCommand.class);
 
         registerAudioCommands();
 
-        registerCommand(new AddQuote());
-        registerCommand(new AddQuoteList());
-        registerCommand(new QuoteCommand());
+        createCommand(AddQuote.class);
+        createCommand(AddQuoteList.class);
+        createCommand(QuoteCommand.class);
 //        registerCommand(new Karma());
 //        registerCommand(new KarmaTop());
 //        registerCommand(new KarmaBottom());
@@ -253,43 +259,50 @@ public class CommandHandler extends ListenerAdapter {
 
         registerDebugCommands();
 
-        registerAllSlashCommands();
-
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
+        try {
+            executor.shutdown();
+            executor.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error("bot did not start in time", e);
+        }
+
+        registerAllSlashCommands();
     }
 
     private void registerImageCommands() {
-        registerCommand(new MorbCommand());
-        registerCommand(new ShitCommand());
-        registerCommand(new ChangeMyMindCommand());
-        registerCommand(new HotlineBlingCommand());
-        registerCommand(new TwoButtonsCommand());
-        registerCommand(new Draw25Command());
-        registerCommand(new DisasterGirlCommand());
-        registerCommand(new SupermanCommand());
+        createCommand(MorbCommand.class);
+        createCommand(ShitCommand.class);
+        createCommand(ChangeMyMindCommand.class);
+        createCommand(HotlineBlingCommand.class);
+        createCommand(TwoButtonsCommand.class);
+        createCommand(Draw25Command.class);
+        createCommand(DisasterGirlCommand.class);
+        createCommand(SupermanCommand.class);
+        createCommand(LatexCommand.class);
     }
 
     private void registerSecretCommands() {
-        registerCommand(new RickRoll());
-        registerCommand(new React());
-        registerCommand(new Msg());
-        registerCommand(new LoadKarma());
-        registerCommand(new LoadSusCount());
-        registerCommand(new Bee());
-        registerCommand(new AcceptImage());
-        registerCommand(new RejectImage());
+        createCommand(RickRoll.class);
+        createCommand(React.class);
+        createCommand(Msg.class);
+        createCommand(LoadKarma.class);
+        createCommand(LoadSusCount.class);
+        createCommand(Bee.class);
+        createCommand(AcceptImage.class);
+        createCommand(RejectImage.class);
+        createCommand(SendImageInfo.class);
     }
 
-    private void registerNilsCommands()
-    {
-        registerCommand(new ElMomentoCommand());
+    private void registerNilsCommands() {
+        createCommand(ElMomentoCommand.class);
     }
 
     private void registerDebugCommands() {
-        registerCommand(new ListQuotes());
-        registerCommand(new GetQuotes());
+        createCommand(ListQuotes.class);
+        createCommand(GetQuotes.class);
     }
 
     private void changeStatus() {
@@ -324,21 +337,21 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerAudioCommands() {
-        registerCommand(new fPlay());
-        registerCommand(new Pause());
-        registerCommand(new Resume());
-//        registerCommand(new Echo());
-        registerCommand(new Loop());
-        registerCommand(new PlayNext());
-        registerCommand(new Queue());
-        registerCommand(new RemoveTrack());
-        registerCommand(new Shuffle());
-        registerCommand(new Skip());
-        registerCommand(new Stop());
-        registerCommand(new Volume());
-        registerCommand(new CurrentTrack());
-        registerCommand(new Leave());
-        registerCommand(new Join());
+        createCommand(fPlay.class);
+        createCommand(Pause.class);
+        createCommand(Resume.class);
+//        createCommand(Echo.class);
+        createCommand(Loop.class);
+        createCommand(PlayNext.class);
+        createCommand(Queue.class);
+        createCommand(RemoveTrack.class);
+        createCommand(Shuffle.class);
+        createCommand(Skip.class);
+        createCommand(Stop.class);
+        createCommand(Volume.class);
+        createCommand(CurrentTrack.class);
+        createCommand(Leave.class);
+        createCommand(Join.class);
     }
 
     private void registerLeaderBoardCommands() {
@@ -397,6 +410,11 @@ public class CommandHandler extends ListenerAdapter {
             if (sus != null)
                 event.getMessage().addReaction(sus).queue();
         }
+        if (msg.contains("giesl") || msg.contains("weihnacht")) {
+            logger.info("weihnachtsgiesl");
+            if (giesl != null)
+                event.getMessage().addReaction(giesl).queue();
+        }
 
         if (event.getAuthor().getId().equals("290368310711681024") && !event.getChannel().getId().equals("917201826271604736")) {
             event.getMessage().addReaction(downvote).queue();
@@ -409,6 +427,7 @@ public class CommandHandler extends ListenerAdapter {
             amogus(event);
             counter(event);
             evaluateMessage(event);
+            detectLatex(event);
         });
         t.start();
         String content = event.getMessage().getContentRaw();
@@ -420,16 +439,11 @@ public class CommandHandler extends ListenerAdapter {
                             .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
                 else {
                     for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-                        File file = new File("tmp" + File.separator + Math.random() + File.separator
-                                + attachment.getFileName());
-                        file.getParentFile().mkdirs();
                         try {
-                            file = attachment.downloadToFile(file).get();
                             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
-                                    .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
-                            channel.sendFile(file).complete();
-                            file.delete();
-                            file.getParentFile().delete();
+                                    .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated())
+                                    .setDescription(attachment.getDescription() + "").build()).queue();
+                            channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName()).complete();
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
                         }
@@ -507,6 +521,16 @@ public class CommandHandler extends ListenerAdapter {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private void detectLatex(MessageReceivedEvent event) {
+        String content = event.getMessage().getContentRaw();
+        if (content.startsWith("```tex\n") && content.endsWith("```")) {
+            content = content.substring(7, content.length() - 3);
+        } else if (content.startsWith("```latex\n") && content.endsWith("```")) {
+            content = content.substring(9, content.length() - 3);
+        } else return;
+        LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
     }
 
 
@@ -606,7 +630,7 @@ public class CommandHandler extends ListenerAdapter {
         if (listener != null) {
             boolean remove = listener.onButtonInteraction(event);
             if (remove)
-                selectMenuListeners.remove(event.getComponentId());
+                buttonListeners.remove(event.getComponentId());
         }
     }
 
@@ -634,6 +658,9 @@ public class CommandHandler extends ListenerAdapter {
         action.queue();
     }
 
+    /**
+     * this is used to automatically register slash commands to a test server (faster than global registration)
+     */
     private void registerSlashCommand(CommandData data) {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();

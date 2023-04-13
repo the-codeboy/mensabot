@@ -61,31 +61,30 @@ public final class GoogleTranslate { //Class marked as final since all methods a
     private static String generateURL(String sourceLanguage, String targetLanguage, String text)
             throws UnsupportedEncodingException {
         String encoded = URLEncoder.encode(text, "UTF-8"); //Encode
-        StringBuilder sb = new StringBuilder();
-        sb.append(GOOGLE_TRANSLATE_URL);
-        sb.append("?client=webapp"); //The client parameter
-        sb.append("&hl=en"); //The language of the UI?
-        sb.append("&sl="); //Source language
-        sb.append(sourceLanguage);
-        sb.append("&tl="); //Target language
-        sb.append(targetLanguage);
-        sb.append("&q=");
-        sb.append(encoded);
-        sb.append("&multires=1");//Necessary but unknown parameters
-        sb.append("&otf=0");
-        sb.append("&pc=0");
-        sb.append("&trs=1");
-        sb.append("&ssel=0");
-        sb.append("&tsel=0");
-        sb.append("&kc=1");
-        sb.append("&dt=t");//This parameters requests the translated text back.
-        //Other dt parameters request additional information such as pronunciation, and so on.
-        //TODO Modify API so that the user may request this additional information.
-        sb.append("&ie=UTF-8"); //Input encoding
-        sb.append("&oe=UTF-8"); //Output encoding
-        sb.append("&tk="); //Token authentication parameter
-        sb.append(generateToken(text));
-        return sb.toString();
+        String sb = GOOGLE_TRANSLATE_URL +
+                "?client=webapp" + //The client parameter
+                "&hl=en" + //The language of the UI?
+                "&sl=" + //Source language
+                sourceLanguage +
+                "&tl=" + //Target language
+                targetLanguage +
+                "&q=" +
+                encoded +
+                "&multires=1" +//Necessary but unknown parameters
+                "&otf=0" +
+                "&pc=0" +
+                "&trs=1" +
+                "&ssel=0" +
+                "&tsel=0" +
+                "&kc=1" +
+                "&dt=t" +//This parameters requests the translated text back.
+                //Other dt parameters request additional information such as pronunciation, and so on.
+                //TODO Modify API so that the user may request this additional information.
+                "&ie=UTF-8" + //Input encoding
+                "&oe=UTF-8" + //Output encoding
+                "&tk=" + //Token authentication parameter
+                generateToken(text);
+        return sb;
     }
 
     /**
@@ -292,7 +291,7 @@ public final class GoogleTranslate { //Class marked as final since all methods a
      */
     private static int shr32(int x, int bits) {
         if (x < 0) {
-            long x_l = 0xffffffffl + x + 1;
+            long x_l = 0xffffffffL + x + 1;
             return (int) (x_l >> bits);
         }
         return x >> bits;
@@ -351,7 +350,7 @@ public final class GoogleTranslate { //Class marked as final since all methods a
         a_i ^= tkk[1];
         long a_l;
         if (0 > a_i) {
-            a_l = 0x80000000l + (a_i & 0x7FFFFFFF);
+            a_l = 0x80000000L + (a_i & 0x7FFFFFFF);
         } else {
             a_l = a_i;
         }

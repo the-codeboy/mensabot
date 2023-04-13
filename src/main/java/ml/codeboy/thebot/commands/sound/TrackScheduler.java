@@ -13,11 +13,11 @@ import java.util.*;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final ArrayList<AudioTrack> queue = new ArrayList<>();
+    private final GuildMusicManager manager;
     private ArrayList<AudioTrack> nextQueue = null;
     private CommandEvent latestEvent = null;
     private int loop = 0, currentLoop = 0;
     private boolean destroyed = false;
-    private final GuildMusicManager manager;
 
     public TrackScheduler(GuildMusicManager manager) {
         this.player = manager.audioPlayer;

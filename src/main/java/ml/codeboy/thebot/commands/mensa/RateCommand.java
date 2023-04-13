@@ -31,6 +31,32 @@ public class RateCommand extends Command {
         super("rate", "Rate mensa meals");
     }
 
+    public static void updateAllGuildAnnouncements(Mensa mensa) {
+        JDA jda = MensaBot.getInstance().getJda();
+        for (Guild guild : jda.getGuilds()) {
+            GuildData data = GuildManager.getInstance().getData(guild);
+            if (data != null && data.getDefaultMensaId() == mensa.getId())
+                updateGuildAnnouncements(guild, jda);//update the meal announcements of the day to include the new rating
+        }
+    }
+
+    private static void updateGuildAnnouncements(Guild guild, JDA jda) {
+        GuildData data = GuildManager.getInstance().getData(guild);
+        try {
+            Mensa mensa = data.getDefaultMensa();
+            MessageChannel channel = (MessageChannel) jda.getGuildChannelById(data.getUpdateChannelId());
+            if (channel != null) {
+                try {
+                    Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
+                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build())
+                            .setActionRows(MensaUtil.mealButtons).complete();
+                } catch (Exception ignored) {
+                }
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData()
@@ -77,32 +103,6 @@ public class RateCommand extends Command {
             }
         }
         event.replyChoices(choices).queue();
-    }
-
-    public static void updateAllGuildAnnouncements(Mensa mensa) {
-        JDA jda = MensaBot.getInstance().getJda();
-        for (Guild guild : jda.getGuilds()) {
-            GuildData data = GuildManager.getInstance().getData(guild);
-            if (data != null && data.getDefaultMensaId() == mensa.getId())
-                updateGuildAnnouncements(guild, jda);//update the meal announcements of the day to include the new rating
-        }
-    }
-
-    private static void updateGuildAnnouncements(Guild guild, JDA jda) {
-        GuildData data = GuildManager.getInstance().getData(guild);
-        try {
-            Mensa mensa = data.getDefaultMensa();
-            MessageChannel channel = (MessageChannel) jda.getGuildChannelById(data.getUpdateChannelId());
-            if (channel != null) {
-                try {
-                    Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
-                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build())
-                            .setActionRows(MensaUtil.mealButtons).complete();
-                } catch (Exception ignored) {
-                }
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     @Override

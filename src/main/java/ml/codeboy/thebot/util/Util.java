@@ -29,6 +29,10 @@ import java.util.TimerTask;
 
 public class Util {
 
+    private static final Random rand = new Random();
+    private static final Color[] colors = new Color[]{Color.blue, Color.cyan, Color.magenta, Color.orange, Color.pink, Color.yellow, Color.white};
+    private static final String arrow = "↑";
+
     public static String toReadable(long millis) {
         int seconds = (int) (millis / 1000);
         int years = seconds / secondsPerYear;
@@ -74,9 +78,7 @@ public class Util {
         if (repeatSecond == 0)
             output += ":white_check_mark:";
         return output;
-    }
-
-    private static final int secondsPerDay = 3600 * 24,
+    }    private static final int secondsPerDay = 3600 * 24,
             secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static EmbedBuilder getSongInfo(AudioTrack track, EmbedBuilder builder) {
@@ -135,9 +137,6 @@ public class Util {
         return user.getMutualGuilds().get(0).getMember(user);
     }
 
-    private static final Random rand = new Random();
-    private static final Color[] colors = new Color[]{Color.blue, Color.cyan, Color.magenta, Color.orange, Color.pink, Color.yellow, Color.white};
-
     public static Color getRandomColor() {
 //        float r = rand.nextFloat();
 //        float g = rand.nextFloat();
@@ -186,7 +185,6 @@ public class Util {
         }
     }
 
-
     public static void addSusCount(User user, int amount) {
         UserData data = UserDataManager.getInstance().getData(user);
         data.setSusCount(data.getSusCount() + amount);
@@ -210,7 +208,6 @@ public class Util {
         }
     }
 
-
     public static String readUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -228,9 +225,6 @@ public class Util {
             return result;
         }
     }
-
-
-    private static final String arrow = "↑";
 
     /**
      * @return true if the text contains ↑ meaning it is probably in knuths arrow notation
@@ -261,4 +255,38 @@ public class Util {
         }
         return text;
     }
+
+    public static int calculateDistance(String from, String to) {
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("can't get the distance for null");
+        }
+        int sourceLength = from.length();
+        int targetLength = to.length();
+        if (sourceLength == 0) return targetLength;
+        if (targetLength == 0) return sourceLength;
+        int[][] dist = new int[sourceLength + 1][targetLength + 1];
+        for (int i = 0; i < sourceLength + 1; i++) {
+            dist[i][0] = i;
+        }
+        for (int j = 0; j < targetLength + 1; j++) {
+            dist[0][j] = j;
+        }
+        for (int i = 1; i < sourceLength + 1; i++) {
+            for (int j = 1; j < targetLength + 1; j++) {
+                int cost = from.charAt(i - 1) == to.charAt(j - 1) ? 0 : 1;
+                dist[i][j] = Math.min(Math.min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
+                if (i > 1 &&
+                        j > 1 &&
+                        from.charAt(i - 1) == to.charAt(j - 2) &&
+                        from.charAt(i - 2) == to.charAt(j - 1)) {
+                    dist[i][j] = Math.min(dist[i][j], dist[i - 2][j - 2] + cost);
+                }
+            }
+        }
+        return dist[sourceLength][targetLength];
+    }
+
+
+
+
 }
