@@ -53,7 +53,7 @@ public class QuoteCommand extends Command {
 
         } else {
             String[] args = event.getArgs();
-            if (args.length > 0 && args[0].length()!=0) {
+            if (args.length > 0) {
                 String name = args[0];
                 quote = QuoteManager.getInstance().getRandomQuote(name);
                 if (quote == null) {
