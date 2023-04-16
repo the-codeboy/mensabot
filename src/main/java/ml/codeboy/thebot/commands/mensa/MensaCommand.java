@@ -12,7 +12,6 @@ import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.util.Replyable;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -279,19 +278,28 @@ public class MensaCommand extends Command {
 
     private boolean detail(ButtonInteractionEvent event) {
         event.deferEdit().queue();
-        Mensa mensa = OpenMensa.getInstance().getMensa(187);
-        Guild guild = event.getGuild();
-        if (guild != null) {
-            GuildData data = GuildManager.getInstance().getData(guild);
-            if (data != null)
-                mensa = data.getDefaultMensa();
+        String componentId = event.getComponentId();
+        String[] args = componentId.split(":");
+        if (args.length == 1) {
+            event.getHook().sendMessage("This button is not working anymore :(").setEphemeral(true).queue();
+            return false;
         }
+        int mensaId = Integer.parseInt(args[1]);
+        String date = args[2];
+        Mensa mensa = OpenMensa.getInstance().getMensa(mensaId);
 
-        SelectMenu.Builder builder = SelectMenu.create("detail").setRequiredRange(1, 1);
+        SelectMenu.Builder builder = SelectMenu.create(componentId).setRequiredRange(1, 1);
 
-        for (Meal meal : mensa.getMeals()) {
+        for (Meal meal : mensa.getMeals(date)) {
             try {
-                builder.addOption(meal.getName(), meal.getName());
+                boolean usedTwice = false;
+                for (SelectOption o : builder.getOptions())
+                    if (o.getValue().equals(meal.getName())) {
+                        usedTwice = true;
+                        break;// wieso gibt es am selben tag zweimal das gleiche essen???
+                    }
+                if (!usedTwice)
+                    builder.addOption(meal.getName(), meal.getName());
             } catch (Exception ignored) {
             }
         }
@@ -304,17 +312,19 @@ public class MensaCommand extends Command {
 
     private boolean detail(SelectMenuInteractionEvent event) {
         event.deferEdit().queue();
-        Mensa mensa = OpenMensa.getInstance().getMensa(187);
-        Guild guild = event.getGuild();
-        if (guild != null) {
-            GuildData data = GuildManager.getInstance().getData(guild);
-            if (data != null)
-                mensa = data.getDefaultMensa();
+        String componentId = event.getComponentId();
+        String[] args = componentId.split(":");
+        if (args.length == 1) {
+            event.getHook().sendMessage("This button is not working anymore :(").setEphemeral(true).queue();
+            return false;
         }
+        int mensaId = Integer.parseInt(args[1]);
+        String date = args[2];
+        Mensa mensa = OpenMensa.getInstance().getMensa(mensaId);
 
         String name = event.getSelectedOptions().get(0).getValue();
 
-        for (Meal meal : mensa.getMeals()) {
+        for (Meal meal : mensa.getMeals(date)) {
             if (meal.getName().equals(name)) {
                 DetailCommand.sendDetails(Replyable.from(event), meal);
                 return false;
