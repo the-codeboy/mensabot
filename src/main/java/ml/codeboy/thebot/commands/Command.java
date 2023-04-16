@@ -1,6 +1,7 @@
 package ml.codeboy.thebot.commands;
 
 import ml.codeboy.thebot.CommandHandler;
+import ml.codeboy.thebot.InteractionHandler;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -138,6 +139,14 @@ public abstract class Command {
 
     protected CommandHandler getCommandHandler() {
         return handler;
+    }
+
+    /**
+     * convenience method
+     * @return the interaction handler
+     */
+    protected InteractionHandler getInteractionHandler(){
+        return InteractionHandler.getInstance();
     }
 
     public void autoComplete(String option, List<String> options) {

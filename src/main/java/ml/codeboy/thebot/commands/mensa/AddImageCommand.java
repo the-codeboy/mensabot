@@ -109,7 +109,7 @@ public class AddImageCommand extends Command {
                 } catch (IllegalArgumentException ignored) {
                 }
             }
-            getCommandHandler().registerSelectMenuListener(id, ev -> {
+            getInteractionHandler().registerSelectMenuListener(id, ev -> {
                 if (!ev.getComponentId().equals(id)) {
                     return false;//this is not the right menu
                 }
@@ -129,7 +129,7 @@ public class AddImageCommand extends Command {
         if (channel != null) {
             String acceptId = image.getId() + acceptImageId;
             String rejectId = image.getId() + rejectImageId;
-            getCommandHandler().registerButtonListener(acceptId, e -> {
+            getInteractionHandler().registerButtonListener(acceptId, e -> {
                 e.deferEdit().queue();
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     AcceptImage.accept(image, e.getChannel());
@@ -137,7 +137,7 @@ public class AddImageCommand extends Command {
                 }
                 return false;
             });
-            getCommandHandler().registerButtonListener(rejectId, e -> {
+            getInteractionHandler().registerButtonListener(rejectId, e -> {
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
                     String modalId = image.getId() + rejectImageModalId;
                     TextInput reason = TextInput.create("reason", "Reason", TextInputStyle.SHORT)
@@ -148,7 +148,7 @@ public class AddImageCommand extends Command {
                             .addActionRows(ActionRow.of(reason))
                             .build();
 
-                    getCommandHandler().registerModalListener(modalId, ev -> {
+                    getInteractionHandler().registerModalListener(modalId, ev -> {
                         image.reject(ev.getValue("reason").getAsString());
                         ev.reply("Image rejected").setEphemeral(true).queue();
                         return true;
