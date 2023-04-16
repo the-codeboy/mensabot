@@ -35,7 +35,7 @@ public class InteractionHandler extends ListenerAdapter {
      * @param listener the listener
      * @param regex    a regular expression matching the button ids to listen for
      */
-    public void registerSelectMenuListener(SelectMenuListener listener, String regex) {
+    public void registerRegexSelectMenuListener(SelectMenuListener listener, String regex) {
         Pattern pattern = Pattern.compile(regex);
         regexSelectMenuListeners.put(pattern, listener);
     }

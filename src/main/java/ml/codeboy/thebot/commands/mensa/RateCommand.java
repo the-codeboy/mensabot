@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,11 +32,11 @@ public class RateCommand extends Command {
         super("rate", "Rate mensa meals");
     }
 
-    public static void updateAllGuildAnnouncements(Mensa mensa) {
+    public static void updateAllGuildAnnouncements() {
         JDA jda = MensaBot.getInstance().getJda();
         for (Guild guild : jda.getGuilds()) {
             GuildData data = GuildManager.getInstance().getData(guild);
-            if (data != null && data.getDefaultMensaId() == mensa.getId())
+            if (data != null)
                 updateGuildAnnouncements(guild, jda);//update the meal announcements of the day to include the new rating
         }
     }
@@ -48,8 +49,10 @@ public class RateCommand extends Command {
             if (channel != null) {
                 try {
                     Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
-                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 4)).build())
-                            .setActionRows(MensaUtil.mealButtons).complete();
+                    Date date=new Date(System.currentTimeMillis() + 1000 * 3600 * 4);
+                    ActionRow mealButtons=MensaUtil.createMealButtons(mensa,date);
+                    message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
+                            .setActionRows(mealButtons).complete();
                 } catch (Exception ignored) {
                 }
             }
@@ -132,7 +135,7 @@ public class RateCommand extends Command {
 
 
                     if (i == 0)//the rated meal was from today
-                        updateAllGuildAnnouncements(mensa);
+                        updateAllGuildAnnouncements();
                 } else {
                     event.reply("Meal not found");
                 }

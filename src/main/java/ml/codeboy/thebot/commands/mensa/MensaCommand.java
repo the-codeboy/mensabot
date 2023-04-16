@@ -20,8 +20,10 @@ import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
@@ -172,36 +174,46 @@ public class MensaCommand extends Command {
             return;
         }
         EmbedBuilder builder = MensaUtil.MealsToEmbed(mensa, date);
+        ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
         if (event.isSlashCommandEvent()) {
-            event.getSlashCommandEvent().getInteraction().getHook().sendMessageEmbeds(builder.build()).addActionRows(MensaUtil.mealButtons).queue();
+            event.getSlashCommandEvent().getInteraction().getHook().sendMessageEmbeds(builder.build()).addActionRows(mealButtons).queue();
         } else if (event.isMessageEvent())
-            event.getMessageReceivedEvent().getChannel().sendMessageEmbeds(builder.build()).setActionRows(MensaUtil.mealButtons).queue();
+            event.getMessageReceivedEvent().getChannel().sendMessageEmbeds(builder.build()).setActionRows(mealButtons).queue();
     }
 
     @Override
     public void register(CommandHandler handler) {
         super.register(handler);
-        handler.registerButtonListener("rate", this::rate);
-        handler.registerSelectMenuListener("rate", this::rate);
-        handler.registerButtonListener("detail", this::detail);
-        handler.registerSelectMenuListener("detail", this::detail);
+        getInteractionHandler().registerRegexButtonListener(this::rate, "^rate.*");
+        getInteractionHandler().registerRegexSelectMenuListener(this::rate, "^rate.*");
+        getInteractionHandler().registerRegexButtonListener(this::detail, "^detail.*");
+        getInteractionHandler().registerRegexSelectMenuListener(this::detail, "^detail.*");
     }
 
     private boolean rate(ButtonInteractionEvent event) {
         event.deferEdit().queue();
-        Mensa mensa = OpenMensa.getInstance().getMensa(187);
-        Guild guild = event.getGuild();
-        if (guild != null) {
-            GuildData data = GuildManager.getInstance().getData(guild);
-            if (data != null)
-                mensa = data.getDefaultMensa();
+        String componentId = event.getComponentId();
+        String[] args = componentId.split(":");
+        if (args.length == 1) {
+            event.getHook().sendMessage("This button is not working anymore :(").setEphemeral(true).queue();
+            return false;
         }
+        int mensaId = Integer.parseInt(args[1]);
+        String date = args[2];
+        Mensa mensa = OpenMensa.getInstance().getMensa(mensaId);
 
         SelectMenu.Builder builder = SelectMenu.create("rate").setRequiredRange(1, 1);
 
-        for (Meal meal : mensa.getMeals()) {
+        for (Meal meal : mensa.getMeals(date)) {
             try {
-                builder.addOption(meal.getName(), meal.getName());
+                boolean usedTwice = false;
+                for (SelectOption o : builder.getOptions())
+                    if (o.getValue().equals(meal.getName())) {
+                        usedTwice = true;
+                        break;// wieso gibt es am selben tag zweimal das gleiche essen???
+                    }
+                if (!usedTwice)
+                    builder.addOption(meal.getName(), meal.getName());
             } catch (Exception ignored) {
             }
         }
@@ -237,15 +249,7 @@ public class MensaCommand extends Command {
                     .setFooter(e.getMember().getEffectiveName(), e.getMember().getUser().getEffectiveAvatarUrl())
                     .build()).queue();
 
-            Mensa mensa = OpenMensa.getInstance().getMensa(187);
-            Guild guild = event.getGuild();
-            if (guild != null) {
-                GuildData d = GuildManager.getInstance().getData(guild);
-                if (d != null)
-                    mensa = d.getDefaultMensa();
-            }
-
-            RateCommand.updateAllGuildAnnouncements(mensa);
+            RateCommand.updateAllGuildAnnouncements();
 
             return true;
         });

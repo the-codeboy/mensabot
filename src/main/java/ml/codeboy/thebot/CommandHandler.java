@@ -49,6 +49,7 @@ import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
@@ -135,8 +136,10 @@ public class CommandHandler extends ListenerAdapter {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, new Date(System.currentTimeMillis() + 1000 * 3600 * 5)).build())
-                        .setActionRows(MensaUtil.mealButtons).complete();
+                Date date=new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
+                ActionRow mealButtons=MensaUtil.createMealButtons(mensa,date);
+                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
+                        .setActionRows(mealButtons).complete();
                 data.setLatestAnnouncementId(message.getId());
                 data.save();
             }
