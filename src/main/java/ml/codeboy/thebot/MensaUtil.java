@@ -1,5 +1,6 @@
 package ml.codeboy.thebot;
 
+import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.data.CommentManager;
@@ -22,9 +23,11 @@ import java.util.Locale;
 import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
 public class MensaUtil {
-
-    public static ActionRow mealButtons = ActionRow.of(Button.primary("rate", Emoji.fromFormatted("⭐")),
-            Button.secondary("detail", "details"));
+    public static ActionRow createMealButtons(Mensa mensa,Date date){
+        String dataString= ":" + mensa.getId() + ":" + Util.dateToString(date);
+        return ActionRow.of(Button.primary("rate"+dataString, Emoji.fromFormatted("⭐")),
+                Button.secondary("detail"+dataString, "details"));
+    }
 
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date) {
         EmbedBuilder builder = new EmbedBuilder();
