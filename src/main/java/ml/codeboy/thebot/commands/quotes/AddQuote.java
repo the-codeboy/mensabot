@@ -96,7 +96,7 @@ public class AddQuote extends Command {
                         .addField(" ", q.getContent() + "\n||" + q.getPerson() + "||", false)
                         .setColor(Color.RED).build();
 
-                getCommandHandler().registerButtonListener(id, e ->
+                getInteractionHandler().registerButtonListener(id, e ->
                         {
                             e.deferReply(true).queue();
                             e.getHook().sendMessageEmbeds(new EmbedBuilder().setColor(Color.RED)

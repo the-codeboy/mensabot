@@ -46,6 +46,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.user.UserActivityStartEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -65,6 +66,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.regex.Pattern;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
 import static ml.codeboy.thebot.util.Util.getKANValue;
@@ -77,9 +79,6 @@ public class CommandHandler extends ListenerAdapter {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-    private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
-    private final HashMap<String, ButtonListener> buttonListeners = new HashMap<>();
-    private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
     private final Emoji amogus, sus, downvote;
     private final Emoji giesl;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -89,6 +88,7 @@ public class CommandHandler extends ListenerAdapter {
         UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
         this.bot = bot;
         bot.getJda().addEventListener(this);
+        bot.getJda().addEventListener(InteractionHandler.getInstance());
         String serverID = Config.getInstance().serverId;
         try {
             bot.getJda().awaitReady();
@@ -603,48 +603,6 @@ public class CommandHandler extends ListenerAdapter {
         if (sus) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
             Util.addSusCount(message.getAuthor(), -1);
-        }
-    }
-
-    public void registerSelectMenuListener(String id, SelectMenuListener listener) {
-        selectMenuListeners.put(id, listener);
-    }
-
-    @Override
-    public void onSelectMenuInteraction(@NotNull SelectMenuInteractionEvent event) {
-        SelectMenuListener listener = selectMenuListeners.get(event.getComponentId());
-        if (listener != null) {
-            boolean remove = listener.onSelectMenuInteraction(event);
-            if (remove)
-                selectMenuListeners.remove(event.getComponentId());
-        }
-    }
-
-    public void registerButtonListener(String id, ButtonListener listener) {
-        buttonListeners.put(id, listener);
-    }
-
-    @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        ButtonListener listener = buttonListeners.get(event.getComponentId());
-        if (listener != null) {
-            boolean remove = listener.onButtonInteraction(event);
-            if (remove)
-                buttonListeners.remove(event.getComponentId());
-        }
-    }
-
-    public void registerModalListener(String id, ModalListener listener) {
-        modalListeners.put(id, listener);
-    }
-
-    @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
-        ModalListener listener = modalListeners.get(event.getModalId());
-        if (listener != null) {
-            boolean remove = listener.onModalInteraction(event);
-            if (remove)
-                selectMenuListeners.remove(event.getModalId());
         }
     }
 

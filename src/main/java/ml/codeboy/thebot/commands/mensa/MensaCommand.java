@@ -221,7 +221,7 @@ public class MensaCommand extends Command {
         for (int i = 1; i < 6; i++) {
             builder.addOption(Util.repeat("⭐", i), i + "");
         }
-        getCommandHandler().registerSelectMenuListener(id, e -> {
+        getInteractionHandler().registerSelectMenuListener(id, e -> {
             openRatingModal(e, meal);
 
             User user = event.getUser();
@@ -258,7 +258,7 @@ public class MensaCommand extends Command {
     private void openRatingModal(SelectMenuInteractionEvent event, String meal) {
         String id = UUID.randomUUID().toString();
 
-        getCommandHandler().registerModalListener(id, e -> {
+        getInteractionHandler().registerModalListener(id, e -> {
             e.deferReply(true).queue();
             String comment = e.getValue("comment").getAsString();
             CommentManager.getInstance().addComment(meal, comment, e.getUser());
