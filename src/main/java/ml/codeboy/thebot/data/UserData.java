@@ -14,7 +14,6 @@ public class UserData {
     private Map<String, Integer> ratings = new HashMap<>();
     private Map<String, Integer> restaurantRatings = new HashMap<>();
     private ArrayList<Comment> comments = new ArrayList<>();
-
     public UserData(String userId) {
         this.userId = userId;
     }
@@ -97,5 +96,13 @@ public class UserData {
         if (comments == null)
             comments = new ArrayList<>();
         return comments;
+    }
+
+    public Map<String, Integer> getRatings() {
+        return ratings;
+    }
+
+    public Map<String, Integer> getRestaurantRatings() {
+        return restaurantRatings;
     }
 }

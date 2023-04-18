@@ -1,6 +1,7 @@
 package ml.codeboy.thebot.data;
 
 import com.google.gson.Gson;
+import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,8 @@ public class UserDataManager {
     {
         for(String key : userData.keySet())
         {
-
+            logger.info("Moved "+key+" to cloud");
+            DatabaseUserAPI.saveUser(userData.get(key));
         }
     }
 
@@ -77,6 +79,7 @@ public class UserDataManager {
 
     public Collection<UserData> getAllUserData() {
         waitTilInit();
+        moveDataToCloud();
         return userData.values();
     }
 
