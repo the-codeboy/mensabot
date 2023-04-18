@@ -44,15 +44,15 @@ public class EmojiManager {
         }
     }
 
+    public static EmojiManager getInstance() {
+        return instance;
+    }
+
     private int getMinPriority() {
         MealEmoji min = emojis.stream().min(Comparator.comparing(MealEmoji::getPriority)).orElse(null);
         if (min == null)
             return 1000;
         return min.getPriority();
-    }
-
-    public static EmojiManager getInstance() {
-        return instance;
     }
 
     public MealEmoji getMatching(String content) {

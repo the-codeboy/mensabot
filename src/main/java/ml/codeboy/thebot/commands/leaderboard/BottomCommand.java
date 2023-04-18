@@ -20,8 +20,8 @@ import java.util.List;
 
 public class BottomCommand extends Command {
     private final LeaderBoard leaderBoard;
-    private MessageEmbed lastBottom;
     private final MessageEmbed loading;
+    private MessageEmbed lastBottom;
 
     public BottomCommand(LeaderBoard leaderBoard) {
         super(leaderBoard.getName() + "Bottom", leaderBoard.getCurrency() + " Schlechtestenliste");

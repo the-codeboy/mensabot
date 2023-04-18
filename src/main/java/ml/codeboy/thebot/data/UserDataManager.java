@@ -9,14 +9,20 @@ import java.io.*;
 import java.util.*;
 
 public class UserDataManager {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String userDataFolder = "users";
-
     private static final UserDataManager instance = new UserDataManager();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final HashMap<String, UserData> userData = new HashMap<>();
 
     private final long karmaTopUpdate = 600000;
+    private final Thread initThread;
     private long lastUpdatedKarmaTop = 0;
+    private List<UserData> karmaSorted;
+
+    private UserDataManager() {
+        initThread = new Thread(this::loadUserData);
+        initThread.start();
+    }
 
     public static UserDataManager getInstance() {
         return instance;
@@ -34,22 +40,13 @@ public class UserDataManager {
         return getData(user.getId());
     }
 
-    private final Thread initThread;
-
-
     public UserData loadData(User user) throws FileNotFoundException {
         return loadData(user.getId());
     }
 
-
     private UserData loadData(String id) throws FileNotFoundException {
         UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
         return data;
-    }
-
-    private UserDataManager() {
-        initThread = new Thread(this::loadUserData);
-        initThread.start();
     }
 
     public void save(UserData data) {
@@ -62,8 +59,6 @@ public class UserDataManager {
             ex.printStackTrace();
         }
     }
-
-    private List<UserData> karmaSorted;
 
     public UserData getData(String userId) {
         waitTilInit();
@@ -119,10 +114,10 @@ public class UserDataManager {
     }
 
     private void updateKarmaTop() {
-            karmaSorted = new ArrayList<>(getAllUserData());
-            karmaSorted.removeIf(d->d.getKarma()==0);
-            karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+        karmaSorted = new ArrayList<>(getAllUserData());
+        karmaSorted.removeIf(d -> d.getKarma() == 0);
+        karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
 //            karmaSorted = karmaSorted.subList(0, 20);
-            lastUpdatedKarmaTop = System.currentTimeMillis();
+        lastUpdatedKarmaTop = System.currentTimeMillis();
     }
 }

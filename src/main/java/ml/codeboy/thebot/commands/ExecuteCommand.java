@@ -18,12 +18,6 @@ import java.util.*;
 public class ExecuteCommand extends Command {
     private final List<String> languages = new ArrayList<>();
 
-    @Override
-    public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true, true)
-                .addOption(OptionType.STRING, "code", "the code to run", true);
-    }
-
     public ExecuteCommand() {
         super("run", "runs code in the specified language");
         setGuildOnlyCommand(false);
@@ -35,6 +29,12 @@ public class ExecuteCommand extends Command {
         for (Runtime runtime : Piston.getDefaultApi().getRuntimes()) {//add aliases only after full names
             languages.addAll(Arrays.asList(runtime.getAliases()));
         }
+    }
+
+    @Override
+    public SlashCommandData getCommandData() {
+        return super.getCommandData().addOption(OptionType.STRING, "language", "see available languages using the languages command", true, true)
+                .addOption(OptionType.STRING, "code", "the code to run", true);
     }
 
     @Override

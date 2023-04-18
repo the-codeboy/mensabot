@@ -20,8 +20,8 @@ import java.util.List;
 
 public class TopCommand extends Command {
     private final LeaderBoard leaderBoard;
-    private MessageEmbed lastTop;
     private final MessageEmbed loading;
+    private MessageEmbed lastTop;
 
     public TopCommand(LeaderBoard leaderBoard) {
         super(leaderBoard.getName() + "Top", leaderBoard.getCurrency() + " Bestenliste");

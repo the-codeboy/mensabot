@@ -15,17 +15,18 @@ import static ml.codeboy.thebot.commands.KarmaTop.updateInterval;
 
 public class KarmaBottom extends Command {
     private CommandEvent latestEvent;
+    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaBottom")
+            .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
+    private long lastUpdated = 0;
 
     public KarmaBottom() {
         super("KarmaBottom", "Karma Schlechtestenliste", "kb");
         setGuildOnlyCommand(false);
     }
 
-    private MessageEmbed karmaTop = new EmbedBuilder().setTitle("Loading KarmaBottom")
-            .setDescription("please wait a few seconds\nI will update the message when I'm done").setColor(Color.RED).build();
-
     @Override
     public void register(CommandHandler handler) {
+        super.register(handler);
 //        updateKarmaTop(handler.getServer().getJDA());//initialisation is done when the command is first run
     }
 
@@ -34,7 +35,6 @@ public class KarmaBottom extends Command {
         latestEvent = event;
         event.reply(getKarmaTop(event.getJdaEvent().getJDA()));
     }
-    private long lastUpdated = 0;
 
     private MessageEmbed getKarmaTop(JDA jda) {
         if (lastUpdated + updateInterval < System.currentTimeMillis()) {

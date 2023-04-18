@@ -17,11 +17,11 @@ public class Msg extends SecretCommand {
         MessageChannel channel = (TextChannel) event.getJdaEvent().getJDA().getGuildChannelById(id);
         if (channel == null) {
             User user = event.getJdaEvent().getJDA().retrieveUserById(id).complete();
-            if(user==null) {
+            if (user == null) {
                 event.reply(":(");
                 return;
             }
-            channel=user.openPrivateChannel().complete();
+            channel = user.openPrivateChannel().complete();
         }
         String message = String.join(" ", event.getArgs());
         message = message.substring(event.getArgs()[0].length() + 1);

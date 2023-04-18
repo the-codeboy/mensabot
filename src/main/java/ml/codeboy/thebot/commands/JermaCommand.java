@@ -30,14 +30,15 @@ public class JermaCommand extends Command {
     /**
      * Open the connection to the Database and set the appropriate flag
      */
-    private void dbConnect()
-    {
-        if(!dbConnected) {
-            client = MongoClients.create(DatabaseManager.getInstance().getSettings());
-            dbConnected=true;
-        }
-        else
-        {
+    private void dbConnect() {
+        if (!dbConnected) {
+            try {
+                client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+                dbConnected = true;
+            } catch (Exception e) {
+                getLogger().error("failed to connect to DB", e);
+            }
+        } else {
             getLogger().error("Not able to open the connection because it is already open");
         }
     }
@@ -45,14 +46,11 @@ public class JermaCommand extends Command {
     /**
      * Close the connection and set the flag
      */
-    private void dbClose()
-    {
-        if(dbConnected) {
+    private void dbClose() {
+        if (dbConnected) {
             client.close();
             dbConnected = false;
-        }
-        else
-        {
+        } else {
             getLogger().error("Not able to close the client because it has already been closed");
         }
     }
@@ -60,15 +58,16 @@ public class JermaCommand extends Command {
     /**
      * Load the 'jermas' and shuffle them
      */
-    private void updateDocs()
-    {
+    private void updateDocs() {
         dbConnect();
+        if (!dbConnected)
+            return;
         MongoCollection collection = client.getDatabase("text").getCollection("jerma");
         databaseSize = collection.countDocuments();
-        docs = new Document[(int)databaseSize];
+        docs = new Document[(int) databaseSize];
         {
             int i = 0;
-            for(Object d : collection.find())
+            for (Object d : collection.find())
                 docs[i++] = (Document) d;
         }
         shuffle(docs);
@@ -77,10 +76,10 @@ public class JermaCommand extends Command {
 
     /**
      * Get the amount of 'jermas' in the db
+     *
      * @return the amount of 'jermas'
      */
-    private long getCollectionSize()
-    {
+    private long getCollectionSize() {
         dbConnect();
         long ret = client.getDatabase("text").getCollection("jerma").countDocuments();
         dbClose();
@@ -92,22 +91,20 @@ public class JermaCommand extends Command {
         dbConnect();
         MongoCollection collection = client.getDatabase("text").getCollection("jerma");
         long collSize = collection.countDocuments();
-        if(databaseSize!=collSize)
-        {
+        if (databaseSize != collSize) {
             databaseSize = collSize;
             int i = 0;
-            docs = new Document[(int)databaseSize];
-            for(Object d : collection.find())
+            docs = new Document[(int) databaseSize];
+            for (Object d : collection.find())
                 docs[i++] = (Document) d;
             shuffle(docs);
             p = 0;
             getLogger().info("Reloaded Jerma urls");
         }
         dbClose();
-        if(p==databaseSize)
-        {
+        if (p == databaseSize) {
             shuffle(docs);
-            p=0;
+            p = 0;
         }
         event.reply(docs[p++].getString("url"));
     }

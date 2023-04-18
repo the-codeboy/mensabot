@@ -32,6 +32,12 @@ public abstract class AudioCommand extends Command {
 //        event.getManager().scheduler.setLatestEvent(event);//song info will now only be send if current is run
     }
 
+    /**
+     * Ensures that the user is in a voice channel and tries to move to the channel they`re in if nessecary and possible
+     *
+     * @param event
+     * @return true if the bot is connected, false if the bot could not join
+     */
     protected boolean ensureConnected(CommandEvent event) {
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
@@ -58,6 +64,18 @@ public abstract class AudioCommand extends Command {
         }
         //already connected
         return true;
+    }
+
+    protected boolean ensureSameChannel(CommandEvent event) {
+        final Member self = event.getGuild().getSelfMember();
+        final GuildVoiceState selfVoiceState = self.getVoiceState();
+        final Member member = event.getMember();
+        final GuildVoiceState memberVoiceState = member.getVoiceState();
+        if (memberVoiceState.getChannel().equals(selfVoiceState.getChannel())) {
+            return true;
+        }
+        event.reply("You need to be in the same voice channel as me for this to work");
+        return false;
     }
 
     protected void queue(CommandEvent event, String link) {

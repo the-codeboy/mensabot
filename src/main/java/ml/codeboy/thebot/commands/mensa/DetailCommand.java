@@ -28,6 +28,25 @@ public class DetailCommand extends Command {
         super("detail", "gives details about a meal", "meal");
     }
 
+    public static void sendDetails(Replyable event, Meal meal) {
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle(MensaUtil.getTitleString(meal));
+        String url = FoodRatingManager.getInstance().getImage(meal.getName());
+        if (url != null && url.length() > 0)
+            builder.setImage(url);
+        builder.addBlankField(false);
+        for (String note : meal.getNotes()) {
+            MealEmoji emoji = MensaUtil.getEmojiForWord(note);
+            builder.addField((emoji == null ? "" : emoji.getEmoji()) + " " + note, "", true);
+        }
+        builder.addBlankField(false);
+        for (String comment : CommentManager.getInstance().getComments(meal.getName())) {
+            builder.addField("", comment, false);
+        }
+
+        event.reply(builder.build());
+    }
+
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData()
@@ -40,16 +59,13 @@ public class DetailCommand extends Command {
         String selected = event.getFocusedOption().getName();
 
 
-        switch (selected) {
-            case "meal": {
-                Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
-                for (int i = 0; i <= maxDaysAgo; i++) {
-                    Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
-                    for (Meal meal : mensa.getMeals(date)) {
-                        options.add(meal.getName());
-                    }
+        if (selected.equals("meal")) {
+            Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
+            for (int i = 0; i <= maxDaysAgo; i++) {
+                Date date = new Date(System.currentTimeMillis() - 3600000L * 24 * i);
+                for (Meal meal : mensa.getMeals(date)) {
+                    options.add(meal.getName());
                 }
-                break;
             }
         }
 
@@ -88,24 +104,5 @@ public class DetailCommand extends Command {
             }
         }
         event.replyError("Can not find meal");
-    }
-
-    public static void sendDetails(Replyable event, Meal meal) {
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle(MensaUtil.getTitleString(meal));
-        String url = FoodRatingManager.getInstance().getImage(meal.getName());
-        if (url != null && url.length() > 0)
-            builder.setImage(url);
-        builder.addBlankField(false);
-        for (String note : meal.getNotes()) {
-            MealEmoji emoji = MensaUtil.getEmojiForWord(note);
-            builder.addField((emoji == null ? "" : emoji.getEmoji()) + " " + note, "", true);
-        }
-        builder.addBlankField(false);
-        for (String comment : CommentManager.getInstance().getComments(meal.getName())) {
-            builder.addField("", comment, false);
-        }
-
-        event.reply(builder.build());
     }
 }

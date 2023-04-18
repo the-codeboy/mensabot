@@ -20,7 +20,7 @@ public class MemeGeneratorCommand extends ImageCommand {
         try {
             this.image = Util.getImageFromUrl(image);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            getLogger().error("Failed to load image: ", e);
         }
     }
 
@@ -34,11 +34,11 @@ public class MemeGeneratorCommand extends ImageCommand {
 
     protected void setBounds(Rectangle... bounds) {
         this.bounds = bounds;
-        for (Rectangle r:bounds){
-            r.x*=imageScale;
-            r.y*=imageScale;
-            r.width*=imageScale;
-            r.height*=imageScale;
+        for (Rectangle r : bounds) {
+            r.x *= imageScale;
+            r.y *= imageScale;
+            r.width *= imageScale;
+            r.height *= imageScale;
         }
     }
 
@@ -50,7 +50,7 @@ public class MemeGeneratorCommand extends ImageCommand {
         BufferedImage image = new BufferedImage(background.getWidth(null), background.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
         Graphics g = image.createGraphics();
-        g.drawImage(background,0,0,null);
+        g.drawImage(background, 0, 0, null);
         for (int i = 0; i < bounds.length; i++) {
             if (captions.length <= i)
                 break;
