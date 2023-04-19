@@ -110,6 +110,10 @@ public class UserData {
         return comments;
     }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
     public Map<String, Integer> getRatings() {
         return ratings;
     }

@@ -1,11 +1,10 @@
 package ml.codeboy.thebot.apis.mongoDB;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import ml.codeboy.thebot.data.Comment;
 import ml.codeboy.thebot.data.UserData;
+
+import java.util.ArrayList;
 
 import static com.mongodb.client.model.Filters.exists;
 
@@ -26,9 +25,26 @@ public class DatabaseUserAPI {
     {
         MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
         MongoDatabase db = client.getDatabase("users");
-        MongoCollection<UserData> collection = db.getCollection(userID,UserData.class);
-        UserData d = collection.find(exists("index")).first();
+        MongoCollection<UserData> collectionUserData = db.getCollection(userID,UserData.class);
+        UserData d = collectionUserData.find(exists("susCount")).first();
+        MongoCollection<Comment> collectionComments = db.getCollection(userID,Comment.class);
+        FindIterable<Comment> comments = collectionComments.find(exists("susCount",false));
+        ArrayList<Comment> cmts = new ArrayList<>();
+        for(Comment c : comments)
+        {
+            cmts.add(c);
+        }
+        d.setComments(cmts);
         client.close();
-        return null;
+        return d;
+    }
+
+    public static ArrayList<String> getUserIds()
+    {
+        MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
+        MongoDatabase db = client.getDatabase("users");
+        ArrayList<String> ret = new ArrayList<>();
+        db.listCollectionNames().iterator().forEachRemaining(ret::add);
+        return ret;
     }
 }

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.*;
 
@@ -45,26 +46,26 @@ public class UserDataManager {
         return getData(user.getId());
     }
 
-    public UserData loadData(User user) throws FileNotFoundException {
+    public UserData loadData(User user) {
         return loadData(user.getId());
     }
 
-    private UserData loadData(String id) throws FileNotFoundException {
-        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
-        //DatabaseUserAPI.getUser(id);
-        return data;
+    private UserData loadData(String id) {
+        //UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
+        //return data;
+        return DatabaseUserAPI.getUser(id);
     }
 
     public void save(UserData data) {
         DatabaseUserAPI.saveUser(data);
-        try {
+        /*try {
             new File(userDataFolder).mkdirs();
             FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getUserId());
             new Gson().toJson(data, writer);
             writer.close();
         } catch (IOException ex) {
             ex.printStackTrace();
-        }
+        }*/
     }
 
     public UserData getData(String userId) {
@@ -73,13 +74,7 @@ public class UserDataManager {
         if (data != null) {
             return data;
         }
-        try {
-            return loadData(userId);
-        } catch (FileNotFoundException ignored) {
-        }
-        data = new UserData(userId);
-        userData.put(userId, data);
-        return data;
+        return loadData(userId);
     }
 
     public Collection<UserData> getAllUserData() {
@@ -98,7 +93,11 @@ public class UserDataManager {
     }
 
     private void loadUserData() {
-        File folder = new File(userDataFolder);
+        for(String s: DatabaseUserAPI.getUserIds())
+        {
+            userData.put(s, loadData(s));
+        }
+        /*File folder = new File(userDataFolder);
         if (folder.exists()) {
             for (File file : folder.listFiles()) {
                 try {
@@ -107,7 +106,7 @@ public class UserDataManager {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
         logger.info("finished loading user data for users");
     }
 
