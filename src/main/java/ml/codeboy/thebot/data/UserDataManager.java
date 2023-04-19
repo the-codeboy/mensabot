@@ -29,13 +29,17 @@ public class UserDataManager {
         return instance;
     }
 
-    public void moveDataToCloud()
+    public String moveDataToCloud()
     {
+        String ret = "";
         for(String key : userData.keySet())
         {
-            logger.info("Moved "+key+" to cloud");
+            String msg = "Moved "+key+" to cloud\n";
+            ret += msg;
+            logger.info(msg);
             DatabaseUserAPI.saveUser(userData.get(key));
         }
+        return ret;
     }
 
     public UserData getData(User user) {

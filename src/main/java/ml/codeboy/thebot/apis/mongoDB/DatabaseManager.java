@@ -5,8 +5,12 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.ServerApi;
 import com.mongodb.ServerApiVersion;
 import ml.codeboy.thebot.Config;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 
 public class DatabaseManager {
 
@@ -31,6 +35,7 @@ public class DatabaseManager {
     public DatabaseManager() {
         //Create the connection string and settings
         connectionString = new ConnectionString(Config.getInstance().mongoDB_URL);
+        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
         settings = MongoClientSettings.builder()
                 .applyConnectionString(connectionString)
                 .serverApi(ServerApi.builder()

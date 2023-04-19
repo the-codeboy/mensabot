@@ -10,6 +10,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
+import ml.codeboy.thebot.commands.debug.SaveUsers;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
 import ml.codeboy.thebot.commands.image.meme.*;
@@ -303,6 +304,7 @@ public class CommandHandler extends ListenerAdapter {
     private void registerDebugCommands() {
         createCommand(ListQuotes.class);
         createCommand(GetQuotes.class);
+        createCommand(SaveUsers.class);
     }
 
     private void changeStatus() {
