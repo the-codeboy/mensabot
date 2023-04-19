@@ -75,7 +75,7 @@ public class TopCommand extends Command {
             UserData data = sorted.get(i + offset);
             try {
                 if (filter) {
-                    event.getGuild().retrieveMemberById(data.getId()).complete();//makes sure the user is a member on this server
+                    event.getGuild().retrieveMemberById(data.getUserId()).complete();//makes sure the user is a member on this server
                 }
                 builder.addField(i + 1 + ".", data.getTag(jda) + " " + leaderBoard.getValue(data), false);
             } catch (Exception e) {

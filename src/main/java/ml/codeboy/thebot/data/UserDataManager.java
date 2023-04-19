@@ -36,7 +36,6 @@ public class UserDataManager {
         {
             String msg = "Moved "+key+" to cloud\n";
             ret += msg;
-            logger.info(msg);
             DatabaseUserAPI.saveUser(userData.get(key));
         }
         return ret;
@@ -52,13 +51,15 @@ public class UserDataManager {
 
     private UserData loadData(String id) throws FileNotFoundException {
         UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
+        //DatabaseUserAPI.getUser(id);
         return data;
     }
 
     public void save(UserData data) {
+        DatabaseUserAPI.saveUser(data);
         try {
             new File(userDataFolder).mkdirs();
-            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getId());
+            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getUserId());
             new Gson().toJson(data, writer);
             writer.close();
         } catch (IOException ex) {
@@ -83,7 +84,6 @@ public class UserDataManager {
 
     public Collection<UserData> getAllUserData() {
         waitTilInit();
-        moveDataToCloud();
         return userData.values();
     }
 

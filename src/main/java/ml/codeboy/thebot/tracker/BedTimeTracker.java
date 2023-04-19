@@ -32,7 +32,7 @@ public class BedTimeTracker {
         for (UserData data : UserDataManager.getInstance().getAllUserData()) {
             if (data.getBedTime() < 0)
                 continue;
-            User user = bot.getJda().retrieveUserById(data.getId()).complete();
+            User user = bot.getJda().retrieveUserById(data.getUserId()).complete();
             if (user == null)
                 continue;
             int seconds = data.getBedTime();
