@@ -33,11 +33,16 @@ public class UserDataManager {
     public String moveDataToCloud()
     {
         String ret = "";
-        for(String key : userData.keySet())
-        {
-            String msg = "Moved "+key+" to cloud\n";
-            ret += msg;
-            DatabaseUserAPI.saveUser(userData.get(key));
+        File folder = new File(userDataFolder);
+        if (folder.exists()) {
+            for (File file : folder.listFiles()) {
+                try {
+                    DatabaseUserAPI.saveUser(new Gson().fromJson(new FileReader(userDataFolder + File.separator + file.getName()), UserData.class));
+                    ret += "Moved "+file.getName()+" to cloud\n";
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return ret;
     }
@@ -112,17 +117,27 @@ public class UserDataManager {
 
 
     public List<UserData> getKarmaSorted() {
-        /*if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
+        if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
             updateKarmaTop();
-        }*/
+        }
         //karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
         return karmaSorted;
+    }
+
+    public List<UserData> getKarmaTop()
+    {
+        return DatabaseUserAPI.getTopN("karma",10);
+    }
+    public List<UserData> getKarmaBottom()
+    {
+        return DatabaseUserAPI.getBottomN("karma",10);
     }
 
     private void updateKarmaTop() {
         karmaSorted = new ArrayList<>(getAllUserData());
         karmaSorted.removeIf(d -> d.getKarma() == 0);
         karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+        //karmaSorted = DatabaseUserAPI.getTopN("karma",10);
 //            karmaSorted = karmaSorted.subList(0, 20);
         lastUpdatedKarmaTop = System.currentTimeMillis();
     }

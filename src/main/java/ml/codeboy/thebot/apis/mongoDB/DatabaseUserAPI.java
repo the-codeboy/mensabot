@@ -6,8 +6,11 @@ import com.mongodb.client.model.UpdateOptions;
 import ml.codeboy.thebot.data.Comment;
 import ml.codeboy.thebot.data.UserData;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.exists;
@@ -37,5 +40,31 @@ public class DatabaseUserAPI {
         ArrayList<String> ret = new ArrayList<>();
         docs.iterator().forEachRemaining(x->ret.add(x.getUserId()));
         return ret;
+    }
+
+    public static List<UserData> findUsers(List<? extends Bson> filter)
+    {
+        MongoCollection<UserData> collection = MongoClients.create(DatabaseManager.getInstance().getSettings())
+                .getDatabase("users")
+                .getCollection("users",UserData.class);
+        AggregateIterable<UserData> result = collection.aggregate(filter);
+        List<UserData> ret = new ArrayList<>();
+        result.iterator().forEachRemaining(ret::add);
+        return ret;
+    }
+
+    public static List<UserData> getTopN(String karma, int i) {
+        return findUsers(Arrays.asList(
+                new Document("$match", new Document("karma", new Document("$ne", 0))),
+                new Document("$sort", new Document("karma", -1)),
+                new Document("$limit", i)
+        ));
+    }
+    public static List<UserData> getBottomN(String karma, int i) {
+        return findUsers(Arrays.asList(
+                new Document("$match", new Document("karma", new Document("$ne", 0))),
+                new Document("$sort", new Document("karma", 1)),
+                new Document("$limit", i)
+        ));
     }
 }

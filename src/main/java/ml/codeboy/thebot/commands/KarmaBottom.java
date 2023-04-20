@@ -47,7 +47,7 @@ public class KarmaBottom extends Command {
         new Thread(() -> {
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("KarmaBottom");
-            List<UserData> karmaTop = UserDataManager.getInstance().getKarmaSorted();
+            List<UserData> karmaTop = UserDataManager.getInstance().getKarmaBottom();
             for (int i = 0; i < 10; i++) {
                 UserData data = karmaTop.get(karmaTop.size() - (i + 1));
                 builder.addField(i + 1 + ".", data.getTag(jda) + " " + data.getKarma(), false);
