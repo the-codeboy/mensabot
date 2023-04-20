@@ -112,10 +112,10 @@ public class UserDataManager {
 
 
     public List<UserData> getKarmaSorted() {
-        if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
+        /*if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
             updateKarmaTop();
-        }
-        karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+        }*/
+        //karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
         return karmaSorted;
     }
 

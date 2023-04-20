@@ -14,7 +14,7 @@ import java.util.Map;
 public class UserData {
     @BsonId
     private final String userId;
-    @BsonProperty
+    @BsonIgnore
     private int bedTime = -1;
     @BsonProperty
     private int karma = 0;
@@ -24,8 +24,9 @@ public class UserData {
     private Map<String, Integer> ratings = new HashMap<>();
     @BsonProperty
     private Map<String, Integer> restaurantRatings = new HashMap<>();
-    @BsonIgnore
+    @BsonProperty
     private ArrayList<Comment> comments = new ArrayList<>();
+
     @BsonCreator
     public UserData(@BsonId String userId) {
         this.userId = userId;
@@ -54,6 +55,7 @@ public class UserData {
         }
         return "unknown user";
     }
+
     public int getKarma() {
         return karma;
     }
@@ -118,7 +120,15 @@ public class UserData {
         return ratings;
     }
 
+    public void setRatings(Map<String, Integer> r) {
+        ratings = r;
+    }
+
     public Map<String, Integer> getRestaurantRatings() {
         return restaurantRatings;
+    }
+
+    public void setRestaurantRatings(Map<String, Integer> rr) {
+        restaurantRatings = rr;
     }
 }
