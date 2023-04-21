@@ -60,10 +60,10 @@ public class DatabaseUserAPI {
                 new Document("$limit", i)
         ));
     }
-    public static List<UserData> getBottomN(String karma, int i) {
+    public static List<UserData> getBottomN(String field, int i) {
         return findUsers(Arrays.asList(
-                new Document("$match", new Document("karma", new Document("$ne", 0))),
-                new Document("$sort", new Document("karma", 1)),
+                new Document("$match", new Document(field, new Document("$ne", 0))),
+                new Document("$sort", new Document(field, 1)),
                 new Document("$limit", i)
         ));
     }
