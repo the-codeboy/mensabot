@@ -56,21 +56,11 @@ public class UserDataManager {
     }
 
     private UserData loadData(String id) {
-        //UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
-        //return data;
         return DatabaseUserAPI.getUser(id);
     }
 
     public void save(UserData data) {
         DatabaseUserAPI.saveUser(data);
-        /*try {
-            new File(userDataFolder).mkdirs();
-            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getUserId());
-            new Gson().toJson(data, writer);
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }*/
     }
 
     public UserData getData(String userId) {
@@ -102,16 +92,6 @@ public class UserDataManager {
         {
             userData.put(s, loadData(s));
         }
-        /*File folder = new File(userDataFolder);
-        if (folder.exists()) {
-            for (File file : folder.listFiles()) {
-                try {
-                    userData.put(file.getName(), loadData(file.getName()));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        }*/
         logger.info("finished loading user data for users");
     }
 
@@ -120,7 +100,6 @@ public class UserDataManager {
         if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
             updateKarmaTop();
         }
-        //karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
         return karmaSorted;
     }
 
