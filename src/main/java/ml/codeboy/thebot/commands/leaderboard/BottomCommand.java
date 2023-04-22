@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands.leaderboard;
 
+import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
@@ -64,12 +65,14 @@ public class BottomCommand extends Command {
         JDA jda = event.getJDA();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(leaderBoard.getName() + "Bottom");
-        List<UserData> sorted = new ArrayList<>(UserDataManager.getInstance().getAllUserData());
-        sorted.removeIf(d -> leaderBoard.getValue(d) == 0);
-        sorted.sort(Comparator.comparingInt(d -> leaderBoard.getValue(d)));
-        int limit = Math.min(10, sorted.size());
-        int offset = 0;
-        for (int i = 0; i < limit; i++) {
+        List<UserData> sorted = DatabaseUserAPI.getBottomN(leaderBoard.getCurrency(), 10);
+        int i = 0;
+        for(UserData d : sorted)
+        {
+            builder.addField(i++ + ".", d.getTag(jda) + " " + leaderBoard.getValue(d), false);
+        }
+        /*int offset = 0;
+        for (int i = 0; i < sorted.size(); i++) {
             if (i + offset >= sorted.size())
                 break;
             UserData data = sorted.get(i + offset);
@@ -82,7 +85,7 @@ public class BottomCommand extends Command {
                 offset++;
                 i--;
             }
-        }
+        }*/
         event.edit(builder);
         if (!filter)
             lastBottom = builder.build();

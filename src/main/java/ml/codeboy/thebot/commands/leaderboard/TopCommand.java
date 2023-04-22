@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands.leaderboard;
 
+import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -64,12 +66,14 @@ public class TopCommand extends Command {
         JDA jda = event.getJDA();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(leaderBoard.getName() + "Top");
-        List<UserData> sorted = new ArrayList<>(UserDataManager.getInstance().getAllUserData());
-        sorted.removeIf(d -> leaderBoard.getValue(d) == 0);
-        sorted.sort(Comparator.comparingInt(d -> leaderBoard.getValue((UserData) d)).reversed());
-        int limit = Math.min(10, sorted.size());
-        int offset = 0;
-        for (int i = 0; i < limit; i++) {
+        List<UserData> sorted = DatabaseUserAPI.getTopN(leaderBoard.getCurrency(),10);//new ArrayList<>(UserDataManager.getInstance().getAllUserData());
+        int i = 0;
+        for(UserData d : sorted)
+        {
+            builder.addField(i++ + ".", d.getTag(jda) + " " + leaderBoard.getValue(d), false);
+        }
+        /*int offset = 0;
+        for (i = 0; i < sorted.size(); i++) {
             if (i + offset >= sorted.size())
                 break;
             UserData data = sorted.get(i + offset);
@@ -82,7 +86,7 @@ public class TopCommand extends Command {
                 offset++;
                 i--;
             }
-        }
+        }*/
         event.edit(builder);
         if (!filter)
             lastTop = builder.build();
