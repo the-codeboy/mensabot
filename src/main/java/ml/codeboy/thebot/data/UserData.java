@@ -2,20 +2,33 @@ package ml.codeboy.thebot.data;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserData {
+    @BsonId
     private final String userId;
+    @BsonIgnore
     private int bedTime = -1;
-    private int karma = 0, susCount = 0;
+    @BsonProperty
+    private int karma = 0;
+    @BsonProperty
+    private int susCount = 0;
+    @BsonProperty
     private Map<String, Integer> ratings = new HashMap<>();
+    @BsonProperty
     private Map<String, Integer> restaurantRatings = new HashMap<>();
+    @BsonProperty
     private ArrayList<Comment> comments = new ArrayList<>();
 
-    public UserData(String userId) {
+    @BsonCreator
+    public UserData(@BsonId String userId) {
         this.userId = userId;
     }
 
@@ -27,12 +40,12 @@ public class UserData {
         this.bedTime = bedTime;
     }
 
-    public String getId() {
+    public String getUserId() {
         return userId;
     }
 
     public User getUser(JDA jda) {
-        return jda.retrieveUserById(getId()).complete();
+        return jda.retrieveUserById(getUserId()).complete();
     }
 
     public String getTag(JDA jda) {
@@ -97,5 +110,25 @@ public class UserData {
         if (comments == null)
             comments = new ArrayList<>();
         return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Map<String, Integer> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Map<String, Integer> r) {
+        ratings = r;
+    }
+
+    public Map<String, Integer> getRestaurantRatings() {
+        return restaurantRatings;
+    }
+
+    public void setRestaurantRatings(Map<String, Integer> rr) {
+        restaurantRatings = rr;
     }
 }

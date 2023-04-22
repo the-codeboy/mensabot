@@ -7,11 +7,11 @@ import ml.codeboy.thebot.data.UserData;
 import java.util.function.Function;
 
 public class LeaderBoard {
-    private static final LeaderBoard karma = new LeaderBoard("Karma", "Karma", UserData::getKarma, ((data, integer) -> {
+    private static final LeaderBoard karma = new LeaderBoard("Karma", "karma", UserData::getKarma, ((data, integer) -> {
         data.setKarma(integer);
         return null;
     })),
-            sus = new LeaderBoard("Sus", "Suscount", UserData::getSusCount, ((data, integer) -> {
+            sus = new LeaderBoard("Sus", "susCount", UserData::getSusCount, ((data, integer) -> {
                 data.setSusCount(integer);
                 return null;
             }));

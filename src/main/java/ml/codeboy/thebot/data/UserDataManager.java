@@ -1,10 +1,12 @@
 package ml.codeboy.thebot.data;
 
 import com.google.gson.Gson;
+import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.*;
 
@@ -28,28 +30,37 @@ public class UserDataManager {
         return instance;
     }
 
+    public String moveDataToCloud()
+    {
+        String ret = "";
+        File folder = new File(userDataFolder);
+        if (folder.exists()) {
+            for (File file : folder.listFiles()) {
+                try {
+                    DatabaseUserAPI.saveUser(new Gson().fromJson(new FileReader(userDataFolder + File.separator + file.getName()), UserData.class));
+                    ret += "Moved "+file.getName()+" to cloud\n";
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
+    }
+
     public UserData getData(User user) {
         return getData(user.getId());
     }
 
-    public UserData loadData(User user) throws FileNotFoundException {
+    public UserData loadData(User user) {
         return loadData(user.getId());
     }
 
-    private UserData loadData(String id) throws FileNotFoundException {
-        UserData data = new Gson().fromJson(new FileReader(userDataFolder + File.separator + id), UserData.class);
-        return data;
+    private UserData loadData(String id) {
+        return DatabaseUserAPI.getUser(id);
     }
 
     public void save(UserData data) {
-        try {
-            new File(userDataFolder).mkdirs();
-            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getId());
-            new Gson().toJson(data, writer);
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        DatabaseUserAPI.saveUser(data);
     }
 
     public UserData getData(String userId) {
@@ -58,13 +69,7 @@ public class UserDataManager {
         if (data != null) {
             return data;
         }
-        try {
-            return loadData(userId);
-        } catch (FileNotFoundException ignored) {
-        }
-        data = new UserData(userId);
-        userData.put(userId, data);
-        return data;
+        return loadData(userId);
     }
 
     public Collection<UserData> getAllUserData() {
@@ -83,15 +88,9 @@ public class UserDataManager {
     }
 
     private void loadUserData() {
-        File folder = new File(userDataFolder);
-        if (folder.exists()) {
-            for (File file : folder.listFiles()) {
-                try {
-                    userData.put(file.getName(), loadData(file.getName()));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
+        for(String s: DatabaseUserAPI.getUserIds())
+        {
+            userData.put(s, loadData(s));
         }
         logger.info("finished loading user data for users");
     }
@@ -101,14 +100,23 @@ public class UserDataManager {
         if (System.currentTimeMillis() - karmaTopUpdate > lastUpdatedKarmaTop) {
             updateKarmaTop();
         }
-        karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
         return karmaSorted;
+    }
+
+    public List<UserData> getKarmaTop()
+    {
+        return DatabaseUserAPI.getTopN("karma",10);
+    }
+    public List<UserData> getKarmaBottom()
+    {
+        return DatabaseUserAPI.getBottomN("karma",10);
     }
 
     private void updateKarmaTop() {
         karmaSorted = new ArrayList<>(getAllUserData());
         karmaSorted.removeIf(d -> d.getKarma() == 0);
         karmaSorted.sort(Comparator.comparingInt(UserData::getKarma).reversed());
+        //karmaSorted = DatabaseUserAPI.getTopN("karma",10);
 //            karmaSorted = karmaSorted.subList(0, 20);
         lastUpdatedKarmaTop = System.currentTimeMillis();
     }

@@ -1,5 +1,6 @@
 package ml.codeboy.thebot.commands.leaderboard;
 
+import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
@@ -32,60 +33,25 @@ public class BottomCommand extends Command {
         lastBottom = loading;
         setRequiredBotPermisions(Permission.MESSAGE_EXT_EMOJI, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION);
     }
-
-    @Override
-    public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.BOOLEAN, "local", "If the leaderboard should be only for this server", false);
-    }
-
     @Override
     public void run(CommandEvent event) {
-        boolean local = false;
-        if (event.isSlashCommandEvent()) {
-            OptionMapping om = event.getSlashCommandEvent().getOption("local");
-            if (om != null && om.getAsBoolean())
-                local = true;
-        } else if (event.isMessageEvent()) {
-            String[] args = event.getArgs();
-            if (args.length > 0 && args[0].equalsIgnoreCase("true"))
-                local = true;
-        }
-        if (!local) {
-            event.reply(lastBottom);
-            new Thread(() -> update(event, false)).start();
-        } else {
-            event.reply(loading);
-            new Thread(() -> update(event, true)).start();
-        }
+        event.reply(lastBottom);
+        new Thread(() -> update(event)).start();
     }
 
-    private void update(CommandEvent event, boolean filter) {
+    private void update(CommandEvent event) {
         Guild guild = event.getGuild();
         JDA jda = event.getJDA();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(leaderBoard.getName() + "Bottom");
-        List<UserData> sorted = new ArrayList<>(UserDataManager.getInstance().getAllUserData());
-        sorted.removeIf(d -> leaderBoard.getValue(d) == 0);
-        sorted.sort(Comparator.comparingInt(d -> leaderBoard.getValue(d)));
-        int limit = Math.min(10, sorted.size());
-        int offset = 0;
-        for (int i = 0; i < limit; i++) {
-            if (i + offset >= sorted.size())
-                break;
-            UserData data = sorted.get(i + offset);
-            try {
-                if (filter) {
-                    event.getGuild().retrieveMemberById(data.getId()).complete();//makes sure the user is a member on this server
-                }
-                builder.addField(i + 1 + ".", data.getTag(jda) + " " + leaderBoard.getValue(data), false);
-            } catch (Exception e) {
-                offset++;
-                i--;
-            }
+        List<UserData> sorted = DatabaseUserAPI.getBottomN(leaderBoard.getCurrency(), 10);
+        int i = 0;
+        for(UserData d : sorted)
+        {
+            builder.addField(i++ + ".", d.getTag(jda) + " " + leaderBoard.getValue(d), false);
         }
         event.edit(builder);
-        if (!filter)
-            lastBottom = builder.build();
+        lastBottom = builder.build();
     }
 
 }
