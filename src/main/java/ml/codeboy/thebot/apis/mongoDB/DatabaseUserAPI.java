@@ -47,16 +47,17 @@ public class DatabaseUserAPI {
         MongoCollection<UserData> collection = MongoClients.create(DatabaseManager.getInstance().getSettings())
                 .getDatabase("users")
                 .getCollection("users",UserData.class);
+        filter.forEach((x)->System.out.println(x.toBsonDocument().toJson()));
         AggregateIterable<UserData> result = collection.aggregate(filter);
         List<UserData> ret = new ArrayList<>();
         result.iterator().forEachRemaining(ret::add);
         return ret;
     }
 
-    public static List<UserData> getTopN(String karma, int i) {
+    public static List<UserData> getTopN(String field, int i) {
         return findUsers(Arrays.asList(
-                new Document("$match", new Document("karma", new Document("$ne", 0))),
-                new Document("$sort", new Document("karma", -1)),
+                new Document("$match", new Document(field, new Document("$ne", 0))),
+                new Document("$sort", new Document(field, -1)),
                 new Document("$limit", i)
         ));
     }
