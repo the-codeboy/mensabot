@@ -36,60 +36,23 @@ public class TopCommand extends Command {
     }
 
     @Override
-    public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.BOOLEAN, "local", "If the leaderboard should be only for this server", false);
-    }
-
-    @Override
     public void run(CommandEvent event) {
-        boolean local = false;
-        if (event.isSlashCommandEvent()) {
-            OptionMapping om = event.getSlashCommandEvent().getOption("local");
-            if (om != null && om.getAsBoolean())
-                local = true;
-        } else if (event.isMessageEvent()) {
-            String[] args = event.getArgs();
-            if (args.length > 0 && args[0].equalsIgnoreCase("true"))
-                local = true;
-        }
-        if (!local) {
-            event.reply(lastTop);
-            new Thread(() -> update(event, false)).start();
-        } else {
-            event.reply(loading);
-            new Thread(() -> update(event, true)).start();
-        }
+        event.reply(lastTop);
+        new Thread(() -> update(event)).start();
     }
 
-    private void update(CommandEvent event, boolean filter) {
+    private void update(CommandEvent event) {
         Guild guild = event.getGuild();
         JDA jda = event.getJDA();
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle(leaderBoard.getName() + "Top");
-        List<UserData> sorted = DatabaseUserAPI.getTopN(leaderBoard.getCurrency(),10);//new ArrayList<>(UserDataManager.getInstance().getAllUserData());
+        List<UserData> sorted = DatabaseUserAPI.getTopN(leaderBoard.getCurrency(), 10);//new ArrayList<>(UserDataManager.getInstance().getAllUserData());
         int i = 0;
-        for(UserData d : sorted)
-        {
+        for (UserData d : sorted) {
             builder.addField(i++ + ".", d.getTag(jda) + " " + leaderBoard.getValue(d), false);
         }
-        /*int offset = 0;
-        for (i = 0; i < sorted.size(); i++) {
-            if (i + offset >= sorted.size())
-                break;
-            UserData data = sorted.get(i + offset);
-            try {
-                if (filter) {
-                    event.getGuild().retrieveMemberById(data.getUserId()).complete();//makes sure the user is a member on this server
-                }
-                builder.addField(i + 1 + ".", data.getTag(jda) + " " + leaderBoard.getValue(data), false);
-            } catch (Exception e) {
-                offset++;
-                i--;
-            }
-        }*/
         event.edit(builder);
-        if (!filter)
-            lastTop = builder.build();
+        lastTop = builder.build();
     }
 
 
