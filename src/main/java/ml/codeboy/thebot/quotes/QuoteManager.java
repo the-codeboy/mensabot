@@ -51,13 +51,8 @@ public class QuoteManager {
         Person person = new Person(p);
         Quote q = null;
         ArrayList<Quote> list = new ArrayList<>();
-        for (Document d : DatabaseQuoteAPI.getQuotes(p, client)) {
-            q = new Quote(
-                    d.getString("content"),
-                    d.getLong("time"),
-                    d.getString("name"),
-                    d.getString("authorId"));
-            list.add(q);
+        for (Quote d : DatabaseQuoteAPI.getQuotes(p, client)) {
+            list.add(d);
         }
         person.setQuotes(list);
         if (person != null)

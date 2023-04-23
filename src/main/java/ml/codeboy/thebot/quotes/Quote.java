@@ -1,14 +1,24 @@
 package ml.codeboy.thebot.quotes;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 public class Quote {
+    @BsonProperty("content")
     private String content;
+    @BsonProperty("time")
     private long time;
-    private transient String person;
+    @BsonProperty("name")
+    private String person;
+    @BsonProperty("authorId")
     private String authorId;
 
-    public Quote(String content, long time, String person, String authorId) {
+    @BsonCreator
+    public Quote(@BsonProperty("content") String content,
+                 @BsonProperty("time") long time,
+                 @BsonProperty("name") String person,
+                 @BsonProperty("authorId")String authorId) {
         this.content = content;
         this.time = time;
         this.person = person;

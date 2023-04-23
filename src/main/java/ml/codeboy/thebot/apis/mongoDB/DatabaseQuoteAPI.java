@@ -16,12 +16,8 @@ public class DatabaseQuoteAPI {
      */
     public static void saveQuote(Quote q) {
         QuoteManager.getInstance().addQuote(q);
-        Document quote = new Document("content", q.getContent());
-        quote.append("time", q.getTime());
-        quote.append("authorId", q.getAuthorId());
-        quote.append("name", q.getPerson());
         MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
-        client.getDatabase("quotes").getCollection(q.getPerson().toLowerCase()).insertOne(quote);
+        client.getDatabase("quotes").getCollection(q.getPerson().toLowerCase(), Quote.class).insertOne(q);
         client.close();
     }
 
@@ -57,8 +53,8 @@ public class DatabaseQuoteAPI {
      * @param name
      * @return
      */
-    public static FindIterable<Document> getQuotes(String name, MongoClient client) {
-        FindIterable<Document> ret = client.getDatabase("quotes").getCollection(name.toLowerCase()).find();
+    public static FindIterable<Quote> getQuotes(String name, MongoClient client) {
+        FindIterable<Quote> ret = client.getDatabase("quotes").getCollection(name.toLowerCase(), Quote.class).find();
         return ret;
     }
 }
