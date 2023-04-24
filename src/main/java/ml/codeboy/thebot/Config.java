@@ -76,4 +76,7 @@ public class Config {
     public boolean isDebugAccount(User user) {
         return debugAccounts.contains(user.getId());
     }
+    public boolean isAdminAccount(User user) {
+        return admins.contains(user.getId());
+    }
 }
