@@ -1,6 +1,7 @@
 package ml.codeboy.thebot;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.FileNotFoundException;
@@ -47,6 +48,11 @@ public class Config {
         return instance;
     }
 
+    public void save() throws IOException {
+        FileWriter writer = new FileWriter("config.json");
+        new GsonBuilder().setPrettyPrinting().create().toJson(instance);
+        writer.close();
+    }
 
     public boolean isUpvote(String s) {
         return upvoteEmotes.contains(s);
