@@ -1,11 +1,12 @@
-package ml.codeboy.thebot.commands.debug;
+package ml.codeboy.thebot.commands.admin;
 
 import ml.codeboy.thebot.Config;
+import ml.codeboy.thebot.commands.debug.DebugCommand;
 import ml.codeboy.thebot.events.CommandEvent;
 
 import java.io.IOException;
 
-public class MaintenanceCommand extends DebugCommand{
+public class MaintenanceCommand extends AdminCommand {
     public MaintenanceCommand() {
         super("maintenance", "toggles maintenance mode");
     }
