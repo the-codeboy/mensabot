@@ -10,6 +10,7 @@ import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
+import ml.codeboy.thebot.commands.debug.MaintenanceCommand;
 import ml.codeboy.thebot.commands.debug.SaveUsers;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
@@ -26,12 +27,15 @@ import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.UserDataManager;
+import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
-import ml.codeboy.thebot.util.*;
+import ml.codeboy.thebot.util.MensaUtil;
+import ml.codeboy.thebot.util.Replyable;
+import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -65,9 +69,9 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static ml.codeboy.thebot.util.WeatherUtil.generateForecastImage;
 import static ml.codeboy.thebot.util.Util.getKANValue;
 import static ml.codeboy.thebot.util.Util.isKAN;
+import static ml.codeboy.thebot.util.WeatherUtil.generateForecastImage;
 
 public class CommandHandler extends ListenerAdapter {
     private final Logger logger
@@ -132,8 +136,8 @@ public class CommandHandler extends ListenerAdapter {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                Date date=new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
-                ActionRow mealButtons=MensaUtil.createMealButtons(mensa,date);
+                Date date = new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
+                ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
                 Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
                         .setActionRows(mealButtons).complete();
                 data.setLatestAnnouncementId(message.getId());
@@ -303,6 +307,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ListQuotes.class);
         createCommand(GetQuotes.class);
         createCommand(SaveUsers.class);
+        createCommand(MaintenanceCommand.class);
     }
 
     private void changeStatus() {
@@ -332,7 +337,7 @@ public class CommandHandler extends ListenerAdapter {
         if (quote == null)
             return "";
         status = "\"" + quote.getContent() +
-                "\"\n - " + quote.getPerson();
+                 "\"\n - " + quote.getPerson();
         return status;
     }
 
@@ -376,7 +381,7 @@ public class CommandHandler extends ListenerAdapter {
             if (activity.isRich()) {
                 RichPresence presence = activity.asRichPresence();
                 if (presence != null && "401518684763586560".equals(presence.getApplicationId())
-                        && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
+                    && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
                     String message = null;
                     switch (presence.getLargeImage().getText()) {
                         case "Yuumi":
@@ -459,12 +464,14 @@ public class CommandHandler extends ListenerAdapter {
         if (command != null) {
             if (event.isFromGuild()) {
                 logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
-                        + ": " + event.getMessage().getContentRaw());
+                            + ": " + event.getMessage().getContentRaw());
             } else {
                 logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
             }
-
-            command.execute(new MessageCommandEvent(event, command));
+            MessageCommandEvent e = new MessageCommandEvent(event, command);
+            if (ensureNotInMaintenanceMode(e)) {
+                command.execute(e);
+            }
         }
     }
 
@@ -533,15 +540,37 @@ public class CommandHandler extends ListenerAdapter {
         LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
     }
 
+    private boolean ensureNotInMaintenanceMode(CommandEvent e) {
+        if (Config.getInstance().maintenance) {
+            if (Config.getInstance().isDebugAccount(e.getUser())) {
+                e.reply(new EmbedBuilder().setColor(Color.RED)
+                        .setTitle("I am currently in maintenance mode")
+                        .setDescription("You are still allowed to use commands, but be careful")
+                        .build());
+                return true;
+            }
+            e.reply(new EmbedBuilder().setColor(Color.RED)
+                    .setTitle("I am currently in maintenance mode")
+                    .setDescription("Check back in a few minutes")
+                    .setThumbnail("https://media.forgecdn.net/avatars/555/767/637899742972862439.png")// icon of a random minecraft mod
+                    .build());
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
             logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getChannel().getName())
-                    + ": " + event.getUser().getAsTag()
-                    + ": " + event.getCommandString());
-            command.execute(new SlashCommandCommandEvent(event, command));
+                        + ": " + event.getUser().getAsTag()
+                        + ": " + event.getCommandString());
+            SlashCommandCommandEvent e = new SlashCommandCommandEvent(event, command);
+            if (ensureNotInMaintenanceMode(e)) {
+                command.execute(e);
+            }
         }
     }
 
@@ -549,6 +578,12 @@ public class CommandHandler extends ListenerAdapter {
     public void onCommandAutoCompleteInteraction(@NotNull CommandAutoCompleteInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
+            if (Config.getInstance().maintenance) {
+                event.replyChoices(new net.dv8tion.jda.api.interactions.commands.Command
+                                .Choice("Error: bot in maintenance mode", "Error: bot in maintenance mode"))
+                        .queue();
+                return;
+            }
             command.autoComplete(event);
         }
     }

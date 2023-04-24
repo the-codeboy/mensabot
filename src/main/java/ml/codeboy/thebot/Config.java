@@ -49,6 +49,8 @@ public class Config {
     public String dmDebugChannel = "966789128375140412";
     public String openWeatherApiKey = "";
 
+    public boolean maintenance = false;
+
     public static Config getInstance() {
         return instance;
     }
