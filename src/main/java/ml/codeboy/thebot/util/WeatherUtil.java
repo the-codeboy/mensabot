@@ -1,4 +1,4 @@
-package ml.codeboy.thebot;
+package ml.codeboy.thebot.util;
 
 import ml.codeboy.met.data.Forecast;
 

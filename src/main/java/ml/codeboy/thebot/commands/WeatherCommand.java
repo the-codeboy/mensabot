@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.util.List;
 
-import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
+import static ml.codeboy.thebot.util.WeatherUtil.generateForecastImage;
 
 public class WeatherCommand extends ImageCommand {
 

@@ -4,7 +4,7 @@ import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.CommandHandler;
-import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.apis.RWTHMensa;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.*;

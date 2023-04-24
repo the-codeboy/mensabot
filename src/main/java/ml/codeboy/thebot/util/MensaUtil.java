@@ -1,4 +1,4 @@
-package ml.codeboy.thebot;
+package ml.codeboy.thebot.util;
 
 import com.github.codeboy.Util;
 import com.github.codeboy.api.Meal;

@@ -1,6 +1,6 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.data.Restaurant;
 import ml.codeboy.thebot.data.RestaurantManager;
 import ml.codeboy.thebot.data.UserDataManager;

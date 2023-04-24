@@ -1,6 +1,6 @@
 package ml.codeboy.thebot.commands.secret;
 
-import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;

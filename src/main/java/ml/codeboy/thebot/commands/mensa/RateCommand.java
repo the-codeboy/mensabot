@@ -3,7 +3,7 @@ package ml.codeboy.thebot.commands.mensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaBot;
-import ml.codeboy.thebot.MensaUtil;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildData;
