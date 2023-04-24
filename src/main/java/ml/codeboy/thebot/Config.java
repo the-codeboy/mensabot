@@ -17,12 +17,17 @@ public class Config {
         try {
             instance = new Gson().fromJson(new FileReader("config.json"), Config.class);
         } catch (FileNotFoundException ignored) {
+            System.out.println("Config not found - generating default config");
+            System.err.println("The bot will run into an error connecting because" +
+                               " there is no token in the config");
         }
         try {
-            FileWriter writer = new FileWriter("config.json");
-            new Gson().toJson(instance == null ? (instance = new Config()) : instance, writer);
-            writer.close();
+            if (instance == null) {
+                instance = new Config();
+                instance.save();
+            }
         } catch (IOException ex) {
+            System.err.println("Failed to save default config");
             ex.printStackTrace();
         }
     }
