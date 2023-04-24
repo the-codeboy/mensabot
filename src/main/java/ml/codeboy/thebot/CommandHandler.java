@@ -8,6 +8,7 @@ import ml.codeboy.met.Weather4J;
 import ml.codeboy.met.data.Forecast;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
+import ml.codeboy.thebot.commands.admin.ShutdownCommand;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
 import ml.codeboy.thebot.commands.admin.MaintenanceCommand;
@@ -313,6 +314,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAdminCommands() {
         createCommand(MaintenanceCommand.class);
+        createCommand(ShutdownCommand.class);
     }
 
     private void changeStatus() {
