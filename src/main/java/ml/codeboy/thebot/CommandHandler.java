@@ -262,6 +262,8 @@ public class CommandHandler extends ListenerAdapter {
 
         registerDebugCommands();
 
+        registerAdminCommands();
+
         if (Config.getInstance().quoteStatus) {
             changeStatus();
         }
@@ -307,6 +309,9 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ListQuotes.class);
         createCommand(GetQuotes.class);
         createCommand(SaveUsers.class);
+    }
+
+    private void registerAdminCommands() {
         createCommand(MaintenanceCommand.class);
     }
 
@@ -542,7 +547,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private boolean ensureNotInMaintenanceMode(CommandEvent e) {
         if (Config.getInstance().maintenance) {
-            if (Config.getInstance().isDebugAccount(e.getUser())) {
+            if (Config.getInstance().isAdminAccount(e.getUser())) {
                 e.reply(new EmbedBuilder().setColor(Color.RED)
                         .setTitle("I am currently in maintenance mode")
                         .setDescription("You are still allowed to use commands, but be careful")
