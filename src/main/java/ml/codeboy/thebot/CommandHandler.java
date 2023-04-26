@@ -409,6 +409,8 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void amogus(MessageReceivedEvent event) {
+        if(Config.getInstance().debugChannels.contains(event.getChannel().getId()))
+            return;
         String msg = event.getMessage().getContentRaw().toLowerCase();
         if (msg.contains("mogus") || msg.contains("imposter") || msg.contains("among us")) {
             logger.info("amogus");
