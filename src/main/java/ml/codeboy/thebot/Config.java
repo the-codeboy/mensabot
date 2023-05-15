@@ -57,7 +57,7 @@ public class Config {
 
     public void save() throws IOException {
         FileWriter writer = new FileWriter("config.json");
-        new GsonBuilder().setPrettyPrinting().create().toJson(instance);
+        writer.append(new GsonBuilder().setPrettyPrinting().create().toJson(instance));
         writer.close();
     }
 
@@ -76,6 +76,7 @@ public class Config {
     public boolean isDebugAccount(User user) {
         return debugAccounts.contains(user.getId());
     }
+
     public boolean isAdminAccount(User user) {
         return admins.contains(user.getId());
     }
