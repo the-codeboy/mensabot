@@ -45,7 +45,7 @@ public class LeaderBoardCommand extends Command {
         int value = leaderBoard.getValue(data);
         EmbedBuilder builder = event.getBuilder();
         builder.setTitle(leaderBoard.getCurrency() + " of " + user.getAsTag())
-                .setDescription(value + "");
+                .setDescription(String.valueOf(value));
         event.reply(builder);
     }
 }

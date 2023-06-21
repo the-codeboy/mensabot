@@ -54,7 +54,7 @@ public class BedTimeTracker {
                     if (member == null)
                         return;
                     if (member.getOnlineStatus() != OnlineStatus.OFFLINE
-                            && member.getOnlineStatus() != OnlineStatus.UNKNOWN) {
+                        && member.getOnlineStatus() != OnlineStatus.UNKNOWN) {
                         remindOfBedtime(user);
                     }
                 }

@@ -37,7 +37,7 @@ public class Karma extends Command {
         int karma = UserDataManager.getInstance().getData(user).getKarma();
         EmbedBuilder builder = event.getBuilder();
         builder.setTitle("Karma of " + user.getAsTag())
-                .setDescription(karma + "");
+                .setDescription(String.valueOf(karma));
         event.reply(builder);
     }
 }

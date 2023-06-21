@@ -4,11 +4,11 @@ import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.CommandHandler;
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.apis.RWTHMensa;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.*;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.util.Replyable;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -230,7 +230,7 @@ public class MensaCommand extends Command {
         SelectMenu.Builder builder = SelectMenu.create(id).setRequiredRange(1, 1);
 
         for (int i = 1; i < 6; i++) {
-            builder.addOption(Util.repeat("⭐", i), i + "");
+            builder.addOption(Util.repeat("⭐", i), String.valueOf(i));
         }
         getInteractionHandler().registerSelectMenuListener(id, e -> {
             openRatingModal(e, meal);

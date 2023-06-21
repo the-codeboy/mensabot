@@ -143,9 +143,10 @@ public abstract class Command {
 
     /**
      * convenience method
+     *
      * @return the interaction handler
      */
-    protected InteractionHandler getInteractionHandler(){
+    protected InteractionHandler getInteractionHandler() {
         return InteractionHandler.getInstance();
     }
 

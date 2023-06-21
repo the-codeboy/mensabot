@@ -18,7 +18,7 @@ public class Quote {
     public Quote(@BsonProperty("content") String content,
                  @BsonProperty("time") long time,
                  @BsonProperty("name") String person,
-                 @BsonProperty("authorId")String authorId) {
+                 @BsonProperty("authorId") String authorId) {
         this.content = content;
         this.time = time;
         this.person = person;

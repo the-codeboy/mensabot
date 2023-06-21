@@ -23,10 +23,10 @@ import java.util.Locale;
 import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
 public class MensaUtil {
-    public static ActionRow createMealButtons(Mensa mensa,Date date){
-        String dataString= ":" + mensa.getId() + ":" + Util.dateToString(date);
-        return ActionRow.of(Button.primary("rate"+dataString, Emoji.fromFormatted("⭐")),
-                Button.secondary("detail"+dataString, "details"));
+    public static ActionRow createMealButtons(Mensa mensa, Date date) {
+        String dataString = ":" + mensa.getId() + ":" + Util.dateToString(date);
+        return ActionRow.of(Button.primary("rate" + dataString, Emoji.fromFormatted("⭐")),
+                Button.secondary("detail" + dataString, "details"));
     }
 
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date) {
@@ -42,11 +42,11 @@ public class MensaUtil {
         for (Meal meal : mensa.getMeals(date)) {
             String title = getTitleString(meal);
             String description = meal.getCategory() +
-                    (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
-                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                                 (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
+                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             if (!beilagen
-                    && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
+                && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
                 beilagen = true;
                 builder.addBlankField(false);
             }
@@ -237,8 +237,8 @@ public class MensaUtil {
             drawString(g, meal.getName(), rectangle);
 
             String description = meal.getCategory() +
-                    (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
-                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                                 (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
+                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             rectangle.y += size;
 

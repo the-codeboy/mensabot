@@ -4,7 +4,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseManager;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseQuoteAPI;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +102,7 @@ public class QuoteManager {
      * @return A list of all the quotes
      */
     public List<Quote> getQuotes(String person) {
-        if(!persons.containsKey(person))
+        if (!persons.containsKey(person))
             return Collections.emptyList();
         return persons.get(person).getQuotes();
     }

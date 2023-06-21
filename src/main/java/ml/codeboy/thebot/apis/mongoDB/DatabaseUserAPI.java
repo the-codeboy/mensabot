@@ -2,8 +2,6 @@ package ml.codeboy.thebot.apis.mongoDB;
 
 import com.mongodb.client.*;
 import com.mongodb.client.model.ReplaceOptions;
-import com.mongodb.client.model.UpdateOptions;
-import ml.codeboy.thebot.data.Comment;
 import ml.codeboy.thebot.data.UserData;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -13,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.exists;
 
 public class DatabaseUserAPI {
     public static void saveUser(UserData user) {
@@ -21,7 +18,7 @@ public class DatabaseUserAPI {
         MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
         client.getDatabase("users")
                 .getCollection("users", UserData.class)
-                .replaceOne(eq("_id", userID), user,new ReplaceOptions().upsert(true));
+                .replaceOne(eq("_id", userID), user, new ReplaceOptions().upsert(true));
         client.close();
     }
 
@@ -36,18 +33,17 @@ public class DatabaseUserAPI {
 
     public static ArrayList<String> getUserIds() {
         MongoClient client = MongoClients.create(DatabaseManager.getInstance().getSettings());
-        FindIterable<UserData> docs = client.getDatabase("users").getCollection("users",UserData.class).find();
+        FindIterable<UserData> docs = client.getDatabase("users").getCollection("users", UserData.class).find();
         ArrayList<String> ret = new ArrayList<>();
-        docs.iterator().forEachRemaining(x->ret.add(x.getUserId()));
+        docs.iterator().forEachRemaining(x -> ret.add(x.getUserId()));
         return ret;
     }
 
-    public static List<UserData> findUsers(List<? extends Bson> filter)
-    {
+    public static List<UserData> findUsers(List<? extends Bson> filter) {
         MongoCollection<UserData> collection = MongoClients.create(DatabaseManager.getInstance().getSettings())
                 .getDatabase("users")
-                .getCollection("users",UserData.class);
-        filter.forEach((x)->System.out.println(x.toBsonDocument().toJson()));
+                .getCollection("users", UserData.class);
+        filter.forEach((x) -> System.out.println(x.toBsonDocument().toJson()));
         AggregateIterable<UserData> result = collection.aggregate(filter);
         List<UserData> ret = new ArrayList<>();
         result.iterator().forEachRemaining(ret::add);
@@ -61,6 +57,7 @@ public class DatabaseUserAPI {
                 new Document("$limit", i)
         ));
     }
+
     public static List<UserData> getBottomN(String field, int i) {
         return findUsers(Arrays.asList(
                 new Document("$match", new Document(field, new Document("$ne", 0))),

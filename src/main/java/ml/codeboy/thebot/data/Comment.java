@@ -13,23 +13,22 @@ public class Comment {
         this.meal = meal;
     }
 
-    public Comment(){}
+    public Comment() {
+    }
 
     public String getContent() {
         return content;
+    }
+
+    public void setContent(String c) {
+        this.content = c;
     }
 
     public String getMeal() {
         return meal;
     }
 
-    public void setContent(String c)
-    {
-        this.content = c;
-    }
-
-    public void setMeal(String m)
-    {
+    public void setMeal(String m) {
         this.meal = m;
     }
 }

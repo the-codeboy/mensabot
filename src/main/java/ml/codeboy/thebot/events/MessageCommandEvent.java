@@ -72,7 +72,6 @@ public class MessageCommandEvent extends CommandEvent {
     }
 
     /**
-     *
      * @return Arguments or empty array if arg[0].length() == 0
      */
     public String[] getArgs() {
