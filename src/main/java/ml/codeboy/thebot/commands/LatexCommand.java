@@ -27,9 +27,12 @@ public class LatexCommand extends Command {
         if (latex.length() > 200) {
             replyable.reply(new EmbedBuilder().setTitle("This is too much text").setDescription("the maximum is 200 characters :(").setColor(Color.RED).build());
         } else {
+            String url = "https://latex.codecogs.com/png.image?\\inline&space;\\LARGE&space;\\dpi{200}\\color{white}";
+
             try {
                 double size = 1.1;
-                BufferedImage image = ImageIO.read(new URL("https://latex.codecogs.com/png.image?\\inline&space;\\LARGE&space;\\dpi{200}\\color{white}" + URLEncoder.encode(latex)));
+                url += latex.replaceAll("\\s", "");
+                BufferedImage image = ImageIO.read(new URL(url));
                 BufferedImage output = new BufferedImage((int) (image.getWidth() * size), (int) (image.getHeight() * size), BufferedImage.TYPE_INT_ARGB);
                 output.getGraphics().drawImage(image, (int) ((size - 1) * image.getHeight() / 2),
                         (int) ((size - 1) * image.getHeight() / 2), null);
@@ -45,6 +48,7 @@ public class LatexCommand extends Command {
                 file.delete();
             } catch (IOException e) {
                 e.printStackTrace();
+                System.out.println(url);
                 replyable.reply(new EmbedBuilder().setTitle("Normal method failed. Here is a picture rendered by google instead:")
                         .setImage("https://chart.apis.google.com/chart?cht=tx&chl=" + URLEncoder.encode(latex)).setColor(Color.RED).build());
             }
