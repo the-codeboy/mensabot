@@ -103,8 +103,7 @@ public class Util {
                 }
             }
         }, 1000, 5000);
-    }    private static final int secondsPerDay = 3600 * 24,
-            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
+    }
 
     public static int toInt(String string) {
         return toInt(string, 0);
@@ -277,9 +276,9 @@ public class Util {
                 int cost = from.charAt(i - 1) == to.charAt(j - 1) ? 0 : 1;
                 dist[i][j] = Math.min(Math.min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
                 if (i > 1 &&
-                        j > 1 &&
-                        from.charAt(i - 1) == to.charAt(j - 2) &&
-                        from.charAt(i - 2) == to.charAt(j - 1)) {
+                    j > 1 &&
+                    from.charAt(i - 1) == to.charAt(j - 2) &&
+                    from.charAt(i - 2) == to.charAt(j - 1)) {
                     dist[i][j] = Math.min(dist[i][j], dist[i - 2][j - 2] + cost);
                 }
             }
