@@ -79,8 +79,12 @@ public interface Replyable {
         reply(message, referenceMessage, new File[0]);
     }
 
+    default void reply(boolean referenceMessage, MessageEmbed... embeds) {
+        reply(new MessageBuilder().setEmbeds(embeds).build(), referenceMessage);
+    }
+
     default void reply(MessageEmbed... embeds) {
-        reply(new MessageBuilder().setEmbeds(embeds).build());
+        reply(embeds);
     }
 
     default void reply(Message message) {

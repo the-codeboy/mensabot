@@ -10,12 +10,9 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Random;
 
 
 public class LatexCommand extends Command {
@@ -31,13 +28,13 @@ public class LatexCommand extends Command {
 
             try {
                 url += latex.replaceAll("\\s", "");
-                BufferedImage image = ImageIO.read(new URL(url));// we only do that to insure the latex can be rendered
+                ImageIO.read(new URL(url));// we only do that to insure the latex can be rendered
 
-                replyable.reply(new MessageBuilder().append(url).build());
+                replyable.reply(new MessageBuilder().append(url).build(), true);
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println(url);
-                replyable.reply(new EmbedBuilder().setTitle("Normal method failed. Here is a picture rendered by google instead:")
+                replyable.reply(true, new EmbedBuilder().setTitle("Normal method failed. Here is a picture rendered by google instead:")
                         .setImage("https://chart.apis.google.com/chart?cht=tx&chl=" + URLEncoder.encode(latex)).setColor(Color.RED).build());
             }
         }
