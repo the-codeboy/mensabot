@@ -4,6 +4,7 @@ import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
 
 import java.io.File;
 import java.util.Arrays;
@@ -25,6 +26,20 @@ public class MessageCommandEvent extends CommandEvent {
     @Override
     public void reply(MessageEmbed... embed) {
         reply = getMessageReceivedEvent().getChannel().sendMessageEmbeds(Arrays.asList(embed)).complete();
+    }
+
+    @Override
+    public void reply(Message message, boolean referenceMessage, File... files) {
+        MessageAction messageAction;
+        if (referenceMessage)
+            messageAction = getMessageReceivedEvent().getMessage().reply(message);
+        else
+            messageAction = getChannel().sendMessage(message);
+
+        for (File file : files) {
+            messageAction.addFile(file);
+        }
+        messageAction.queue();
     }
 
     @Override
@@ -91,10 +106,5 @@ public class MessageCommandEvent extends CommandEvent {
             return "";
 
         return splitContent[1];
-    }
-
-    @Override
-    public void reply(String message, boolean referenceMessage) {
-        getMessageReceivedEvent().getMessage().reply(message).queue();
     }
 }

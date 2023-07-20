@@ -103,7 +103,8 @@ public class Util {
                 }
             }
         }, 1000, 5000);
-    }
+    }    private static final int secondsPerDay = 3600 * 24,
+            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static int toInt(String string) {
         return toInt(string, 0);

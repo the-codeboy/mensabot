@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 
 import java.awt.*;
 import java.io.File;
@@ -44,6 +45,21 @@ public class SlashCommandCommandEvent extends CommandEvent {
             embeds.add(builder.build());
             replyInternal(embeds.toArray(embed));
         }
+    }
+
+    @Override
+    public void reply(Message message, boolean referenceMessage, File... files) {
+        SlashCommandInteractionEvent event = getSlashCommandEvent();
+        WebhookMessageAction<Message> messageAction;
+        if (referenceMessage)
+            messageAction = event.getHook().sendMessage(message);
+        else
+            messageAction = event.getHook().sendMessage(message);
+
+        for (File file : files) {
+            messageAction.addFile(file);
+        }
+        messageAction.queue();
     }
 
     private void replyInternal(MessageEmbed[] embeds) {

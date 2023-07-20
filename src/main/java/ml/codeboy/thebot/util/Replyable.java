@@ -1,68 +1,91 @@
 package ml.codeboy.thebot.util;
 
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
 
-import java.util.Arrays;
+import java.io.File;
 
 public interface Replyable {
     static Replyable from(MessageChannel channel) {
-        return new Replyable() {
-            @Override
-            public void reply(String message) {
-                channel.sendMessage(message).queue();
+        return (message, referenceMessage, files) -> {
+            MessageAction messageAction = channel.sendMessage(message);
+            for (File file : files) {
+                messageAction.addFile(file);
             }
-
-            @Override
-            public void reply(MessageEmbed... embeds) {
-                channel.sendMessageEmbeds(Arrays.asList(embeds)).queue();
-            }
+            messageAction.queue();
         };
     }
 
     static Replyable from(Message message) {
         return new Replyable() {
             @Override
-            public void reply(String content) {
+            public void reply(Message content) {
                 reply(content, false);
             }
 
             @Override
-            public void reply(String content, boolean referenceMessage) {
+            public void reply(Message msg, boolean referenceMessage, File... files) {
+                MessageAction messageAction;
+                if (referenceMessage)
+                    messageAction = message.reply(msg);
+                else
+                    messageAction = message.getChannel().sendMessage(msg);
+
+                for (File file : files) {
+                    messageAction.addFile(file);
+                }
+                messageAction.queue();
+            }
+
+            @Override
+            public void reply(Message content, boolean referenceMessage) {
                 if (referenceMessage)
                     message.reply(content).queue();
                 else
                     message.getChannel().sendMessage(content).queue();
             }
 
-            @Override
-            public void reply(MessageEmbed... embeds) {
-                message.getChannel().sendMessageEmbeds(Arrays.asList(embeds)).queue();
-            }
         };
     }
 
     static Replyable from(IReplyCallback replyCallback) {
         return new Replyable() {
             @Override
-            public void reply(String message) {
+            public void reply(Message message) {
                 replyCallback.getHook().sendMessage(message).queue();
             }
 
             @Override
-            public void reply(MessageEmbed... embeds) {
-                replyCallback.getHook().sendMessageEmbeds(Arrays.asList(embeds)).queue();
+            public void reply(Message message, boolean referenceMessage, File... files) {
+                WebhookMessageAction<Message> messageAction = replyCallback.getHook().sendMessage(message);
+                for (File file : files) {
+                    messageAction.addFile(file);
+                }
+                messageAction.queue();
             }
         };
     }
 
-    void reply(String message);
-
-    default void reply(String message, boolean referenceMessage) {
-        reply(message);
+    default void reply(String message) {
+        reply(new MessageBuilder(message).build());
     }
 
-    void reply(MessageEmbed... embeds);
+    default void reply(Message message, boolean referenceMessage) {
+        reply(message, referenceMessage, new File[0]);
+    }
+
+    default void reply(MessageEmbed... embeds) {
+        reply(new MessageBuilder().setEmbeds(embeds).build());
+    }
+
+    default void reply(Message message) {
+        reply(message, false);
+    }
+
+    void reply(Message message, boolean referenceMessage, File... files);
 }
