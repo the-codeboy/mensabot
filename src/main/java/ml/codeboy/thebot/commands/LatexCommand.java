@@ -30,30 +30,16 @@ public class LatexCommand extends Command {
             String url = "https://latex.codecogs.com/png.image?\\inline&space;\\LARGE&space;\\dpi{200}\\color{white}";
 
             try {
-                double size = 1.1;
                 url += latex.replaceAll("\\s", "");
-                BufferedImage image = ImageIO.read(new URL(url));
-                BufferedImage output = new BufferedImage((int) (image.getWidth() * size), (int) (image.getHeight() * size), BufferedImage.TYPE_INT_ARGB);
-                output.getGraphics().drawImage(image, (int) ((size - 1) * image.getHeight() / 2),
-                        (int) ((size - 1) * image.getHeight() / 2), null);
+                BufferedImage image = ImageIO.read(new URL(url));// we only do that to insure the latex can be rendered
 
-                File file = new File("images/" + new Random().nextInt() + ".png");
-                file.getParentFile().mkdirs();
-                try {
-                    ImageIO.write(output, "png", file);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                replyable.reply(new MessageBuilder().append("Here you go:").build(), true, file);
-                file.delete();
+                replyable.reply(new MessageBuilder().append(url).build());
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println(url);
                 replyable.reply(new EmbedBuilder().setTitle("Normal method failed. Here is a picture rendered by google instead:")
                         .setImage("https://chart.apis.google.com/chart?cht=tx&chl=" + URLEncoder.encode(latex)).setColor(Color.RED).build());
             }
-            //https://latex.codecogs.com/png.latex?
-
         }
     }
 
