@@ -84,7 +84,7 @@ public interface Replyable {
     }
 
     default void reply(MessageEmbed... embeds) {
-        reply(embeds);
+        reply(false,embeds);
     }
 
     default void reply(Message message) {
