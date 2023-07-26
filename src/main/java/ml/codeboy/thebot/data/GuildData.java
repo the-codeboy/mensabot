@@ -2,7 +2,6 @@ package ml.codeboy.thebot.data;
 
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
-import ml.codeboy.thebot.apis.MensaVeganika;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class GuildData {
@@ -24,10 +23,7 @@ public class GuildData {
 
 
     public Mensa getDefaultMensa() {
-        Mensa mensa = OpenMensa.getInstance().getMensa(getDefaultMensaId());
-        if (getId().equals("896116435875668019"))
-            mensa = new MensaVeganika(mensa);//such a useless feature
-        return mensa;
+        return OpenMensa.getInstance().getMensa(getDefaultMensaId());
     }
 
     public int getDefaultMensaId() {
