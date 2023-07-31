@@ -23,10 +23,10 @@ import java.util.Locale;
 import static ml.codeboy.thebot.commands.image.ImageCommand.drawString;
 
 public class MensaUtil {
-    public static ActionRow createMealButtons(Mensa mensa,Date date){
-        String dataString= ":" + mensa.getId() + ":" + Util.dateToString(date);
-        return ActionRow.of(Button.primary("rate"+dataString, Emoji.fromFormatted("⭐")),
-                Button.secondary("detail"+dataString, "details"));
+    public static ActionRow createMealButtons(Mensa mensa, Date date) {
+        String dataString = ":" + mensa.getId() + ":" + Util.dateToString(date);
+        return ActionRow.of(Button.primary("rate" + dataString, Emoji.fromFormatted("⭐")),
+                Button.secondary("detail" + dataString, "details"));
     }
 
     public static EmbedBuilder MealsToEmbed(Mensa mensa, Date date) {
@@ -42,11 +42,11 @@ public class MensaUtil {
         for (Meal meal : mensa.getMeals(date)) {
             String title = getTitleString(meal);
             String description = meal.getCategory() +
-                    (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
-                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                                 (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
+                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             if (!beilagen
-                    && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
+                && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
                 beilagen = true;
                 builder.addBlankField(false);
             }
@@ -61,12 +61,21 @@ public class MensaUtil {
     public static String getTitleString(Meal meal) {
         String title = getEmojiForMeal(meal);
         title += " " + meal.getName();
-        title += getAdditionalEmojisString(meal);
+        String additionalEmojis = getAdditionalEmojisString(meal);
         double rating = FoodRatingManager.getInstance().getRating(meal.getName());
-        title += getRatingString(rating);
+        String ratingString = getRatingString(rating);
+        String ratingInfo = "";// empty by default
         if (rating != -1) {
-            title += " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
+            ratingInfo = " (" + FoodRatingManager.getInstance().getRatings(meal.getName()) + ")";
         }
+        int length = title.length() + additionalEmojis.length() + ratingString.length() + ratingInfo.length();
+        if (length >= 256) {// make sure the title is not too long
+            ratingString = getRatingString(rating, true);// use shorter rating string
+            if (title.length() + additionalEmojis.length() + ratingString.length() + ratingInfo.length() >= 256) {
+                title = title.substring(0, 256 - additionalEmojis.length() - 3) + "...";// only shorten title if it is still too long
+            }
+        }
+        title += additionalEmojis + ratingString + ratingInfo;
         return title;
     }
 
@@ -85,11 +94,15 @@ public class MensaUtil {
     }
 
     public static String getRatingString(double rating) {
+        return getRatingString(rating, false);
+    }
+
+    public static String getRatingString(double rating, boolean shorter) {
         StringBuilder title = new StringBuilder();
         if (rating != -1) {
             title.append("\n");
             while (rating >= 1) {
-                title.append("<:star:992412997886693476>");
+                title.append(shorter ? "⭐" : "<:star:992412997886693476>");// the shorter version is platform dependent so it should be avoided
                 rating--;
             }
             if (rating > 0.9)
@@ -237,8 +250,8 @@ public class MensaUtil {
             drawString(g, meal.getName(), rectangle);
 
             String description = meal.getCategory() +
-                    (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
-                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                                 (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
+                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             rectangle.y += size;
 
