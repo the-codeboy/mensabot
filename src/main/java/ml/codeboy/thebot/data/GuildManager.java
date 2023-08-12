@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import net.dv8tion.jda.api.entities.Guild;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GuildManager {
     private static final String guildFolder = "guilds";
@@ -31,6 +33,10 @@ public class GuildManager {
         data = new GuildData(guild);
         guildData.put(guild.getId(), data);
         return data;
+    }
+
+    public List<GuildData> getAllGuildData() {
+        return new ArrayList<>(guildData.values());
     }
 
 

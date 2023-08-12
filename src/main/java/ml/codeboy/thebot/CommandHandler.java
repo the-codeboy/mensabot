@@ -30,23 +30,21 @@ import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
 import ml.codeboy.thebot.tracker.BedTimeTracker;
-import ml.codeboy.thebot.util.*;
+import ml.codeboy.thebot.util.Replyable;
+import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.events.user.UserActivityStartEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
-import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -67,7 +65,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.regex.Pattern;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
 import static ml.codeboy.thebot.util.Util.getKANValue;
@@ -130,16 +127,12 @@ public class CommandHandler extends ListenerAdapter {
         }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
-    private void sendMealsToGuild(Guild guild) {
+    private void sendMealsToGuild(Guild guild, Message message) {
         GuildData data = GuildManager.getInstance().getData(guild);
         try {
-            Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                Date date=new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
-                ActionRow mealButtons=MensaUtil.createMealButtons(mensa,date);
-                Message message = channel.sendMessageEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
-                        .setActionRows(mealButtons).complete();
+                message = channel.sendMessage(message).complete();
                 data.setLatestAnnouncementId(message.getId());
                 data.save();
             }
@@ -149,35 +142,35 @@ public class CommandHandler extends ListenerAdapter {
 
     private void sendMealsToAllGuilds() {
         logger.info("Sending meals to guilds");
-        for (Guild guild : getBot().getJda().getGuilds()) {
-            sendMealsToGuild(guild);
+        List<GuildData> data = GuildManager.getInstance().getAllGuildData();
+        while (!data.isEmpty()) {
+            GuildData d = data.remove(0);
+            Mensa mensa = d.getDefaultMensa();
+            Date date = new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
+            ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
+            Message message = new MessageBuilder()
+                    .setEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
+                    .setActionRows(mealButtons).build();
+            sendMealsToGuild(d.getGuild(), message);
+            data.removeIf(g -> {
+                if (g.getDefaultMensaId() == d.getDefaultMensaId()) {
+                    sendMealsToGuild(g.getGuild(), message);
+                    return true;
+                }
+                return false;
+            });
         }
     }
 
-    private void sendWeatherToGuild(Guild guild) {
+    private void sendWeatherToGuild(Guild guild, File file) {
         GuildData data = GuildManager.getInstance().getData(guild);
         try {
             Mensa mensa = data.getDefaultMensa();
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
-                List<Double> coordinates = mensa.getCoordinates();
-                String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
-                List<Forecast> forecasts = Weather4J.getForecasts(lat, lon);
-                Instant now = Instant.now();
-                while (forecasts.get(1).getTime().isBefore(now)) {
-                    forecasts.remove(0);
-                }
 
-                BufferedImage image = generateForecastImage(forecasts, 16);
-                File file = new File("images/" + new Random().nextInt() + ".png");
-                try {
-                    ImageIO.write(image, "png", file);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 channel.sendMessage("Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
                         .addFile(file, "weather_forecast.png").complete();
-                file.delete();
             }
         } catch (Exception ignored) {
         }
@@ -185,9 +178,39 @@ public class CommandHandler extends ListenerAdapter {
 
     private void sendWeatherToAllGuilds() {
         logger.info("Sending weather to guilds");
-        for (Guild guild : getBot().getJda().getGuilds()) {
-            sendWeatherToGuild(guild);
+        List<GuildData> data = GuildManager.getInstance().getAllGuildData();
+
+        while (!data.isEmpty()) {
+            GuildData d = data.remove(0);
+            Mensa mensa = d.getDefaultMensa();
+
+            List<Double> coordinates = mensa.getCoordinates();
+            String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
+            List<Forecast> forecasts = Weather4J.getForecasts(lat, lon);
+            Instant now = Instant.now();
+            while (forecasts.get(1).getTime().isBefore(now)) {
+                forecasts.remove(0);
+            }
+
+            BufferedImage image = generateForecastImage(forecasts, 16);
+            File file = new File("images/" + new Random().nextInt() + ".png");
+            try {
+                ImageIO.write(image, "png", file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            sendWeatherToGuild(d.getGuild(), file);
+            data.removeIf(g -> {
+                if (g.getDefaultMensaId() == d.getDefaultMensaId()) {
+                    sendWeatherToGuild(g.getGuild(), file);
+                    return true;
+                }
+                return false;
+            });
+            file.delete();
         }
+
     }
 
     @Override
@@ -335,7 +358,7 @@ public class CommandHandler extends ListenerAdapter {
         if (quote == null)
             return "";
         status = "\"" + quote.getContent() +
-                "\"\n - " + quote.getPerson();
+                 "\"\n - " + quote.getPerson();
         return status;
     }
 
@@ -379,7 +402,7 @@ public class CommandHandler extends ListenerAdapter {
             if (activity.isRich()) {
                 RichPresence presence = activity.asRichPresence();
                 if (presence != null && "401518684763586560".equals(presence.getApplicationId())
-                        && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
+                    && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
                     String message = null;
                     switch (presence.getLargeImage().getText()) {
                         case "Yuumi":
@@ -462,7 +485,7 @@ public class CommandHandler extends ListenerAdapter {
         if (command != null) {
             if (event.isFromGuild()) {
                 logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
-                        + ": " + event.getMessage().getContentRaw());
+                            + ": " + event.getMessage().getContentRaw());
             } else {
                 logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
             }
@@ -542,8 +565,8 @@ public class CommandHandler extends ListenerAdapter {
         Command command = getCommand(event.getName());
         if (command != null) {
             logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getChannel().getName())
-                    + ": " + event.getUser().getAsTag()
-                    + ": " + event.getCommandString());
+                        + ": " + event.getUser().getAsTag()
+                        + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event, command));
         }
     }
