@@ -3,15 +3,17 @@ package ml.codeboy.thebot.commands.mensa;
 import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
+import com.github.codeboy.api.RWTHMensa;
 import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.MensaUtil;
-import ml.codeboy.thebot.apis.RWTHMensa;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.*;
 import ml.codeboy.thebot.events.CommandEvent;
 import ml.codeboy.thebot.util.Replyable;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -27,7 +29,6 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
 import java.awt.*;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -37,11 +38,6 @@ public class MensaCommand extends Command {
     public MensaCommand() {
         super("mensa", "Sends the current food in mensa Academica", "food");
         OpenMensa.getInstance().reloadCanteens();//doesn't work without this
-        Collection<Mensa> mensas = OpenMensa.getInstance().searchMensa("aachen");
-
-        for (Mensa mensa : mensas) {
-            OpenMensa.getInstance().addMensa(new RWTHMensa(mensa));
-        }
         setGuildOnlyCommand(false);
     }
 
@@ -174,10 +170,17 @@ public class MensaCommand extends Command {
         }
         EmbedBuilder builder = MensaUtil.MealsToEmbed(mensa, date);
         ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
+        Message message = new MessageBuilder().setEmbeds(builder.build()).setActionRows(mealButtons).build();
         if (event.isSlashCommandEvent()) {
-            event.getSlashCommandEvent().getInteraction().getHook().sendMessageEmbeds(builder.build()).addActionRows(mealButtons).queue();
+            message = event.getSlashCommandEvent().getInteraction().getHook().sendMessage(message).complete();
         } else if (event.isMessageEvent())
-            event.getMessageReceivedEvent().getChannel().sendMessageEmbeds(builder.build()).setActionRows(mealButtons).queue();
+            message = event.getMessageReceivedEvent().getChannel().sendMessage(message).complete();
+
+        if (message != null && mensa instanceof RWTHMensa) {
+            ((RWTHMensa) mensa).loadNewMeals();
+            Message newMessage = new MessageBuilder().setEmbeds(builder.build()).setActionRows(mealButtons).build();
+            message.editMessage(newMessage).queue();
+        }
     }
 
     @Override
