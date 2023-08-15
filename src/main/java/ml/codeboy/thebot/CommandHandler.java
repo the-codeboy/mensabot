@@ -140,7 +140,7 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    private void sendMealsToAllGuilds() {
+    public void sendMealsToAllGuilds() {
         logger.info("Sending meals to guilds");
         List<GuildData> data = GuildManager.getInstance().getAllGuildData();
         while (!data.isEmpty()) {
@@ -320,6 +320,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(AcceptImage.class);
         createCommand(RejectImage.class);
         createCommand(SendImageInfo.class);
+        createCommand(AnnounceCommand.class);
     }
 
     private void registerNilsCommands() {
@@ -676,5 +677,18 @@ public class CommandHandler extends ListenerAdapter {
 
     public Guild getServer() {
         return server;
+    }
+
+    public void sendAnnouncementToAllGuilds(Message message) {
+        List<GuildData> data = GuildManager.getInstance().getAllGuildData();
+        for (GuildData d : data) {
+            try {
+                MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(d.getUpdateChannelId());
+                if (channel != null) {
+                    channel.sendMessage(message).queue();
+                }
+            } catch (Exception ignored) {
+            }
+        }
     }
 }
