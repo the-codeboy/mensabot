@@ -127,8 +127,7 @@ public class CommandHandler extends ListenerAdapter {
         }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
     }
 
-    private void sendMealsToGuild(Guild guild, Message message) {
-        GuildData data = GuildManager.getInstance().getData(guild);
+    private void sendMealsToGuild(GuildData data, Message message) {
         try {
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
@@ -151,10 +150,10 @@ public class CommandHandler extends ListenerAdapter {
             Message message = new MessageBuilder()
                     .setEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
                     .setActionRows(mealButtons).build();
-            sendMealsToGuild(d.getGuild(), message);
+            sendMealsToGuild(d, message);
             data.removeIf(g -> {
                 if (g.getDefaultMensaId() == d.getDefaultMensaId()) {
-                    sendMealsToGuild(g.getGuild(), message);
+                    sendMealsToGuild(g, message);
                     return true;
                 }
                 return false;
