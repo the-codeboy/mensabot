@@ -15,6 +15,13 @@ public class GuildManager {
     private final HashMap<String, GuildData> guildData = new HashMap<>();
 
     private GuildManager() {
+        for (File file : new File(guildFolder).listFiles()) {
+            try {
+                GuildData data = loadData(file.getName());
+                guildData.put(data.getId(), data);
+            } catch (FileNotFoundException ignored) {
+            }
+        }
     }
 
     public static GuildManager getInstance() {
