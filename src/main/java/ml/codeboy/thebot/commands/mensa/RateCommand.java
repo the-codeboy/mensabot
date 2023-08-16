@@ -3,13 +3,13 @@ package ml.codeboy.thebot.commands.mensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import ml.codeboy.thebot.MensaBot;
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -49,8 +49,8 @@ public class RateCommand extends Command {
             if (channel != null) {
                 try {
                     Message message = channel.retrieveMessageById(data.getLatestAnnouncementId()).complete();
-                    Date date=new Date(System.currentTimeMillis() + 1000 * 3600 * 4);
-                    ActionRow mealButtons=MensaUtil.createMealButtons(mensa,date);
+                    Date date = new Date(System.currentTimeMillis() + 1000 * 3600 * 4);
+                    ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
                     message.editMessageEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
                             .setActionRows(mealButtons).complete();
                 } catch (Exception ignored) {
@@ -130,8 +130,8 @@ public class RateCommand extends Command {
                 if (found) {//check if meal exists
                     UserDataManager.getInstance().getData(event.getUser()).addRating(meal, rating);
                     event.reply("Rating added: " + meal + "\n"
-                            + MensaUtil.getRatingString(rating) + " added \n"
-                            + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ") total");
+                                + MensaUtil.getRatingString(rating) + " added \n"
+                                + MensaUtil.getRatingString(FoodRatingManager.getInstance().getRating(meal)) + " (" + FoodRatingManager.getInstance().getRatings(meal) + ") total");
 
 
                     if (i == 0)//the rated meal was from today

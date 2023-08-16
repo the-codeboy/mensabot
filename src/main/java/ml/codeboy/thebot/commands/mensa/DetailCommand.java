@@ -2,13 +2,13 @@ package ml.codeboy.thebot.commands.mensa;
 
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.CommentManager;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.GuildManager;
 import ml.codeboy.thebot.data.MealEmoji;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.util.Replyable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;

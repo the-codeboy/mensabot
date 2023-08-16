@@ -1,9 +1,9 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.data.Restaurant;
 import ml.codeboy.thebot.data.RestaurantManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.Comparator;

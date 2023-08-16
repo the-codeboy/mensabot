@@ -4,7 +4,7 @@ import ml.codeboy.thebot.Config;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.events.CommandEvent;
 
-public abstract class AdminCommand  extends Command {
+public abstract class AdminCommand extends Command {
     public AdminCommand(String name, String description, String... aliases) {
         super(name, description, aliases);
         setHidden(true);

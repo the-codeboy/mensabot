@@ -1,10 +1,10 @@
 package ml.codeboy.thebot.commands.secret;
 
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.data.FoodRatingManager;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.PrivateChannel;
 

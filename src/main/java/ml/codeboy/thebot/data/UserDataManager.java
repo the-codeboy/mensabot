@@ -6,8 +6,9 @@ import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.crypto.Data;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 public class UserDataManager {
@@ -30,15 +31,14 @@ public class UserDataManager {
         return instance;
     }
 
-    public String moveDataToCloud()
-    {
+    public String moveDataToCloud() {
         String ret = "";
         File folder = new File(userDataFolder);
         if (folder.exists()) {
             for (File file : folder.listFiles()) {
                 try {
                     DatabaseUserAPI.saveUser(new Gson().fromJson(new FileReader(userDataFolder + File.separator + file.getName()), UserData.class));
-                    ret += "Moved "+file.getName()+" to cloud\n";
+                    ret += "Moved " + file.getName() + " to cloud\n";
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -88,8 +88,7 @@ public class UserDataManager {
     }
 
     private void loadUserData() {
-        for(String s: DatabaseUserAPI.getUserIds())
-        {
+        for (String s : DatabaseUserAPI.getUserIds()) {
             userData.put(s, loadData(s));
         }
         logger.info("finished loading user data for users");
@@ -103,13 +102,12 @@ public class UserDataManager {
         return karmaSorted;
     }
 
-    public List<UserData> getKarmaTop()
-    {
-        return DatabaseUserAPI.getTopN("karma",10);
+    public List<UserData> getKarmaTop() {
+        return DatabaseUserAPI.getTopN("karma", 10);
     }
-    public List<UserData> getKarmaBottom()
-    {
-        return DatabaseUserAPI.getBottomN("karma",10);
+
+    public List<UserData> getKarmaBottom() {
+        return DatabaseUserAPI.getBottomN("karma", 10);
     }
 
     private void updateKarmaTop() {

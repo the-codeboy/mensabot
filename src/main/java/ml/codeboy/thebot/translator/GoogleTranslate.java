@@ -62,28 +62,28 @@ public final class GoogleTranslate { //Class marked as final since all methods a
             throws UnsupportedEncodingException {
         String encoded = URLEncoder.encode(text, "UTF-8"); //Encode
         String sb = GOOGLE_TRANSLATE_URL +
-                "?client=webapp" + //The client parameter
-                "&hl=en" + //The language of the UI?
-                "&sl=" + //Source language
-                sourceLanguage +
-                "&tl=" + //Target language
-                targetLanguage +
-                "&q=" +
-                encoded +
-                "&multires=1" +//Necessary but unknown parameters
-                "&otf=0" +
-                "&pc=0" +
-                "&trs=1" +
-                "&ssel=0" +
-                "&tsel=0" +
-                "&kc=1" +
-                "&dt=t" +//This parameters requests the translated text back.
-                //Other dt parameters request additional information such as pronunciation, and so on.
-                //TODO Modify API so that the user may request this additional information.
-                "&ie=UTF-8" + //Input encoding
-                "&oe=UTF-8" + //Output encoding
-                "&tk=" + //Token authentication parameter
-                generateToken(text);
+                    "?client=webapp" + //The client parameter
+                    "&hl=en" + //The language of the UI?
+                    "&sl=" + //Source language
+                    sourceLanguage +
+                    "&tl=" + //Target language
+                    targetLanguage +
+                    "&q=" +
+                    encoded +
+                    "&multires=1" +//Necessary but unknown parameters
+                    "&otf=0" +
+                    "&pc=0" +
+                    "&trs=1" +
+                    "&ssel=0" +
+                    "&tsel=0" +
+                    "&kc=1" +
+                    "&dt=t" +//This parameters requests the translated text back.
+                    //Other dt parameters request additional information such as pronunciation, and so on.
+                    //TODO Modify API so that the user may request this additional information.
+                    "&ie=UTF-8" + //Input encoding
+                    "&oe=UTF-8" + //Output encoding
+                    "&tk=" + //Token authentication parameter
+                    generateToken(text);
         return sb;
     }
 
@@ -235,7 +235,7 @@ public final class GoogleTranslate { //Class marked as final since all methods a
         for (int i = 0; i + 5 < rawData.length(); i++) {
             boolean dashDetected = rawData.charAt(i + 4) == '-';
             if (rawData.charAt(i) == ',' && rawData.charAt(i + 1) == '"'
-                    && ((rawData.charAt(i + 4) == '"' && rawData.charAt(i + 5) == ',')
+                && ((rawData.charAt(i + 4) == '"' && rawData.charAt(i + 5) == ',')
                     || dashDetected)) {
                 if (dashDetected) {
                     int lastQuote = rawData.substring(i + 2).indexOf('"');
@@ -328,7 +328,7 @@ public final class GoogleTranslate { //Class marked as final since all methods a
                     d.add(e++, g >> 6 | 0xC0);
                 } else {
                     if (0xD800 == (g & 0xFC00) && f + 1 < text.length() &&
-                            0xDC00 == (text.charAt(f + 1) & 0xFC00)) {
+                        0xDC00 == (text.charAt(f + 1) & 0xFC00)) {
                         g = 0x10000 + ((g & 0x3FF) << 10) + (text.charAt(++f) & 0x3FF);
                         d.add(e++, g >> 18 | 0xF0);
                         d.add(e++, g >> 12 & 0x3F | 0x80);

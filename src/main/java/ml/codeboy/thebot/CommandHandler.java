@@ -8,10 +8,10 @@ import ml.codeboy.met.Weather4J;
 import ml.codeboy.met.data.Forecast;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
+import ml.codeboy.thebot.commands.admin.MaintenanceCommand;
 import ml.codeboy.thebot.commands.admin.ShutdownCommand;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
 import ml.codeboy.thebot.commands.debug.ListQuotes;
-import ml.codeboy.thebot.commands.admin.MaintenanceCommand;
 import ml.codeboy.thebot.commands.debug.SaveUsers;
 import ml.codeboy.thebot.commands.image.MorbCommand;
 import ml.codeboy.thebot.commands.image.ShitCommand;
@@ -409,7 +409,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void amogus(MessageReceivedEvent event) {
-        if(Config.getInstance().debugChannels.contains(event.getChannel().getId()))
+        if (Config.getInstance().debugChannels.contains(event.getChannel().getId()))
             return;
         String msg = event.getMessage().getContentRaw().toLowerCase();
         if (msg.contains("mogus") || msg.contains("imposter") || msg.contains("among us")) {
@@ -456,7 +456,7 @@ public class CommandHandler extends ListenerAdapter {
                         try {
                             channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
                                     .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated())
-                                    .setDescription(attachment.getDescription() + "").build()).queue();
+                                    .setDescription(attachment.getDescription()).build()).queue();
                             channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName()).complete();
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
@@ -490,7 +490,7 @@ public class CommandHandler extends ListenerAdapter {
                 double i = evaluate(event.getMessage().getContentRaw());
                 if (Double.isNaN(i))
                     return;
-                event.getChannel().sendMessage(i + 1 + "").queue();
+                event.getChannel().sendMessage(String.valueOf(i + 1)).queue();
             } catch (Exception ignored) {
             }
         }

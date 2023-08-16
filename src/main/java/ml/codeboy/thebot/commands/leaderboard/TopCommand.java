@@ -3,21 +3,14 @@ package ml.codeboy.thebot.commands.leaderboard;
 import ml.codeboy.thebot.apis.mongoDB.DatabaseUserAPI;
 import ml.codeboy.thebot.commands.Command;
 import ml.codeboy.thebot.data.UserData;
-import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class TopCommand extends Command {

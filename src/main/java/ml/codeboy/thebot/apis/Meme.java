@@ -42,13 +42,13 @@ public class Meme {
     @Override
     public String toString() {
         return "Meme{" +
-                "postLink='" + postLink + '\'' +
-                ", subreddit='" + subreddit + '\'' +
-                ", title='" + title + '\'' +
-                ", url='" + url + '\'' +
-                ", author='" + author + '\'' +
-                ", ups=" + ups +
-                ", preview=" + Arrays.toString(preview) +
-                '}';
+               "postLink='" + postLink + '\'' +
+               ", subreddit='" + subreddit + '\'' +
+               ", title='" + title + '\'' +
+               ", url='" + url + '\'' +
+               ", author='" + author + '\'' +
+               ", ups=" + ups +
+               ", preview=" + Arrays.toString(preview) +
+               '}';
     }
 }

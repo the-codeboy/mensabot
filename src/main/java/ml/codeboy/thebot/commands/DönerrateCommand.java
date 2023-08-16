@@ -1,10 +1,10 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.thebot.util.MensaUtil;
 import ml.codeboy.thebot.data.Restaurant;
 import ml.codeboy.thebot.data.RestaurantManager;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.util.MensaUtil;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -80,9 +80,9 @@ public class DönerrateCommand extends Command {
                     return;
                 }
                 event.reply("Rating added: " + restaurant + "\n"
-                        + MensaUtil.getRatingString(rating) + " added \n"
-                        + MensaUtil.getRatingString(r.getRating().getAverage())
-                        + " (" + r.getRating().getRatings() + ") total");
+                            + MensaUtil.getRatingString(rating) + " added \n"
+                            + MensaUtil.getRatingString(r.getRating().getAverage())
+                            + " (" + r.getRating().getRatings() + ") total");
 
             } else {
                 event.reply("Invalid number. Has to be between 1 and 5");
