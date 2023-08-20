@@ -38,7 +38,7 @@ public class WeatherUtil {
         }
 
         Forecast last = null;
-        for (int i = 0; i < values; i++) {
+        for (int i = 0; i <= values; i++) {
             Forecast forecast = forecasts.get(i);
 
             double lastTemp = forecast.getAirTemperature();
@@ -58,18 +58,6 @@ public class WeatherUtil {
             g.setColor(transparentYellow);
 
             g.fillPolygon(new int[]{startX, endX, endX, startX}, new int[]{startY, endY, image.getHeight(), image.getHeight()}, 4);
-
-            if (i == values - 1) {
-                g.setColor(Color.ORANGE);
-                startX += (size + space);
-                endX += (size + space);
-
-                g.drawLine(startX, endY, endX, endY);
-
-                g.setColor(transparentYellow);
-
-                g.fillPolygon(new int[]{startX, endX, endX, startX}, new int[]{endY, endY, image.getHeight(), image.getHeight()}, 4);
-            }
 
             g.setColor(Color.BLACK);
             int x = i * (size + space) - space / 2;
