@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.github.the-codeboy</groupId>
             <artifactId>Mensa4J</artifactId>
-            <version>092bfc6db8</version>
+            <version>3d8b1ea50f</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
