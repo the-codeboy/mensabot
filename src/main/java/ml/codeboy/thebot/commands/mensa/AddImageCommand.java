@@ -11,10 +11,12 @@ import ml.codeboy.thebot.data.MealImage;
 import ml.codeboy.thebot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.SlashCommandInteraction;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -23,7 +25,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.utils.AttachmentOption;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,9 +47,8 @@ public class AddImageCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return null;
-//        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
-//                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
+        return super.getCommandData().addOption(OptionType.ATTACHMENT, "image", "The image you want to add", true)
+                .addOption(OptionType.STRING, "meal", "The meal this image is for", true, true);
     }
 
 
@@ -125,10 +129,23 @@ public class AddImageCommand extends Command {
 
     private void addImage(JDA jda, String name, String url, User author, boolean notify) {
         TextChannel channel = (TextChannel) jda.getGuildChannelById(Config.getInstance().dmDebugChannel);
-        MealImage image = FoodRatingManager.getInstance().addImage(name, url, author);
         if (channel != null) {
-            String acceptId = image.getId() + acceptImageId;
-            String rejectId = image.getId() + rejectImageId;
+            UUID id = UUID.randomUUID();
+            String acceptId = id + acceptImageId;
+            String rejectId = id + rejectImageId;
+
+            try {
+                URL imageUrl = new URL(url);
+                Message msg=channel.sendMessage(author.getAsTag() + " added image for " + name + " with id " + id + "\n" + url)
+                        .addFile(imageUrl.openStream(),name+".png")
+                        .setActionRow(Button.primary(acceptId, "accept"), Button.danger(rejectId, "reject")).complete();
+                url=msg.getAttachments().get(0).getUrl();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            MealImage image = FoodRatingManager.getInstance().addImage(name, url, author);
+
             getInteractionHandler().registerButtonListener(acceptId, e -> {
                 e.deferEdit().queue();
                 if (Config.getInstance().admins.contains(e.getMember().getId())) {
@@ -158,8 +175,8 @@ public class AddImageCommand extends Command {
                 }
                 return false;
             });
-            channel.sendMessage(author.getAsTag() + " added image for " + name + " with id " + image.getId() + "\n" + url)
-                    .setActionRow(Button.primary(acceptId, "accept"), Button.danger(rejectId, "reject")).queue();
+        }else {
+            FoodRatingManager.getInstance().addImage(name, url, author);// add without having to manually accept
         }
         if (notify)
             author.openPrivateChannel().flatMap(c -> c.sendMessage("Your image for " + name + " has been submitted. I will let you know when it gets accepted")).queue();
