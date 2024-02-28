@@ -100,7 +100,7 @@ public class CommandHandler extends ListenerAdapter {
         downvote = getBot().getJda().getEmojiById("903336514644222033");
         giesl = getBot().getJda().getEmojiById("923655475675947028");
 
-        this.registerKnowCommands();
+        this.registerKnownCommands();
 
         registerAnnouncements();
 //        registerBedTimeTracker();
@@ -233,7 +233,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
 
-    public void registerKnowCommands() {
+    public void registerKnownCommands() {
         this.registerCommand(new Help(bot));
 
         createCommand(ChuckNorrisJokeCommand.class);
@@ -251,6 +251,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ShittyTranslateCommand.class);
         createCommand(ASCIICommand.class);
         createCommand(GifCommand.class);
+        createCommand(StudydriveCommand.class);
 
         createCommand(MensaCommand.class);
         createCommand(RateCommand.class);
