@@ -71,8 +71,7 @@ import static ml.codeboy.thebot.util.Util.getKANValue;
 import static ml.codeboy.thebot.util.Util.isKAN;
 
 public class CommandHandler extends ListenerAdapter {
-    private final Logger logger
-            = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Bot bot;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ArrayList<Command> allCommands = new ArrayList<>();
@@ -83,7 +82,7 @@ public class CommandHandler extends ListenerAdapter {
     private Guild server;
 
     public CommandHandler(Bot bot) {
-        UserDataManager.getInstance();//to load userdata - this will start a new thread for loading the data
+        UserDataManager.getInstance();// to load userdata - this will start a new thread for loading the data
         this.bot = bot;
         bot.getJda().addEventListener(this);
         bot.getJda().addEventListener(InteractionHandler.getInstance());
@@ -103,7 +102,7 @@ public class CommandHandler extends ListenerAdapter {
         this.registerKnownCommands();
 
         registerAnnouncements();
-//        registerBedTimeTracker();
+        // registerBedTimeTracker();
 
     }
 
@@ -168,7 +167,8 @@ public class CommandHandler extends ListenerAdapter {
             MessageChannel channel = (MessageChannel) getBot().getJda().getGuildChannelById(data.getUpdateChannelId());
             if (channel != null) {
 
-                channel.sendMessage("Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
+                channel.sendMessage(
+                        "Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
                         .addFile(file, "weather_forecast.png").complete();
             }
         } catch (Exception ignored) {
@@ -232,7 +232,6 @@ public class CommandHandler extends ListenerAdapter {
         });
     }
 
-
     public void registerKnownCommands() {
         this.registerCommand(new Help(bot));
 
@@ -251,7 +250,8 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ShittyTranslateCommand.class);
         createCommand(ASCIICommand.class);
         createCommand(GifCommand.class);
-        createCommand(StudydriveCommand.class);
+        // createCommand(StudydriveCommand.class);
+        // had to remove this, see https://study.the-codeboy.com/
 
         createCommand(MensaCommand.class);
         createCommand(RateCommand.class);
@@ -271,9 +271,9 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(AddQuote.class);
         createCommand(AddQuoteList.class);
         createCommand(QuoteCommand.class);
-//        registerCommand(new Karma());
-//        registerCommand(new KarmaTop());
-//        registerCommand(new KarmaBottom());
+        // registerCommand(new Karma());
+        // registerCommand(new KarmaTop());
+        // registerCommand(new KarmaBottom());
 
         registerLeaderBoardCommands();
 
@@ -339,13 +339,17 @@ public class CommandHandler extends ListenerAdapter {
                 do {
                     status = getRandomStatus();
                 } while (status.length() > 128 || status.length() == 0);
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status, "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
+                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,
+                        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
             }
         }, 0, 60_000);
     }
 
     private String getRandomStatus() {
-        return Jokes4J.getInstance().getJoke(new JokeRequest.Builder().blackList(Flag.explicit, Flag.nsfw, Flag.racist, Flag.sexist).build()).getJoke();
+        return Jokes4J.getInstance()
+                .getJoke(
+                        new JokeRequest.Builder().blackList(Flag.explicit, Flag.nsfw, Flag.racist, Flag.sexist).build())
+                .getJoke();
     }
 
     private String getRandomAdviceStatus() {
@@ -359,7 +363,7 @@ public class CommandHandler extends ListenerAdapter {
         if (quote == null)
             return "";
         status = "\"" + quote.getContent() +
-                 "\"\n - " + quote.getPerson();
+                "\"\n - " + quote.getPerson();
         return status;
     }
 
@@ -367,7 +371,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(fPlay.class);
         createCommand(Pause.class);
         createCommand(Resume.class);
-//        createCommand(Echo.class);
+        // createCommand(Echo.class);
         createCommand(Loop.class);
         createCommand(PlayNext.class);
         createCommand(Queue.class);
@@ -403,7 +407,7 @@ public class CommandHandler extends ListenerAdapter {
             if (activity.isRich()) {
                 RichPresence presence = activity.asRichPresence();
                 if (presence != null && "401518684763586560".equals(presence.getApplicationId())
-                    && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
+                        && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
                     String message = null;
                     switch (presence.getLargeImage().getText()) {
                         case "Yuumi":
@@ -443,7 +447,8 @@ public class CommandHandler extends ListenerAdapter {
                 event.getMessage().addReaction(giesl).queue();
         }
 
-        if (event.getAuthor().getId().equals("290368310711681024") && !event.getChannel().getId().equals("917201826271604736")) {
+        if (event.getAuthor().getId().equals("290368310711681024")
+                && !event.getChannel().getId().equals("917201826271604736")) {
             event.getMessage().addReaction(downvote).queue();
         }
     }
@@ -459,18 +464,24 @@ public class CommandHandler extends ListenerAdapter {
         t.start();
         String content = event.getMessage().getContentRaw();
         if (!event.isFromGuild() && !event.getAuthor().isBot()) {
-            TextChannel channel = (TextChannel) getBot().getJda().getGuildChannelById(Config.getInstance().dmDebugChannel);
+            TextChannel channel = (TextChannel) getBot().getJda()
+                    .getGuildChannelById(Config.getInstance().dmDebugChannel);
             if (channel != null) {
                 if (event.getMessage().getContentRaw().length() > 0)
-                    channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
-                            .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
+                    channel.sendMessageEmbeds(new EmbedBuilder()
+                            .setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
+                            .setDescription(content).setThumbnail(event.getAuthor().getAvatarUrl())
+                            .setTimestamp(event.getMessage().getTimeCreated()).build()).queue();
                 else {
                     for (Message.Attachment attachment : event.getMessage().getAttachments()) {
                         try {
-                            channel.sendMessageEmbeds(new EmbedBuilder().setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
-                                    .setThumbnail(event.getAuthor().getAvatarUrl()).setTimestamp(event.getMessage().getTimeCreated())
+                            channel.sendMessageEmbeds(new EmbedBuilder()
+                                    .setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
+                                    .setThumbnail(event.getAuthor().getAvatarUrl())
+                                    .setTimestamp(event.getMessage().getTimeCreated())
                                     .setDescription(attachment.getDescription() + "").build()).queue();
-                            channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName()).complete();
+                            channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName())
+                                    .complete();
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
                         }
@@ -485,8 +496,9 @@ public class CommandHandler extends ListenerAdapter {
         Command command = getCommand(cmd);
         if (command != null) {
             if (event.isFromGuild()) {
-                logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": " + event.getAuthor().getAsTag()
-                            + ": " + event.getMessage().getContentRaw());
+                logger.info(event.getGuild().getName() + ": " + event.getChannel().getName() + ": "
+                        + event.getAuthor().getAsTag()
+                        + ": " + event.getMessage().getContentRaw());
             } else {
                 logger.info(event.getAuthor().getAsTag() + ": " + event.getMessage().getContentRaw());
             }
@@ -496,7 +508,8 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void counter(MessageReceivedEvent event) {
-        if (event.getChannel().getId().equals("898271566880727130") && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
+        if (event.getChannel().getId().equals("898271566880727130")
+                && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
             try {
                 double i = evaluate(event.getMessage().getContentRaw());
                 if (Double.isNaN(i))
@@ -517,10 +530,13 @@ public class CommandHandler extends ListenerAdapter {
                     try {
                         i = getKANValue(text);
                     } catch (Throwable e) {
-                        // Catches all throwables instead of only exceptions to include stackoverflow and other errors.
-                        // They would not crash the bot if not caught, but this makes sure the user is notified that their number will no longer be calculated
+                        // Catches all throwables instead of only exceptions to include stackoverflow
+                        // and other errors.
+                        // They would not crash the bot if not caught, but this makes sure the user is
+                        // notified that their number will no longer be calculated
                         e.printStackTrace();
-                        event.getMessage().replyEmbeds(new EmbedBuilder().setColor(Color.RED).setTitle("I am unable to calculate this number :(").build()).queue();
+                        event.getMessage().replyEmbeds(new EmbedBuilder().setColor(Color.RED)
+                                .setTitle("I am unable to calculate this number :(").build()).queue();
                         return;
                     }
                     String prefix = text + " = ";
@@ -556,18 +572,19 @@ public class CommandHandler extends ListenerAdapter {
             content = content.substring(7, content.length() - 3);
         } else if (content.startsWith("```latex\n") && content.endsWith("```")) {
             content = content.substring(9, content.length() - 3);
-        } else return;
+        } else
+            return;
         LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
     }
-
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
         if (command != null) {
-            logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName() : event.getChannel().getName())
-                        + ": " + event.getUser().getAsTag()
-                        + ": " + event.getCommandString());
+            logger.info((event.getGuild() != null ? event.getGuild().getName() + ": " + event.getChannel().getName()
+                    : event.getChannel().getName())
+                    + ": " + event.getUser().getAsTag()
+                    + ": " + event.getCommandString());
             command.execute(new SlashCommandCommandEvent(event, command));
         }
     }
@@ -587,7 +604,8 @@ public class CommandHandler extends ListenerAdapter {
             EmbedBuilder builder = new EmbedBuilder();
 
             builder.setTitle("Wilkommen " + event.getMember().getEffectiveName())
-                    .setDescription(event.getMember().getAsMention() + " Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
+                    .setDescription(event.getMember().getAsMention()
+                            + " Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
                     .setColor(Util.getRandomColor());
 
             channel.sendMessageEmbeds(builder.build()).queue();
@@ -624,7 +642,7 @@ public class CommandHandler extends ListenerAdapter {
 
         if (upvote || downVote) {
             Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-            Util.addKarma(message.getAuthor(), upvote ? -1 : 1);//removing upvotes => remove karma
+            Util.addKarma(message.getAuthor(), upvote ? -1 : 1);// removing upvotes => remove karma
         }
 
         if (sus) {
@@ -644,12 +662,13 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     /**
-     * this is used to automatically register slash commands to a test server (faster than global registration)
+     * this is used to automatically register slash commands to a test server
+     * (faster than global registration)
      */
     private void registerSlashCommand(CommandData data) {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();
-//        getBot().getJda().upsertCommand(data);
+        // getBot().getJda().upsertCommand(data);
     }
 
     @Override
