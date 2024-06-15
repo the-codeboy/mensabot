@@ -29,7 +29,6 @@ import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
-import ml.codeboy.thebot.tracker.BedTimeTracker;
 import ml.codeboy.thebot.util.Replyable;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -99,12 +98,6 @@ public class CommandHandler extends ListenerAdapter {
         this.registerKnownCommands();
 
         registerAnnouncements();
-        // registerBedTimeTracker();
-
-    }
-
-    private void registerBedTimeTracker() {
-        BedTimeTracker tracker = new BedTimeTracker(getBot());
     }
 
     private void registerAnnouncements() {
