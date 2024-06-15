@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 public class InteractionHandler extends ListenerAdapter {
 
+    private InteractionHandler(){}
+
     private static final InteractionHandler instance = new InteractionHandler();
     private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
     private final HashMap<Pattern, SelectMenuListener> regexSelectMenuListeners = new HashMap<>();

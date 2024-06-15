@@ -11,27 +11,32 @@ import javax.security.auth.login.LoginException;
 
 public class MensaBot implements Bot {
 
-    private static MensaBot instance;//I don't really want to make this a singleton so I didn't make this final
+    private static final MensaBot instance = new MensaBot();
     private final CommandHandler commandHandler;
     private final JDA jda;
     private final Logger logger
             = LoggerFactory.getLogger(getClass());
 
-    public MensaBot() throws LoginException, InterruptedException {
-        jda = JDABuilder.createDefault(Config.getInstance().token)
-                .enableIntents(GatewayIntent.DIRECT_MESSAGES,
-                        GatewayIntent.GUILD_MEMBERS,
-                        GatewayIntent.MESSAGE_CONTENT,
-                        GatewayIntent.GUILD_PRESENCES)
-                .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY).build();
-        jda.awaitReady();
+    public MensaBot() {
+        try {
+            jda = JDABuilder.createDefault(Config.getInstance().token)
+                    .enableIntents(GatewayIntent.DIRECT_MESSAGES,
+                            GatewayIntent.GUILD_MEMBERS,
+                            GatewayIntent.MESSAGE_CONTENT,
+                            GatewayIntent.GUILD_PRESENCES)
+                    .enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY).build();
+            jda.awaitReady();
+        } catch (InterruptedException | LoginException e) {
+            throw new RuntimeException(e);
+        }
         commandHandler = new CommandHandler(this);
-        instance = this;
+        jda.addEventListener(commandHandler);
+        jda.addEventListener(InteractionHandler.getInstance());
         logger.info("Bot started");
     }
 
-    public static void main(String[] args) throws LoginException, InterruptedException {
-        new MensaBot();
+    public static void main(String[] args) {
+        // nothing to do here - bot is started automatically when class is initialized
     }
 
     public static MensaBot getInstance() {

@@ -84,8 +84,6 @@ public class CommandHandler extends ListenerAdapter {
     public CommandHandler(Bot bot) {
         UserDataManager.getInstance();// to load userdata - this will start a new thread for loading the data
         this.bot = bot;
-        bot.getJda().addEventListener(this);
-        bot.getJda().addEventListener(InteractionHandler.getInstance());
         String serverID = Config.getInstance().serverId;
         try {
             bot.getJda().awaitReady();
