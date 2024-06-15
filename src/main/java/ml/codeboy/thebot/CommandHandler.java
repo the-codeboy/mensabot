@@ -74,7 +74,6 @@ public class CommandHandler extends ListenerAdapter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Bot bot;
     private final HashMap<String, Command> commands = new HashMap<>();
-    private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     private final Emoji amogus, sus, downvote;
     private final Emoji giesl;
@@ -390,7 +389,6 @@ public class CommandHandler extends ListenerAdapter {
     public void registerCommand(Command command) {
         command.register(this);
         commands.put(command.getName().toLowerCase(), command);
-        allCommands.add(command);
         for (String alias : command.getAliases()) {
             commands.put(alias.toLowerCase(), command);
         }
@@ -651,7 +649,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAllSlashCommands() {
         CommandListUpdateAction action = getBot().getJda().updateCommands();
-        for (Command command : allCommands) {
+        for (Command command : commands.values()) {
             CommandData commandData = command.getCommandData();
             if (!command.isHidden() && commandData != null)
                 action = action.addCommands(commandData);
@@ -689,7 +687,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     public Collection<Command> getCommands() {
-        return allCommands;
+        return commands.values();
     }
 
     public Guild getServer() {
