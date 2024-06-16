@@ -1,10 +1,7 @@
 package com.the_codeboy.mensabot.commands;
 
 import com.github.codeboy.jokes4j.Jokes4J;
-import com.github.codeboy.jokes4j.api.Category;
-import com.github.codeboy.jokes4j.api.Joke;
-import com.github.codeboy.jokes4j.api.JokeType;
-import com.github.codeboy.jokes4j.api.Language;
+import com.github.codeboy.jokes4j.api.*;
 import com.the_codeboy.mensabot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -51,7 +48,14 @@ public class JokeCommand extends Command {
             }
         }
         Jokes4J instance = Jokes4J.getInstance();
-        joke = category == null ? instance.getJoke() : instance.getJoke(Language.ENGLISH, category);
+
+        JokeRequest request = new JokeRequest.Builder()
+                .categories(category)
+                .blackList(Flag.explicit, Flag.nsfw, Flag.racist, Flag.sexist)
+                .language(Language.ENGLISH)
+                .build();
+
+        joke=instance.getJoke(request);
 
         EmbedBuilder builder = event.getBuilder();
         if (joke.getType() == JokeType.single) {
