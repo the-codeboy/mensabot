@@ -10,18 +10,14 @@ import com.the_codeboy.mensabot.commands.leaderboard.LeaderBoard;
 import com.the_codeboy.mensabot.commands.mensa.*;
 import com.the_codeboy.mensabot.commands.nils.ElMomentoCommand;
 import com.the_codeboy.mensabot.commands.quotes.AddQuote;
-import com.the_codeboy.mensabot.commands.quotes.AddQuoteList;
 import com.the_codeboy.mensabot.commands.quotes.QuoteCommand;
 import com.the_codeboy.mensabot.commands.secret.*;
-import com.the_codeboy.mensabot.commands.sound.*;
 import com.the_codeboy.mensabot.events.MessageCommandEvent;
 import com.the_codeboy.mensabot.events.SlashCommandCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -105,8 +101,6 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ExecuteCommand.class);
         createCommand(LanguagesCommand.class);
 
-        registerAudioCommands();
-
         createCommand(AddQuote.class);
         createCommand(QuoteCommand.class);
 
@@ -135,7 +129,6 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerSecretCommands() {
-        createCommand(RickRoll.class);
         createCommand(React.class);
         createCommand(Msg.class);
         createCommand(LoadKarma.class);
@@ -154,24 +147,6 @@ public class CommandHandler extends ListenerAdapter {
     private void registerDebugCommands() {
         createCommand(ListQuotes.class);
         createCommand(GetQuotes.class);
-    }
-
-    private void registerAudioCommands() {
-        createCommand(fPlay.class);
-        createCommand(Pause.class);
-        createCommand(Resume.class);
-        // createCommand(Echo.class);
-        createCommand(Loop.class);
-        createCommand(PlayNext.class);
-        createCommand(Queue.class);
-        createCommand(RemoveTrack.class);
-        createCommand(Shuffle.class);
-        createCommand(Skip.class);
-        createCommand(Stop.class);
-        createCommand(Volume.class);
-        createCommand(CurrentTrack.class);
-        createCommand(Leave.class);
-        createCommand(Join.class);
     }
 
     private void registerLeaderBoardCommands() {
@@ -274,17 +249,6 @@ public class CommandHandler extends ListenerAdapter {
     private void registerSlashCommand(CommandData data) {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();
-    }
-
-    @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (event.getChannelLeft().getMembers().size() == 1) {
-            AudioChannel connectedChannel = event.getGuild().getSelfMember().getVoiceState().getChannel();
-            if (connectedChannel != event.getChannelLeft())
-                return;
-
-            PlayerManager.getInstance().destroy(event.getGuild());
-        }
     }
 
     private Bot getBot() {

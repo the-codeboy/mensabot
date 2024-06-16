@@ -4,8 +4,6 @@ import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
 import com.the_codeboy.mensabot.Config;
 import com.the_codeboy.mensabot.commands.Command;
-import com.the_codeboy.mensabot.commands.sound.GuildMusicManager;
-import com.the_codeboy.mensabot.commands.sound.PlayerManager;
 import com.the_codeboy.mensabot.data.GuildData;
 import com.the_codeboy.mensabot.data.GuildManager;
 import com.the_codeboy.mensabot.util.Replyable;
@@ -162,10 +160,6 @@ public abstract class CommandEvent implements Replyable {
 
     public EmbedBuilder getBuilder() {
         return new EmbedBuilder();
-    }
-
-    public GuildMusicManager getManager() {
-        return PlayerManager.getInstance().getMusicManager(getGuild());
     }
 
     public boolean isEphermal() {

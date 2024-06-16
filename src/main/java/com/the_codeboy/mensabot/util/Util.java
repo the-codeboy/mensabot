@@ -2,14 +2,12 @@ package com.the_codeboy.mensabot.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.the_codeboy.mensabot.data.UserData;
 import com.the_codeboy.mensabot.data.UserDataManager;
 import com.the_codeboy.mensabot.events.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import org.mariuszgromada.math.mxparser.Expression;
 
@@ -25,8 +23,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Util {
 
@@ -88,23 +84,11 @@ public class Util {
         builder.addField("Time left: " + Util.toReadable(track.getDuration() - track.getPosition() - 1),  //subtract one millisecond extra because songs weirdly always end one millisecond early
                 Util.getProgress(20, (double) track.getPosition() / track.getDuration(), ":white_large_square:", ":black_large_square:"), false);
         return builder;
-    }    private static final int secondsPerDay = 3600 * 24,
+    }
+
+    private static final int secondsPerDay = 3600 * 24,
             secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
-    public static void sendTrackInfo(CommandEvent event, AudioTrack track) {
-        AudioPlayer player = event.getManager().audioPlayer;
-        Message message = event.send(Util.getSongInfo(track, event.getBuilder()));
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                message.editMessageEmbeds(Util.getSongInfo(track, event.getBuilder()).build()).complete();
-                if (track.getPosition() >= track.getDuration() - 300 || player.getPlayingTrack() != track) {
-                    cancel();
-                }
-            }
-        }, 1000, 5000);
-    }
 
     public static int toInt(String string) {
         return toInt(string, 0);
@@ -295,8 +279,6 @@ public class Util {
         }
         return dist[sourceLength][targetLength];
     }
-
-
 
 
 }
