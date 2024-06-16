@@ -2,24 +2,21 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss} %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} %highlight(%-5level) - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${application.home:-.}/logs/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>./logs/%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
-        <append>true</append>
         <encoder>
-            <pattern>%d{HH:mm:ss} %-15.-15logger{0} %-6level %msg%n</pattern>
+            <pattern>%d{HH:mm:ss} %-5level - %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="DISCORD" class="com.the_codeboy.mensabot.LogAppender"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
-        <appender-ref ref="DISCORD"/>
     </root>
 </configuration>
