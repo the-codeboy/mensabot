@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 public class LanguagesCommand extends Command {
     public LanguagesCommand() {
-        super("languages", "sends available languages");
+        super("languages", "sends available programming languages (see execute command)");
         setGuildOnlyCommand(false);
     }
 
