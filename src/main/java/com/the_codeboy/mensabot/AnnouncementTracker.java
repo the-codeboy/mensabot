@@ -19,6 +19,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -46,23 +48,31 @@ public class AnnouncementTracker {
 
     private AnnouncementTracker(JDA jda) {
         this.jda = jda;
+        registerAnnouncements();
     }
 
 
     private void registerAnnouncements() {
-        Date date = new Date();
-        announceIn(60 * 60 * 20 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), false);
-        announceIn(60 * 60 * 7 - (date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 3600), true);
+        scheduleAnnouncement(20, false); // Schedule announcement at 20:00
+        scheduleAnnouncement(7, true);  // Schedule announcement at 07:00
     }
 
-    private void announceIn(int seconds, boolean includeWeather) {
-        if (seconds < 0)
-            seconds += 24 * 60 * 60;
+    private void scheduleAnnouncement(int targetHour, boolean includeWeather) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextRun = now.withHour(targetHour).withMinute(0).withSecond(0).withNano(0);
+
+        // If nextRun is before now, schedule it for the next day
+        if (nextRun.isBefore(now)) {
+            nextRun = nextRun.plusDays(1);
+        }
+
+        long initialDelay = ChronoUnit.SECONDS.between(now, nextRun);
         executorService.scheduleAtFixedRate(() -> {
             sendMealsToAllGuilds();
-            if (includeWeather)
+            if (includeWeather) {
                 sendWeatherToAllGuilds();
-        }, seconds, 24 * 60 * 60, TimeUnit.SECONDS);
+            }
+        }, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
     }
 
     private void sendMealsToGuild(GuildData data, Message message) {
