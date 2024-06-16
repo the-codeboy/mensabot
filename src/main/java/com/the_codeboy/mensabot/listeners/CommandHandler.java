@@ -108,7 +108,6 @@ public class CommandHandler extends ListenerAdapter {
         registerAudioCommands();
 
         createCommand(AddQuote.class);
-        createCommand(AddQuoteList.class);
         createCommand(QuoteCommand.class);
 
         registerLeaderBoardCommands();
