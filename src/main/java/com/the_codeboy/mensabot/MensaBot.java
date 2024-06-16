@@ -39,6 +39,7 @@ public class MensaBot implements Bot {
         jda.addEventListener(InteractionHandler.getInstance());
         jda.addEventListener(new UselessListener(this));
         jda.addEventListener(new PrivateListener());
+        AnnouncementTracker.registerAnnouncementTracker(jda);
         logger.info("Bot started");
     }
 
