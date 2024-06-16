@@ -40,6 +40,10 @@ public class MensaBot implements Bot {
         jda.addEventListener(new UselessListener(this));
         jda.addEventListener(new PrivateListener());
         AnnouncementTracker.registerAnnouncementTracker(jda);
+
+        if (Config.getInstance().quoteStatus) {
+            new StatusChanger(jda);
+        }
         logger.info("Bot started");
     }
 

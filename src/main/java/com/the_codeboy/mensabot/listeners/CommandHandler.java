@@ -128,9 +128,6 @@ public class CommandHandler extends ListenerAdapter {
 
         registerDebugCommands();
 
-        if (Config.getInstance().quoteStatus) {
-            changeStatus();
-        }
         try {
             executor.shutdown();
             executor.awaitTermination(1, TimeUnit.MINUTES);
@@ -173,41 +170,6 @@ public class CommandHandler extends ListenerAdapter {
     private void registerDebugCommands() {
         createCommand(ListQuotes.class);
         createCommand(GetQuotes.class);
-    }
-
-    private void changeStatus() {
-        new Timer().schedule(new TimerTask() {
-            public void run() {
-                String status;
-                do {
-                    status = getRandomStatus();
-                } while (status.length() > 128 || status.length() == 0);
-                getBot().getJda().getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,
-                        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
-            }
-        }, 0, 60_000);
-    }
-
-    private String getRandomStatus() {
-        return Jokes4J.getInstance()
-                .getJoke(
-                        new JokeRequest.Builder().blackList(Flag.explicit, Flag.nsfw, Flag.racist, Flag.sexist).build())
-                .getJoke();
-    }
-
-    private String getRandomAdviceStatus() {
-        return AdviceApi.getInstance().getObject();
-    }
-
-    private String getRandomQuoteStatus() {
-        Quote quote;
-        String status;
-        quote = QuoteManager.getInstance().getRandomQuote("Sun Tzu");
-        if (quote == null)
-            return "";
-        status = "\"" + quote.getContent() +
-                "\"\n - " + quote.getPerson();
-        return status;
     }
 
     private void registerAudioCommands() {
