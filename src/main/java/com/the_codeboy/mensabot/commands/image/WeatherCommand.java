@@ -1,6 +1,6 @@
-package com.the_codeboy.mensabot.commands;
+package com.the_codeboy.mensabot.commands.image;
 
-import com.the_codeboy.mensabot.commands.image.ImageCommand;
+import com.the_codeboy.mensabot.commands.ShortsCommand;
 import ml.codeboy.met.Weather4J;
 import ml.codeboy.met.data.Forecast;
 import ml.codeboy.openweathermap.data.Location;

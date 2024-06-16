@@ -5,9 +5,7 @@ import com.the_codeboy.mensabot.Config;
 import com.the_codeboy.mensabot.commands.*;
 import com.the_codeboy.mensabot.commands.debug.GetQuotes;
 import com.the_codeboy.mensabot.commands.debug.ListQuotes;
-import com.the_codeboy.mensabot.commands.image.MorbCommand;
-import com.the_codeboy.mensabot.commands.image.ShitCommand;
-import com.the_codeboy.mensabot.commands.image.meme.*;
+import com.the_codeboy.mensabot.commands.image.WeatherCommand;
 import com.the_codeboy.mensabot.commands.leaderboard.LeaderBoard;
 import com.the_codeboy.mensabot.commands.mensa.*;
 import com.the_codeboy.mensabot.commands.nils.ElMomentoCommand;
@@ -134,14 +132,6 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     private void registerImageCommands() {
-        createCommand(MorbCommand.class);
-        createCommand(ShitCommand.class);
-        createCommand(ChangeMyMindCommand.class);
-        createCommand(HotlineBlingCommand.class);
-        createCommand(TwoButtonsCommand.class);
-        createCommand(Draw25Command.class);
-        createCommand(DisasterGirlCommand.class);
-        createCommand(SupermanCommand.class);
         createCommand(LatexCommand.class);
     }
 
