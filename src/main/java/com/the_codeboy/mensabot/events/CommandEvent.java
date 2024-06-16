@@ -142,22 +142,6 @@ public abstract class CommandEvent implements Replyable {
 
     public abstract MessageChannel getChannel();
 
-    public Message send(String message) {
-        return getChannel().sendMessage(message).complete();
-    }
-
-    public Message send(MessageEmbed message) {
-        return getChannel().sendMessageEmbeds(message).complete();
-    }
-
-    public Message send(EmbedBuilder builder) {
-        return send(builder.build());
-    }
-
-    public void replyErrorUnknown() {
-        replyError("unknown error");
-    }
-
     public EmbedBuilder getBuilder() {
         return new EmbedBuilder();
     }
@@ -179,14 +163,5 @@ public abstract class CommandEvent implements Replyable {
     public JDA getJDA() {
         return getJdaEvent().getJDA();
     }
-
-    public MessageCommandEvent getMessageCommandEvent() {
-        return (MessageCommandEvent) this;
-    }
-
-    public SlashCommandCommandEvent getSlashCommandCommandEvent() {
-        return (SlashCommandCommandEvent) this;
-    }
-
     //endregion
 }
