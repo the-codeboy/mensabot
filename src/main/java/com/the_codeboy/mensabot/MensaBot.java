@@ -1,10 +1,7 @@
 package com.the_codeboy.mensabot;
 
 import com.the_codeboy.mensabot.data.UserDataManager;
-import com.the_codeboy.mensabot.listeners.CommandHandler;
-import com.the_codeboy.mensabot.listeners.InteractionHandler;
-import com.the_codeboy.mensabot.listeners.PrivateListener;
-import com.the_codeboy.mensabot.listeners.UselessListener;
+import com.the_codeboy.mensabot.listeners.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -39,6 +36,7 @@ public class MensaBot implements Bot {
         jda.addEventListener(InteractionHandler.getInstance());
         jda.addEventListener(new UselessListener(this));
         jda.addEventListener(new PrivateListener());
+        jda.addEventListener(new KarmaListener());
         AnnouncementTracker.registerAnnouncementTracker(jda);
 
         if (Config.getInstance().quoteStatus) {

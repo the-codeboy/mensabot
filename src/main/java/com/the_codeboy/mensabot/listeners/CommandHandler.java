@@ -273,45 +273,6 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    @Override
-    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        String emote = event.getReaction().getEmoji().getAsReactionCode();
-
-        boolean upvote = Config.getInstance().isUpvote(emote);
-        boolean downVote = Config.getInstance().isDownvote(emote);
-        boolean sus = Config.getInstance().isSus(emote);
-
-        if (upvote || downVote) {
-            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-            Util.addKarma(message.getAuthor(), upvote ? 1 : -1);
-        }
-
-        if (sus) {
-            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-            Util.addSusCount(message.getAuthor(), 1);
-        }
-
-    }
-
-    @Override
-    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        String emote = event.getReaction().getEmoji().getAsReactionCode();
-
-        boolean upvote = Config.getInstance().isUpvote(emote);
-        boolean downVote = Config.getInstance().isDownvote(emote);
-        boolean sus = Config.getInstance().isSus(emote);
-
-        if (upvote || downVote) {
-            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-            Util.addKarma(message.getAuthor(), upvote ? -1 : 1);// removing upvotes => remove karma
-        }
-
-        if (sus) {
-            Message message = event.getChannel().retrieveMessageById(event.getMessageId()).complete();
-            Util.addSusCount(message.getAuthor(), -1);
-        }
-    }
-
     private void registerAllSlashCommands() {
         CommandListUpdateAction action = getBot().getJda().updateCommands();
         for (Command command : getCommands()) {
