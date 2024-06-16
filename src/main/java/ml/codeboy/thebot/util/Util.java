@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import org.mariuszgromada.math.mxparser.Expression;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -78,8 +79,7 @@ public class Util {
         if (repeatSecond == 0)
             output += ":white_check_mark:";
         return output;
-    }    private static final int secondsPerDay = 3600 * 24,
-            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
+    }
 
     public static EmbedBuilder getSongInfo(AudioTrack track, EmbedBuilder builder) {
         builder.setTitle(track.getInfo().title);
@@ -88,7 +88,8 @@ public class Util {
         builder.addField("Time left: " + Util.toReadable(track.getDuration() - track.getPosition() - 1),  //subtract one millisecond extra because songs weirdly always end one millisecond early
                 Util.getProgress(20, (double) track.getPosition() / track.getDuration(), ":white_large_square:", ":black_large_square:"), false);
         return builder;
-    }
+    }    private static final int secondsPerDay = 3600 * 24,
+            secondsPerMonth = secondsPerDay * 30, secondsPerYear = secondsPerDay * 365;
 
     public static void sendTrackInfo(CommandEvent event, AudioTrack track) {
         AudioPlayer player = event.getManager().audioPlayer;
@@ -226,6 +227,15 @@ public class Util {
         }
     }
 
+    public static double evaluate(String text) {
+        try {
+            Expression e = new Expression(text);
+            return e.calculate();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     /**
      * @return true if the text contains ↑ meaning it is probably in knuths arrow notation
      */
@@ -276,9 +286,9 @@ public class Util {
                 int cost = from.charAt(i - 1) == to.charAt(j - 1) ? 0 : 1;
                 dist[i][j] = Math.min(Math.min(dist[i - 1][j] + 1, dist[i][j - 1] + 1), dist[i - 1][j - 1] + cost);
                 if (i > 1 &&
-                    j > 1 &&
-                    from.charAt(i - 1) == to.charAt(j - 2) &&
-                    from.charAt(i - 2) == to.charAt(j - 1)) {
+                        j > 1 &&
+                        from.charAt(i - 1) == to.charAt(j - 2) &&
+                        from.charAt(i - 2) == to.charAt(j - 1)) {
                     dist[i][j] = Math.min(dist[i][j], dist[i - 2][j - 2] + cost);
                 }
             }

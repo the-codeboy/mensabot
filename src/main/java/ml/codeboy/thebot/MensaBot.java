@@ -1,5 +1,10 @@
 package ml.codeboy.thebot;
 
+import ml.codeboy.thebot.data.UserDataManager;
+import ml.codeboy.thebot.listeners.CommandHandler;
+import ml.codeboy.thebot.listeners.InteractionHandler;
+import ml.codeboy.thebot.listeners.PrivateListener;
+import ml.codeboy.thebot.listeners.UselessListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -32,11 +37,13 @@ public class MensaBot implements Bot {
         commandHandler = new CommandHandler(this);
         jda.addEventListener(commandHandler);
         jda.addEventListener(InteractionHandler.getInstance());
+        jda.addEventListener(new UselessListener(this));
+        jda.addEventListener(new PrivateListener());
         logger.info("Bot started");
     }
 
     public static void main(String[] args) {
-        // nothing to do here - bot is started automatically when class is initialized
+        UserDataManager.getInstance();// to load userdata - this will start a new thread for loading the data
     }
 
     public static MensaBot getInstance() {

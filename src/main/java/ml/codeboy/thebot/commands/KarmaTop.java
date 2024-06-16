@@ -1,9 +1,9 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.data.UserData;
 import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.listeners.CommandHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;

@@ -1,4 +1,4 @@
-package ml.codeboy.thebot;
+package ml.codeboy.thebot.listeners;
 
 import com.github.codeboy.api.Mensa;
 import com.github.codeboy.jokes4j.Jokes4J;
@@ -6,6 +6,9 @@ import com.github.codeboy.jokes4j.api.Flag;
 import com.github.codeboy.jokes4j.api.JokeRequest;
 import ml.codeboy.met.Weather4J;
 import ml.codeboy.met.data.Forecast;
+import ml.codeboy.thebot.Bot;
+import ml.codeboy.thebot.Config;
+import ml.codeboy.thebot.MensaUtil;
 import ml.codeboy.thebot.apis.AdviceApi;
 import ml.codeboy.thebot.commands.*;
 import ml.codeboy.thebot.commands.debug.GetQuotes;
@@ -24,76 +27,56 @@ import ml.codeboy.thebot.commands.sound.Queue;
 import ml.codeboy.thebot.commands.sound.*;
 import ml.codeboy.thebot.data.GuildData;
 import ml.codeboy.thebot.data.GuildManager;
-import ml.codeboy.thebot.data.UserDataManager;
 import ml.codeboy.thebot.events.MessageCommandEvent;
 import ml.codeboy.thebot.events.SlashCommandCommandEvent;
 import ml.codeboy.thebot.quotes.Quote;
 import ml.codeboy.thebot.quotes.QuoteManager;
-import ml.codeboy.thebot.util.Replyable;
 import ml.codeboy.thebot.util.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
-import net.dv8tion.jda.api.events.user.UserActivityStartEvent;
-import net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import org.jetbrains.annotations.NotNull;
-import org.mariuszgromada.math.mxparser.Expression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.time.Instant;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
 
 import static ml.codeboy.thebot.WeatherUtil.generateForecastImage;
-import static ml.codeboy.thebot.util.Util.getKANValue;
-import static ml.codeboy.thebot.util.Util.isKAN;
 
 public class CommandHandler extends ListenerAdapter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Bot bot;
     private final HashMap<String, Command> commands = new HashMap<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-    private final Emoji amogus, sus, downvote;
-    private final Emoji giesl;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     private Guild server;
 
     public CommandHandler(Bot bot) {
-        UserDataManager.getInstance();// to load userdata - this will start a new thread for loading the data
         this.bot = bot;
         String serverID = Config.getInstance().serverId;
         try {
             bot.getJda().awaitReady();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         if (serverID != null)
             server = bot.getJda().getGuildById(serverID);
-        amogus = getBot().getJda().getEmojiById("909891436625944646");
-        sus = getBot().getJda().getEmojiById("930765635913408532");
-        downvote = getBot().getJda().getEmojiById("903336514644222033");
-        giesl = getBot().getJda().getEmojiById("923655475675947028");
 
         this.registerKnownCommands();
 
@@ -158,7 +141,7 @@ public class CommandHandler extends ListenerAdapter {
             if (channel != null) {
 
                 channel.sendMessage(
-                        "Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
+                                "Forecast for " + mensa.getCity() + "\nData from The Norwegian Meteorological Institute")
                         .addFile(file, "weather_forecast.png").complete();
             }
         } catch (Exception ignored) {
@@ -200,16 +183,6 @@ public class CommandHandler extends ListenerAdapter {
             file.delete();
         }
 
-    }
-
-    @Override
-    public void onUserActivityStart(@NotNull UserActivityStartEvent event) {
-        checkActivity(event.getMember());
-    }
-
-    @Override
-    public void onUserUpdateActivityOrder(@NotNull UserUpdateActivityOrderEvent event) {
-        checkActivity(event.getMember());
     }
 
     private void createCommand(Class<? extends Command> command) {
@@ -261,9 +234,6 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(AddQuote.class);
         createCommand(AddQuoteList.class);
         createCommand(QuoteCommand.class);
-        // registerCommand(new Karma());
-        // registerCommand(new KarmaTop());
-        // registerCommand(new KarmaBottom());
 
         registerLeaderBoardCommands();
 
@@ -391,66 +361,8 @@ public class CommandHandler extends ListenerAdapter {
         logger.info("registered command " + command.getName());
     }
 
-    private void checkActivity(Member member) {
-        for (Activity activity : member.getActivities()) {
-            if (activity.isRich()) {
-                RichPresence presence = activity.asRichPresence();
-                if (presence != null && "401518684763586560".equals(presence.getApplicationId())
-                        && presence.getLargeImage() != null && presence.getLargeImage().getText() != null) {
-                    String message = null;
-                    switch (presence.getLargeImage().getText()) {
-                        case "Yuumi":
-                            message = "Warum spielst du überhaupt League of Legends, wenn alles was du tust e-drücken ist?";
-                            break;
-                        case "Teemo":
-                            message = "Hör mal auf Teemo zu spielen. Scheiß range top laner";
-                            break;
-                    }
-                    if (message != null && Math.random() > 0.8) {
-                        logger.info(member.getUser().getAsTag() + " " + message);
-                        member.getUser().openPrivateChannel().complete().sendMessage(message).queue();
-                    }
-                }
-
-            }
-        }
-    }
-
-    private void amogus(MessageReceivedEvent event) {
-        String msg = event.getMessage().getContentRaw().toLowerCase();
-        if (msg.contains("mogus") || msg.contains("imposter") || msg.contains("among us")) {
-            logger.info("amogus");
-            if (amogus != null)
-                event.getMessage().addReaction(amogus).queue();
-        }
-        if (msg.contains("sus")) {
-            logger.info("sus");
-            if (amogus != null)
-                event.getMessage().addReaction(amogus).queue();
-            if (sus != null)
-                event.getMessage().addReaction(sus).queue();
-        }
-        if (msg.contains("giesl") || msg.contains("weihnacht")) {
-            logger.info("weihnachtsgiesl");
-            if (giesl != null)
-                event.getMessage().addReaction(giesl).queue();
-        }
-
-        if (event.getAuthor().getId().equals("290368310711681024")
-                && !event.getChannel().getId().equals("917201826271604736")) {
-            event.getMessage().addReaction(downvote).queue();
-        }
-    }
-
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        Thread t = new Thread(() -> {
-            amogus(event);
-            counter(event);
-            evaluateMessage(event);
-            detectLatex(event);
-        });
-        t.start();
         String content = event.getMessage().getContentRaw();
         if (!event.isFromGuild() && !event.getAuthor().isBot()) {
             TextChannel channel = (TextChannel) getBot().getJda()
@@ -468,7 +380,7 @@ public class CommandHandler extends ListenerAdapter {
                                     .setAuthor(event.getAuthor().getAsTag() + " " + event.getAuthor().getAsMention())
                                     .setThumbnail(event.getAuthor().getAvatarUrl())
                                     .setTimestamp(event.getMessage().getTimeCreated())
-                                    .setDescription(attachment.getDescription() + "").build()).queue();
+                                    .setDescription(attachment.getDescription()).build()).queue();
                             channel.sendFile(attachment.getProxy().download().get(), attachment.getFileName())
                                     .complete();
                         } catch (InterruptedException | ExecutionException e) {
@@ -496,76 +408,6 @@ public class CommandHandler extends ListenerAdapter {
         }
     }
 
-    private void counter(MessageReceivedEvent event) {
-        if (event.getChannel().getId().equals("898271566880727130")
-                && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId())) {
-            try {
-                double i = evaluate(event.getMessage().getContentRaw());
-                if (Double.isNaN(i))
-                    return;
-                event.getChannel().sendMessage(i + 1 + "").queue();
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-    private void evaluateMessage(MessageReceivedEvent event) {
-        String content = event.getMessage().getContentRaw();
-        if (!event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) && content.endsWith("=?")) {
-            try {
-                String text = content.substring(0, content.length() - 2);
-                if (isKAN(text)) {
-                    BigInteger i = null;
-                    try {
-                        i = getKANValue(text);
-                    } catch (Throwable e) {
-                        // Catches all throwables instead of only exceptions to include stackoverflow
-                        // and other errors.
-                        // They would not crash the bot if not caught, but this makes sure the user is
-                        // notified that their number will no longer be calculated
-                        e.printStackTrace();
-                        event.getMessage().replyEmbeds(new EmbedBuilder().setColor(Color.RED)
-                                .setTitle("I am unable to calculate this number :(").build()).queue();
-                        return;
-                    }
-                    String prefix = text + " = ";
-                    int charsLeft = 2000 - prefix.length();
-                    String result = i.toString();
-                    result = Util.toDigits(charsLeft, result);
-                    MessageAction action = event.getMessage().reply(prefix + result);
-                    if (!result.equals(i.toString()))
-                        action = action.addFile(Util.toDigits(1048576, i.toString()).getBytes(), "number.txt");
-                    action.queue();
-                    return;
-                }
-                double i = evaluate(text);
-                event.getChannel().sendMessage(text + " = " + i).queue();
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-    }
-
-    private double evaluate(String text) {
-        try {
-            Expression e = new Expression(text);
-            return e.calculate();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private void detectLatex(MessageReceivedEvent event) {
-        String content = event.getMessage().getContentRaw();
-        if (content.startsWith("```tex\n") && content.endsWith("```")) {
-            content = content.substring(7, content.length() - 3);
-        } else if (content.startsWith("```latex\n") && content.endsWith("```")) {
-            content = content.substring(9, content.length() - 3);
-        } else
-            return;
-        LatexCommand.respondLatex(content, Replyable.from(event.getMessage()));
-    }
-
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command command = getCommand(event.getName());
@@ -583,21 +425,6 @@ public class CommandHandler extends ListenerAdapter {
         Command command = getCommand(event.getName());
         if (command != null) {
             command.autoComplete(event);
-        }
-    }
-
-    @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        if (event.getGuild().getId().equals("896116435875668019")) {
-            TextChannel channel = (TextChannel) event.getGuild().getGuildChannelById("896116435875668024");
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.setTitle("Wilkommen " + event.getMember().getEffectiveName())
-                    .setDescription(event.getMember().getAsMention()
-                            + " Bitte ändere deinen Nickname auf dem Server zu deinem echten Namen: Das macht die Kommunikation etwas leichter.")
-                    .setColor(Util.getRandomColor());
-
-            channel.sendMessageEmbeds(builder.build()).queue();
         }
     }
 
@@ -642,7 +469,7 @@ public class CommandHandler extends ListenerAdapter {
 
     private void registerAllSlashCommands() {
         CommandListUpdateAction action = getBot().getJda().updateCommands();
-        for (Command command : commands.values()) {
+        for (Command command : getCommands()) {
             CommandData commandData = command.getCommandData();
             if (!command.isHidden() && commandData != null)
                 action = action.addCommands(commandData);
@@ -657,7 +484,6 @@ public class CommandHandler extends ListenerAdapter {
     private void registerSlashCommand(CommandData data) {
         if (getServer() != null)
             getServer().upsertCommand(data).queue();
-        // getBot().getJda().upsertCommand(data);
     }
 
     @Override
@@ -680,7 +506,7 @@ public class CommandHandler extends ListenerAdapter {
     }
 
     public Collection<Command> getCommands() {
-        return commands.values();
+        return new HashSet<>(commands.values());
     }
 
     public Guild getServer() {

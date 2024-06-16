@@ -1,4 +1,4 @@
-package ml.codeboy.thebot;
+package ml.codeboy.thebot.listeners;
 
 import ml.codeboy.thebot.util.ButtonListener;
 import ml.codeboy.thebot.util.ModalListener;
@@ -7,15 +7,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class InteractionHandler extends ListenerAdapter {
-
-    private InteractionHandler(){}
 
     private static final InteractionHandler instance = new InteractionHandler();
     private final HashMap<String, SelectMenuListener> selectMenuListeners = new HashMap<>();
@@ -24,6 +21,8 @@ public class InteractionHandler extends ListenerAdapter {
     private final HashMap<Pattern, ButtonListener> regexButtonListeners = new HashMap<>();
     private final HashMap<String, ModalListener> modalListeners = new HashMap<>();
     private final HashMap<Pattern, ModalListener> regexModalListeners = new HashMap<>();
+    private InteractionHandler() {
+    }
 
     public static InteractionHandler getInstance() {
         return instance;

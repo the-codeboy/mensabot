@@ -1,8 +1,8 @@
 package ml.codeboy.thebot.commands;
 
-import ml.codeboy.thebot.CommandHandler;
-import ml.codeboy.thebot.InteractionHandler;
 import ml.codeboy.thebot.events.CommandEvent;
+import ml.codeboy.thebot.listeners.CommandHandler;
+import ml.codeboy.thebot.listeners.InteractionHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -143,9 +143,10 @@ public abstract class Command {
 
     /**
      * convenience method
+     *
      * @return the interaction handler
      */
-    protected InteractionHandler getInteractionHandler(){
+    protected InteractionHandler getInteractionHandler() {
         return InteractionHandler.getInstance();
     }
 

@@ -1,8 +1,8 @@
 package ml.codeboy.thebot.commands.leaderboard;
 
 import kotlin.jvm.functions.Function2;
-import ml.codeboy.thebot.CommandHandler;
 import ml.codeboy.thebot.data.UserData;
+import ml.codeboy.thebot.listeners.CommandHandler;
 
 import java.util.function.Function;
 
