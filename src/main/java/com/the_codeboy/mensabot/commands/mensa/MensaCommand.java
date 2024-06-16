@@ -4,9 +4,9 @@ import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Meal;
 import com.github.codeboy.api.Mensa;
 import com.github.codeboy.api.RWTHMensa;
-import com.the_codeboy.mensabot.data.*;
 import com.the_codeboy.mensabot.MensaUtil;
 import com.the_codeboy.mensabot.commands.Command;
+import com.the_codeboy.mensabot.data.*;
 import com.the_codeboy.mensabot.events.CommandEvent;
 import com.the_codeboy.mensabot.listeners.CommandHandler;
 import com.the_codeboy.mensabot.util.Replyable;
@@ -36,7 +36,7 @@ import java.util.UUID;
 public class MensaCommand extends Command {
 
     public MensaCommand() {
-        super("mensa", "Sends the current food in mensa Academica", "food");
+        super("mensa", "Sends the meal plan of the selected mensa", "food");
         OpenMensa.getInstance().reloadCanteens();//doesn't work without this
         setGuildOnlyCommand(false);
     }
@@ -44,7 +44,6 @@ public class MensaCommand extends Command {
     @Override
     public SlashCommandData getCommandData() {
         return super.getCommandData()
-                .addOption(OptionType.INTEGER, "mensa_id", "The id of the mensa eg 187", false)
                 .addOption(OptionType.STRING, "date", "The date", false, true)
                 .addOption(OptionType.STRING, "name", "Name of the mensa", false, true);
     }
@@ -99,9 +98,7 @@ public class MensaCommand extends Command {
             Mensa mensa = GuildManager.getInstance().getData(event.getGuild()).getDefaultMensa();
             Date date = new Date();
             for (OptionMapping om : sce.getOptions()) {
-                if (om.getName().equals("mensa_id")) {
-                    mensa = OpenMensa.getInstance().getMensa((int) om.getAsLong());
-                } else if (om.getName().equals("date")) {
+                if (om.getName().equals("date")) {
                     date = MensaUtil.wordToDate(om.getAsString());
                     if (date == null) {
                         event.replyError("Invalid argument: " + om.getAsString() + ". Expected one of: yesterday, today, tomorrow");
@@ -335,6 +332,5 @@ public class MensaCommand extends Command {
         }
         return false;
     }
-
 
 }
