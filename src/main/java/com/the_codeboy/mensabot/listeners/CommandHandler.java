@@ -72,17 +72,12 @@ public class CommandHandler extends ListenerAdapter {
 
         createCommand(ChuckNorrisJokeCommand.class);
         createCommand(JermaCommand.class);
-        createCommand(TrumpQuoteCommand.class);
         createCommand(AdviceCommand.class);
-        createCommand(NewsCommand.class);
         createCommand(InsultCommand.class);
-        createCommand(RhymeCommand.class);
         createCommand(MemeCommand.class);
         createCommand(JokeCommand.class);
         createCommand(ShortsCommand.class);
         createCommand(WeatherCommand.class);
-        createCommand(PingCommand.class);
-        createCommand(ShittyTranslateCommand.class);
         createCommand(GifCommand.class);
 
         createCommand(MensaCommand.class);
