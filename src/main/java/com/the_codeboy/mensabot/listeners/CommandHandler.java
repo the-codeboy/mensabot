@@ -83,7 +83,6 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(WeatherCommand.class);
         createCommand(PingCommand.class);
         createCommand(ShittyTranslateCommand.class);
-        createCommand(ASCIICommand.class);
         createCommand(GifCommand.class);
         // createCommand(StudydriveCommand.class);
         // had to remove this, see https://study.the-codeboy.com/
