@@ -100,7 +100,9 @@ public class AnnouncementTracker {
                             .setActionRows(mealButtons).build();
 
                     for (GuildData guildData : data) {
-                        sendMealsToGuild(guildData, message);
+                        if(guildData.getDefaultMensaId()==id) {
+                            sendMealsToGuild(guildData, message);
+                        }
                     }
                 }
         );
