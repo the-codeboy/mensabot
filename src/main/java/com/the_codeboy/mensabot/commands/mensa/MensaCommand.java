@@ -31,7 +31,9 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import java.awt.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MensaCommand extends Command {
 
@@ -116,11 +118,14 @@ public class MensaCommand extends Command {
 
     private Mensa tryGetMensa(CommandEvent event, String query) {
         List<Mensa> mensas = OpenMensa.getInstance().searchMensa(query);
-        if (mensas.size() == 0) {
+        if (mensas.isEmpty()) {
             event.replyError("No mensas found matching " + query);
         } else if (mensas.size() == 1) {
             return mensas.get(0);
         } else {
+            Optional<Mensa> exactMatch = mensas.stream().filter(m -> m.getName().equals(query)).findAny();
+            if (exactMatch.isPresent())
+                return exactMatch.get();
             sendMensas(event, mensas, query);
         }
         return null;
