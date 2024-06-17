@@ -147,7 +147,9 @@ public class AnnouncementTracker {
                     }
 
                     for (GuildData guildData : data) {
-                        sendWeatherToGuild(guildData.getGuild(), file);
+                        if(guildData.getDefaultMensaId()==id) {
+                            sendWeatherToGuild(guildData.getGuild(), file);
+                        }
                     }
                     file.delete();
                 }
