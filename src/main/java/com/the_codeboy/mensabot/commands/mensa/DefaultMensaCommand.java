@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.awt.*;
+import java.util.List;
+import java.util.Optional;
 
 public class DefaultMensaCommand extends Command {
     public DefaultMensaCommand() {
@@ -19,7 +21,20 @@ public class DefaultMensaCommand extends Command {
 
     @Override
     public SlashCommandData getCommandData() {
-        return super.getCommandData().addOption(OptionType.INTEGER, "id", "Id of the new default Mensa", true);
+        return super.getCommandData().addOption(OptionType.STRING, "name", "name of the new default Mensa", true,true);
+    }
+
+    @Override
+    public void autoComplete(String option, List<String> options) {
+        switch (option) {
+            case "name": {
+                for (Mensa mensa : OpenMensa.getInstance().getAllCanteens()) {
+                    if (mensa != null)
+                        options.add(mensa.getName());
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -29,14 +44,15 @@ public class DefaultMensaCommand extends Command {
             event.replyError("Missing argument");
         } else {
             try {
-                int i = Integer.parseInt(args[0]);
-                Mensa mensa = OpenMensa.getInstance().getMensa(i);
-                if (mensa == null) {
-                    event.replyError("Unable to find mensa with id " + i);
+                String mensaName = String.join("", args);
+                Optional<Mensa> optionalMensa = OpenMensa.getInstance().getAllCanteens().stream().filter(m -> m.getName().equals(mensaName)).findAny();
+                if (!optionalMensa.isPresent()) {
+                    event.replyError("Unable to find mensa " + mensaName);
                 } else {
+                    Mensa mensa = optionalMensa.get();
                     event.reply(new EmbedBuilder().setTitle("Success").setDescription("New default mensa for server is " + mensa.getName())
                             .setColor(Color.GREEN));
-                    event.getGuildData().setDefaultMensaId(i);
+                    event.getGuildData().setDefaultMensaId(mensa.getId());
                 }
             } catch (NumberFormatException e) {
                 event.replyError("Invalid argument. Expected Integer");
