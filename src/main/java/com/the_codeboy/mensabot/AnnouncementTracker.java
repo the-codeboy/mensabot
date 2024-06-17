@@ -1,5 +1,6 @@
 package com.the_codeboy.mensabot;
 
+import com.github.codeboy.OpenMensa;
 import com.github.codeboy.api.Mensa;
 import com.the_codeboy.mensabot.data.GuildData;
 import com.the_codeboy.mensabot.data.GuildManager;
@@ -21,9 +22,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +39,8 @@ public class AnnouncementTracker {
         return instance;
     }
 
-    public static void registerAnnouncementTracker(JDA jda){
-        if(instance!=null)
+    public static void registerAnnouncementTracker(JDA jda) {
+        if (instance != null)
             throw new IllegalStateException("AnnouncementTracker already registered");
         instance = new AnnouncementTracker(jda);
     }
@@ -90,23 +89,21 @@ public class AnnouncementTracker {
     public void sendMealsToAllGuilds() {
         logger.info("Sending meals to guilds");
         List<GuildData> data = GuildManager.getInstance().getAllGuildData();
-        while (!data.isEmpty()) {
-            GuildData d = data.remove(0);
-            Mensa mensa = d.getDefaultMensa();
-            Date date = new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
-            ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
-            Message message = new MessageBuilder()
-                    .setEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
-                    .setActionRows(mealButtons).build();
-            sendMealsToGuild(d, message);
-            data.removeIf(g -> {
-                if (g.getDefaultMensaId() == d.getDefaultMensaId()) {
-                    sendMealsToGuild(g, message);
-                    return true;
+        data.stream().map(GuildData::getDefaultMensaId).distinct().forEach(
+                id -> {
+                    Mensa mensa = OpenMensa.getInstance().getMensa(id);
+
+                    Date date = new Date(System.currentTimeMillis() + 1000 * 3600 * 5);
+                    ActionRow mealButtons = MensaUtil.createMealButtons(mensa, date);
+                    Message message = new MessageBuilder()
+                            .setEmbeds(MensaUtil.MealsToEmbed(mensa, date).build())
+                            .setActionRows(mealButtons).build();
+
+                    for (GuildData guildData : data) {
+                        sendMealsToGuild(guildData, message);
+                    }
                 }
-                return false;
-            });
-        }
+        );
     }
 
     private void sendWeatherToGuild(Guild guild, File file) {
@@ -124,46 +121,40 @@ public class AnnouncementTracker {
         }
     }
 
-    private void sendWeatherToAllGuilds() {
+    public void sendWeatherToAllGuilds() {
         logger.info("Sending weather to guilds");
         List<GuildData> data = GuildManager.getInstance().getAllGuildData();
+        data.stream().map(GuildData::getDefaultMensaId).distinct().forEach(
+                id -> {
+                    Mensa mensa = OpenMensa.getInstance().getMensa(id);
 
-        while (!data.isEmpty()) {
-            GuildData d = data.remove(0);
-            Mensa mensa = d.getDefaultMensa();
+                    List<Double> coordinates = mensa.getCoordinates();
+                    String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
+                    List<Forecast> forecasts = Weather4J.getForecasts(lat, lon);
+                    Instant now = Instant.now();
+                    while (forecasts.get(1).getTime().isBefore(now)) {
+                        forecasts.remove(0);
+                    }
 
-            List<Double> coordinates = mensa.getCoordinates();
-            String lat = String.valueOf(coordinates.get(0)), lon = String.valueOf(coordinates.get(1));
-            List<Forecast> forecasts = Weather4J.getForecasts(lat, lon);
-            Instant now = Instant.now();
-            while (forecasts.get(1).getTime().isBefore(now)) {
-                forecasts.remove(0);
-            }
+                    BufferedImage image = generateForecastImage(forecasts, 16);
+                    File file = new File("images/" + new Random().nextInt() + ".png");
+                    try {
+                        ImageIO.write(image, "png", file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
-            BufferedImage image = generateForecastImage(forecasts, 16);
-            File file = new File("images/" + new Random().nextInt() + ".png");
-            try {
-                ImageIO.write(image, "png", file);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            sendWeatherToGuild(d.getGuild(), file);
-            data.removeIf(g -> {
-                if (g.getDefaultMensaId() == d.getDefaultMensaId()) {
-                    sendWeatherToGuild(g.getGuild(), file);
-                    return true;
+                    for (GuildData guildData : data) {
+                        sendWeatherToGuild(guildData.getGuild(), file);
+                    }
+                    file.delete();
                 }
-                return false;
-            });
-            file.delete();
-        }
-
+        );
     }
 
 
     public void sendAnnouncementToAllGuilds(Message message) {
-        List<GuildData> data = GuildManager.getInstance().getAllGuildData();
+        Collection<GuildData> data = GuildManager.getInstance().getAllGuildData();
         for (GuildData d : data) {
             try {
                 MessageChannel channel = (MessageChannel) jda.getGuildChannelById(d.getUpdateChannelId());

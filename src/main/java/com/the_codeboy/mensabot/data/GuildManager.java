@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 

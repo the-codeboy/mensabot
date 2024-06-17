@@ -15,6 +15,7 @@ public class AnnounceCommand extends SecretCommand {
     public void run(CommandEvent event) {
         if (event.getArgs().length == 0) {
             AnnouncementTracker.getInstance().sendMealsToAllGuilds();
+            AnnouncementTracker.getInstance().sendWeatherToAllGuilds();
             event.reply("sent meals");
         } else {
             String content = String.join(" ", event.getArgs());
