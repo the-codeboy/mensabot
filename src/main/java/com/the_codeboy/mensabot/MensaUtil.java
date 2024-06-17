@@ -16,6 +16,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -36,26 +39,49 @@ public class MensaUtil {
             return builder;
         }
         builder.setTitle("Meals in " + mensa.getName());
-        builder.setDescription("<t:" + date.getTime() / 1000 + ":R>");
-//        builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
+        if (mensa.hasOpeningHours()) {
+            float openTime = mensa.getOpeningTime(date),
+                    closeTime = mensa.getClosingTime(date);
+            Date openDate = dateAtTime(date, openTime),
+                    closeDate = dateAtTime(date, closeTime);
+
+            builder.setDescription("<t:" + openDate.getTime() / 1000 + ":R> - <t:" + closeDate.getTime() / 1000 + ":R>");
+        } else {
+            builder.setDescription(DayOfWeek.of(date.getDay() == 0 ? 7 : date.getDay()).getDisplayName(TextStyle.FULL, Locale.GERMANY) + ", " + Util.dateToString(date));
+        }
         boolean beilagen = false;
         for (Meal meal : mensa.getMeals(date)) {
             String title = getTitleString(meal);
             String description = meal.getCategory() +
-                                 (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
-                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                    (meal.getPrices().getStudents() != null ? "\n" + toPrice(meal.getPrices().getStudents())
+                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             if (!beilagen
-                && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
+                    && (meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"))) {
                 beilagen = true;
                 builder.addBlankField(false);
             }
-            boolean inline = true;//!(meal.getCategory().equalsIgnoreCase("Hauptbeilagen") || meal.getCategory().equalsIgnoreCase("Nebenbeilage"));
+            boolean inline = true;
             builder.addField(title, description,
                     inline);
         }
 
         return builder;
+    }
+
+    private static Date dateAtTime(Date date, float time) {
+        int hourPart = (int) time;
+        int minutePart = (int) ((time - hourPart) * 60);
+
+        // Use Calendar to set the time
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date); // Set the date to the calendar
+        calendar.set(Calendar.HOUR_OF_DAY, hourPart);
+        calendar.set(Calendar.MINUTE, minutePart);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
     }
 
     public static String getTitleString(Meal meal) {
@@ -250,8 +276,8 @@ public class MensaUtil {
             drawString(g, meal.getName(), rectangle);
 
             String description = meal.getCategory() +
-                                 (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
-                                                                           + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
+                    (meal.getPrices().getStudents() != null ? "\n " + toPrice(meal.getPrices().getStudents())
+                            + (meal.getPrices().getOthers() != null ? " (" + toPrice(meal.getPrices().getOthers()) + ")" : "") : "");
 
             rectangle.y += size;
 
