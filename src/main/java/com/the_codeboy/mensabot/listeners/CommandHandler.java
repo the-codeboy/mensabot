@@ -128,7 +128,6 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(Bee.class);
         createCommand(AcceptImage.class);
         createCommand(RejectImage.class);
-        createCommand(SendImageInfo.class);
         createCommand(AnnounceCommand.class);
     }
 
