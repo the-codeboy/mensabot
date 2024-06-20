@@ -271,6 +271,7 @@ public class MensaCommand extends Command {
             String comment = e.getValue("comment").getAsString();
             CommentManager.getInstance().addComment(meal, comment, e.getUser());
             e.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Added comment").setDescription(comment).build()).queue();
+            RateCommand.updateAllGuildAnnouncements();
             return true;
         });
 
