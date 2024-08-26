@@ -28,7 +28,7 @@ public class StatusChanger {
                     status = getRandomStatus();
                 } while (status.length() > 128 || status.length() == 0);
                 jda.getPresence().setActivity(Activity.of(Activity.ActivityType.STREAMING, status,
-                        "https://www.youtube.com/watch?v=dQw4w9WgXcQ&v=watch&feature=youtu.be"));
+                        "https://www.youtube.com/watch?v=_4JuzLpvZnQ"));
             }
         }, 0, 60_000);
     }
