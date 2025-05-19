@@ -79,6 +79,7 @@ public class CommandHandler extends ListenerAdapter {
         createCommand(ShortsCommand.class);
         createCommand(WeatherCommand.class);
         createCommand(GifCommand.class);
+        createCommand(XKCDCommand.class);
 
         createCommand(MensaCommand.class);
         createCommand(RateCommand.class);
