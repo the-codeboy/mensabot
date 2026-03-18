@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class RestaurantManager {
     public void save() {
         try {
             new File(filePath).getParentFile().mkdirs();
-            FileWriter writer = new FileWriter(filePath);
+            FileWriter writer = new FileWriter(filePath, StandardCharsets.UTF_8);
             new Gson().toJson(restaurants, writer);
             writer.close();
         } catch (IOException ex) {

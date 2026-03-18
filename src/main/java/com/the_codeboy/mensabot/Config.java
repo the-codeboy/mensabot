@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Config {
@@ -18,7 +19,7 @@ public class Config {
         } catch (FileNotFoundException ignored) {
         }
         try {
-            FileWriter writer = new FileWriter("config.json");
+            FileWriter writer = new FileWriter("config.json", StandardCharsets.UTF_8);
             new Gson().toJson(instance == null ? (instance = new Config()) : instance, writer);
             writer.close();
         } catch (IOException ex) {

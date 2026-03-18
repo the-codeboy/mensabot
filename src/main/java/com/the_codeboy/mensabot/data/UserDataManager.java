@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class UserDataManager {
@@ -44,7 +45,7 @@ public class UserDataManager {
     public void save(UserData data) {
         try {
             new File(userDataFolder).mkdirs();
-            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getId());
+            FileWriter writer = new FileWriter(userDataFolder + File.separator + data.getId(), StandardCharsets.UTF_8);
             new Gson().toJson(data, writer);
             writer.close();
         } catch (IOException ex) {

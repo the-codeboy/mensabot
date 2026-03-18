@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class FoodRatingManager {
@@ -116,7 +117,7 @@ public class FoodRatingManager {
     private void saveRatings() {
         try {
             new File(filePath).getParentFile().mkdirs();
-            FileWriter writer = new FileWriter(filePath);
+            FileWriter writer = new FileWriter(filePath, StandardCharsets.UTF_8);
             new Gson().toJson(ratings, writer);
             writer.close();
         } catch (IOException ex) {
